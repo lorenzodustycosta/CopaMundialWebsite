@@ -1,0 +1,49 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<h2>Sorteggio</h2>
+
+<form method="post" style="margin-bottom: 20px;">
+    {% csrf_token %}
+    {% if user.is_authenticated %}
+    <button type="submit" name="draw">Sorteggia una squadra</button>
+    <button type="submit" name="reset">Reset</button>
+    <button type="submit" name="start_tournament">Inizia Torneo</button>
+    {% endif %}
+</form>
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 3fr);
+        gap: 300px;
+    }
+    .column {
+        display: flex;
+        flex-direction: column;
+        font-size: 26px;
+    }
+    .team, .group {
+        margin: 5px 0;
+        font-size: 20px;
+    }
+</style>
+
+<div class="grid-container">
+    <div class="column">
+        <h3>Squadre</h3>
+        {% for team in unassigned_teams %}
+            <div class="team">{{ team.name }}</div>
+        {% endfor %}
+    </div>
+    {% for group in groups %}
+    <div class="column">
+        <h3>{{ group.name }}</h3>
+        {% for team in group.teams.all %}
+            <div class="group">{{ team.name }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

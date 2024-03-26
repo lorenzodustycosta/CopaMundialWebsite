@@ -1,0 +1,66 @@
+<!-- templates/tournament/match_schedule.html -->
+{% extends 'tournament/base.html' %} <!-- Assuming you have a base template -->
+
+{% block content %}
+<style>
+    .matches-table th,
+    .matches-table td {
+        text-align: center;
+        /* Centers text in table headers and cells */
+        padding: 8px;
+        /* Adjust padding as needed for aesthetics */
+    }
+
+    .matches-table {
+        width: 100%;
+        /* Makes the table use the full width of its container */
+        border-collapse: collapse;
+        /* Optional: for styling */
+    }
+
+    /* Additional styles for borders or aesthetics as desired */
+    .matches-table th,
+    .matches-table td {
+        border: 1px solid #ddd;
+        /* Example border style */
+    }
+</style>
+<h2>Calendario e Risultati</h2>
+<table class="matches-table">
+    <tr>
+        <th>Data</th>
+        <th>Ora</th>
+        <th>Campo</th>
+        <th>Gruppo</th>
+        <th>Casa</th>
+        <th>Trasferta</th>
+        <th>Risultato</th>
+        <th>Stato</th>
+    </tr>
+    {% for match in matches %}
+    <tr>
+        <td>{{ match.date|date:"l, d F Y" }}</td>
+        <td>{{ match.time|time:"H:i" }}</td>
+        <td>{{ match.pitch }} </td>
+        <td>{{ match.group }} </td>
+        <td>{{ match.team1.name }}</td>
+        <td>{{ match.team2.name }}</td>
+        <td>{{ match.score1 }} - {{ match.score2 }}</td>
+        <td>
+            {% if match.validated %}
+            Concluso
+            {% else %}
+            In programma
+            {% endif %}
+        </td>
+        {% if user.is_authenticated %}
+        <td>
+            <form action="{% url 'edit_match' match_id=match.id %}" method="get">
+                <button type="submit">Edit</button>
+            </form>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

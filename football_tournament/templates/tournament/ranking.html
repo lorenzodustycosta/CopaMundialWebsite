@@ -1,0 +1,44 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 8px;
+    }
+    th.team-name, td.team-name {
+        width: 30%;  /* Adjust as needed for the "Team Name" column */
+    }
+    th, td {
+        width: 17.5%; /* This ensures the other columns have uniform width; adjust the percentage based on the number of columns */
+    }
+    /* Additional styling as needed */
+</style>
+  <h2>Classifiche</h2>
+  {% for group_name, teams in groups %}
+    <h3>{{ group_name }}</h3>
+    <table>
+      <tr>
+        <th class="team-name">Squadra</th>
+        <th>Punti</th>
+        <th>Goal Fatti</th>
+        <th>Goal Subiti</th>
+        <th>Differenza Reti</th>
+      </tr>
+      {% for team in teams %}
+        <tr>
+          <td class="team-name">{{ team.team_name }}</td>
+          <td>{{ team.points }}</td>
+          <td>{{ team.goals_scored }}</td>
+          <td>{{ team.goals_conceded }}</td>
+          <td>{{ team.goal_difference }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% endfor %}
+{% endblock %}
