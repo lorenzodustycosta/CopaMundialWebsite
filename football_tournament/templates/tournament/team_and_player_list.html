@@ -1,0 +1,53 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<h2>Rose</h2>
+<table>
+    <thead>
+        <tr>
+            <th></th> <!-- For player number/position -->
+            {% for team in teams %}
+            <th>{{ team.name }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in player_rows %}
+        <tr>
+            <td>{{ forloop.counter }}</td> <!-- Player number/position -->
+            {% for player in row %}
+            <td>{% if player %}{{ player.surname}} {{player.name }}{% else %}N/A{% endif %}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse; /* Merges borders between cells */
+    }
+    
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    th:first-child, td:first-child {
+        width: 5px; /* Adjust the width as needed */
+    }
+    
+    thead th {
+        background-color: #f4f4f4;
+    }
+    
+    tbody td {
+        padding-left: 15px; /* Add padding as needed */
+        padding-right: 15px;
+    }
+    </style>
+
+{% endblock %}

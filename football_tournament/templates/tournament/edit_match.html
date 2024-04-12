@@ -5,6 +5,27 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Changes</button>
+    <h3>Goals</h3>
+    {{ formset.management_form }}
+    {% for form in formset %}
+        <div class="goal-form">
+            {{ form.player.label }}: {{ form.player }}
+            {{ form.number_of_goals.label }}: {{ form.number_of_goals }}
+        </div>
+    {% endfor %}
+    <button type="submit">Save Match Details</button>
 </form>
 {% endblock %}
+
+<style>
+    .goal-form {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .goal-form div {
+        margin: 5px 0;
+    }
+    </style>
+    

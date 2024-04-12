@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,17 +10,26 @@
         body {
             display: flex;
         }
+
         .sidebar {
-            height: 100vh; /* Full height */
-            width: 250px; /* Sidebar width */
-            position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-            z-index: 1; /* Stay on top */
-            top: 0; /* Stay at the top */
+            height: 100vh;
+            /* Full height */
+            width: 250px;
+            /* Sidebar width */
+            position: fixed;
+            /* Fixed Sidebar (stay in place on scroll) */
+            z-index: 1;
+            /* Stay on top */
+            top: 0;
+            /* Stay at the top */
             left: 0;
-            background-color: #111; /* Black */
-            overflow-x: hidden; /* Disable horizontal scroll */
+            background-color: #111;
+            /* Black */
+            overflow-x: hidden;
+            /* Disable horizontal scroll */
             padding-top: 20px;
         }
+
         .sidebar a {
             padding: 10px 15px;
             text-decoration: none;
@@ -27,13 +37,17 @@
             color: white;
             display: block;
         }
+
         .sidebar a:hover {
             color: #f1f1f1;
         }
+
         .main-content {
-            margin-left: 250px; /* Same as the width of the sidebar */
+            margin-left: 250px;
+            /* Same as the width of the sidebar */
             padding: 0px 10px;
         }
+
         .footer {
             text-align: center;
             padding: 20px 0;
@@ -45,35 +59,48 @@
             color: rgb(0, 0, 0);
             font-size: 14px;
         }
+
+        .sidebar .authenticated-links {
+            padding-left: 20px;
+            /* Add left padding to indent the links */
+        }
     </style>
 </head>
+
 <body>
 
-<div class="sidebar">
-    <a href="{% url 'home' %}">Home</a>
-    <a href="{% url 'match_schedule' %}">Partite</a>
-    <a href="{% url 'ranking' %}">Classifiche</a>
-    <a href="{% url 'group_draw' %}">Sorteggio</a> 
-    {% if not user.is_authenticated %}
-        <a href="{% url 'login' %}?next={{ request.path }}">Login</a>
-    {% endif %}
-</div>
-
-<div class="main-content">
-    <header>
-        <h1>CopaMundial 2024</h1>
-    </header>
-    
-    <main>
-        {% block content %}
-        <!-- This block will be overridden by child templates -->
-        {% endblock content %}
-    </main>
-
-    <div class="footer">
-        <p>&copy; 2024 Tutti i diritti riservati.</p>
+    <div class="sidebar">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'team_and_player_list' %}">Squadre</a>
+        <a href="{% url 'match_schedule' %}">Partite</a>
+        <a href="{% url 'ranking' %}">Classifiche</a>
+        <a href="{% url 'login' %}?next={{ request.path }}">Area Riservata</a>
+        {% if user.is_authenticated %}
+        <div class="authenticated-links">
+            <a href="{% url 'group_draw' %}">Sorteggio</a>
+            <a href="{% url 'manage_matches' %}">Gestione Partite</a>
+            <a href="{% url 'manage_teams' %}">Gestione Squadre</a>
+            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                {% csrf_token %}
+            </form>
+        </div>
+        {% endif %}
     </div>
-</div>
+
+    <div class="main-content">
+
+        <main>
+            {% block content %}
+            <!-- This block will be overridden by child templates -->
+            {% endblock content %}
+        </main>
+
+        <div class="footer">
+            <p>&copy; 2024 Tutti i diritti riservati.</p>
+        </div>
+    </div>
 
 </body>
+
 </html>

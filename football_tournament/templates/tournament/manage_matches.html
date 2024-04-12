@@ -53,6 +53,13 @@
             In programma
             {% endif %}
         </td>
+        {% if user.is_authenticated %}
+        <td>
+            <form action="{% url 'edit_match' match_id=match.id %}" method="get">
+                <button type="submit">Edit</button>
+            </form>
+        </td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>
