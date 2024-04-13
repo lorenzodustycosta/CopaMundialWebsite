@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,9 +81,9 @@ WSGI_APPLICATION = 'football_tournament.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'copamundial',
-        'USER': 'lorenzo',
-        'PASSWORD': 'CopaMundial2024',
+        'NAME': os.environ['DBNAME'], #'copamundial',
+        'USER': os.environ['DBUSERNAME'], #'lorenzo',
+        'PASSWORD': os.environ['DBPASSWORD'], #'CopaMundial2024',
         'HOST': 'localhost',  # Or the IP address of your database server
         'PORT': '5432',  # Default PostgreSQL port
     }
