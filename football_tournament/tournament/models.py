@@ -4,6 +4,7 @@ from django import forms
 from django.db import models
 from django import forms
 from django.forms.models import BaseInlineFormSet
+from django.utils.translation import gettext_lazy as _
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
@@ -27,23 +28,36 @@ class Match(models.Model):
         ('Verde', 'Verde'),
         ('Da definire','Da definire')
     )
-    date = models.DateField(default="2024-06-05")
-    time = models.TimeField(default="20:00:00")
-    home_team = models.ForeignKey(
-        Team, related_name='home_team', on_delete=models.CASCADE, default='home_team')
-    away_team = models.ForeignKey(
-        Team, related_name='away_team', on_delete=models.CASCADE, default='away_team')
-    pitch = models.CharField(
-        max_length=50, default='Da definire', choices=PITCH_CHOICES)
-    score_home_team = models.IntegerField(default=0)
-    score_away_team = models.IntegerField(default=0)
-    stage = models.CharField(max_length=50, default='Gironi')
-    group = models.CharField(max_length=50, default='')
+    date = models.DateField(_("Date"), default="2024-06-05")
+    time = models.TimeField(_("Time"), default="20:00:00")
+    home_team = models.ForeignKey(Team, related_name='home_team', on_delete=models.CASCADE, default='home_team', verbose_name=_("Home Team"))
+    away_team = models.ForeignKey(Team, related_name='away_team', on_delete=models.CASCADE, default='away_team', verbose_name=_("Away Team"))
+    pitch = models.CharField(_("Pitch"), max_length=50, default='Da definire', choices=PITCH_CHOICES)
+    score_home_team = models.IntegerField(_("Home Score"), default=0)
+    score_away_team =  models.IntegerField(_("Away Score"), default=0)
+    stage = models.CharField(_("Stage"), max_length=50, default='Gironi')
+    group = models.CharField(_("Group"), max_length=50, default='')
     validated = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
 
+class MatchForm(forms.ModelForm):
+    class Meta:
+        model = Match
+        fields = ['date', 'time', 'home_team', 'away_team', 'score_home_team',
+                  'score_away_team', 'pitch', 'stage', 'group']
+        labels = {
+            'date': _('Date'),
+            'time': _('Time'),
+            'score_home_team': _('Home Score'),
+            'score_away_team': _('Away Score'),
+            'pitch': _('Pitch'),
+            'group': _('Group'),
+            'stage': _('Stage'),
+            'home_team': _('Home Team'),
+            'away team': _('Away Team'),
+        }
 
 class Player(models.Model):
     team = models.ForeignKey(Team, related_name='players', on_delete=models.CASCADE)
@@ -55,17 +69,12 @@ class Player(models.Model):
 class Goal(models.Model):
     match = models.ForeignKey('Match', on_delete=models.CASCADE, related_name='goals')
     player = models.ForeignKey('Player', on_delete=models.CASCADE, related_name='goals')
-    number_of_goals = models.PositiveIntegerField(default=1)
+    number_of_goals = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.player.name} scored {self.number_of_goals} goals in {self.match}"
     
-class MatchForm(forms.ModelForm):
-    class Meta:
-        model = Match
-        fields = ['date', 'time', 'home_team', 'away_team', 'score_home_team',
-                  'score_away_team', 'pitch', 'stage', 'group', 'validated']
-        
+
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
@@ -78,23 +87,35 @@ class PlayerForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': '', 'class': 'player-name'}),
             'surname': forms.TextInput(attrs={'placeholder': '', 'class': 'player-surname'}),
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'time': forms.TimeInput(attrs={'type': 'time'}),
         }
+
         
-class GoalForm(forms.ModelForm):
+class PlayerGoalsForm(forms.ModelForm):
     class Meta:
         model = Goal
-        fields = ['player', 'number_of_goals']
+        fields = []
 
-    def __init__(self, *args, match=None, **kwargs):
-        super(GoalForm, self).__init__(*args, **kwargs)
-        if match:
-            self.fields['player'].queryset = Player.objects.filter(team__in=[match.home_team, match.away_team])
-
-class GoalFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
-        self.match = kwargs.pop('match', None)
-        super(GoalFormSet, self).__init__(*args, **kwargs)
-        for form in self.forms:
-            form.fields['player'].queryset = Player.objects.filter(
-                team__in=[self.match.home_team, self.match.away_team]
-            ) if self.match else Player.objects.none()
+        team = kwargs.pop('team', None)
+        super(PlayerGoalsForm, self).__init__(*args, **kwargs)
+        if team:
+            for player in Player.objects.filter(team=team):
+                field_name = f'goals_{player.id}'
+                self.fields[field_name] = forms.IntegerField(
+                    required=False,
+                    label=f'{player.name} {player.surname}',
+                    widget=forms.NumberInput(attrs={
+                        'placeholder': 'Goals',
+                        'style': 'width: 60px; margin-left: 10px;',
+                    }),
+                    initial=0
+                )
+            
+            self.fields[f'autogol_{team.id}'] = forms.IntegerField(
+            label='Autogol',
+            initial=0,
+            required=False,
+            widget=forms.NumberInput(attrs={'placeholder': 'Enter autogols', 'style': 'width: 60px;'})
+        )

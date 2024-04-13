@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm, Goal, GoalForm, GoalFormSet
+from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm, Goal, PlayerGoalsForm
 from django.db.models import Prefetch
 import random
 from django.db.models import Count, Sum, F, Case, When, IntegerField, F, Q, Value
@@ -148,28 +148,24 @@ def ranking(request):
         
 @login_required
 def edit_match(request, match_id):
-    match = get_object_or_404(Match, id=match_id)
-    
-    # Define GoalFormSet right after fetching the match and before any conditional logic
-    GoalFormSet = inlineformset_factory(Match, Goal, fields=('player', 'number_of_goals'))
-
+    match = get_object_or_404(Match, pk=match_id)
     if request.method == 'POST':
-        home_formset = GoalFormSet(request.POST, request.FILES, instance=match, queryset=Goal.objects.filter(player__team=match.home_team))
-        away_formset = GoalFormSet(request.POST, request.FILES, instance=match, queryset=Goal.objects.filter(player__team=match.away_team))
-        
-        if home_formset.is_valid() and away_formset.is_valid():
-            home_formset.save()
-            away_formset.save()
-            return redirect('redirect_target')  # Make sure to replace 'redirect_target' with your actual redirect destination
-
+        match_form = MatchForm(request.POST, instance=match)
+        home_goals_form = PlayerGoalsForm(request.POST, team=match.home_team)
+        away_goals_form = PlayerGoalsForm(request.POST, team=match.away_team)
+        if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
+            match_form.save()
+            # Logic to save goal data, including autogols
+            return redirect('manage_matches')
     else:
-        home_formset = GoalFormSet(instance=match, queryset=Goal.objects.filter(player__team=match.home_team))
-        away_formset = GoalFormSet(instance=match, queryset=Goal.objects.filter(player__team=match.away_team))
+        match_form = MatchForm(instance=match)
+        home_goals_form = PlayerGoalsForm(team=match.home_team)
+        away_goals_form = PlayerGoalsForm(team=match.away_team)
 
     return render(request, 'tournament/edit_match.html', {
-        'home_formset': home_formset,
-        'away_formset': away_formset,
-        'match': match
+        'match_form': match_form,
+        'home_goals_form': home_goals_form,
+        'away_goals_form': away_goals_form,
     })
 
 def team_and_player_list(request):

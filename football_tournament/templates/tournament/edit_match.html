@@ -1,31 +1,42 @@
 {% extends 'tournament/base.html' %}
+{% load i18n %}
 
 {% block content %}
-<h2>Edit Match</h2>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <h3>Goals</h3>
-    {{ formset.management_form }}
-    {% for form in formset %}
-        <div class="goal-form">
-            {{ form.player.label }}: {{ form.player }}
-            {{ form.number_of_goals.label }}: {{ form.number_of_goals }}
+    <h2>{% trans "Edit Match Details" %}</h2>
+    {{ match_form.as_p }}
+
+    <h2>{% trans "Home Team Goals" %}</h2>
+    {% for field in home_goals_form %}
+        <div class="player-goal-entry">
+            {{ field.errors }}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
         </div>
     {% endfor %}
-    <button type="submit">Save Match Details</button>
+
+    <h2>{% trans "Away Team Goals" %}</h2>
+    {% for field in away_goals_form %}
+        <div class="player-goal-entry">
+            {{ field.errors }}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </div>
+    {% endfor %}
+
+    <button type="submit">{% trans "Save Changes" %}</button>
 </form>
-{% endblock %}
 
 <style>
-    .goal-form {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+    .player-goal-entry {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
     }
-    .goal-form div {
-        margin: 5px 0;
+    .player-goal-entry label, .player-goal-entry input {
+        margin-right: 10px;
     }
-    </style>
-    
+</style>
+{% endblock %}
