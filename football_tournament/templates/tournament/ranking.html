@@ -46,4 +46,24 @@
         </table>
     {% endfor %}
 {% endif %}
+
+<!-- Goal Scorers Table -->
+<h2>Classifica Marcatori</h2>
+<table>
+    <tr>
+        <th>Posizione</th>
+        <th>Giocatore</th>
+        <th>Squadra</th>
+        <th>Goal</th>
+    </tr>
+    {% for scorer in top_scorers %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ scorer.name }}</td>
+        <td>{{ scorer.team.name }}</td>
+        <td>{{ scorer.total_goals }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}

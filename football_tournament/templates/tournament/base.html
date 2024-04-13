@@ -9,6 +9,8 @@
         /* Add your CSS styling here */
         body {
             display: flex;
+            overflow-x: hidden; /* Only horizontal scrolling is disabled */
+            height: 100%; /* Full height to the body might be necessary */
         }
 
         .sidebar {
@@ -48,28 +50,18 @@
             padding: 0px 10px;
         }
 
-        .footer {
-            text-align: center;
-            padding: 20px 0;
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            height: 1%;
-            background-color: #1C4192;
-            color: rgb(255, 255, 255);
-            font-size: 14px;
-        }
-
         .sidebar .authenticated-links {
             padding-left: 20px;
             /* Add left padding to indent the links */
+        }
+        .sponsor {
+            margin-top: 100px
         }
     </style>
 </head>
 
 <body>
-
+    {% load static %}
     <div class="sidebar">
         <a href="{% url 'home' %}">Home</a>
         <a href="{% url 'team_and_player_list' %}">Squadre</a>
@@ -86,6 +78,9 @@
                 {% csrf_token %}
             </form>
         </div>
+        <a class="sponsor">Gli Amici della CopaMundial</a>
+        <a href="https://www.instagram.com/selos_design/" target="_blank"><img src="{% static 'selos.png' %}" alt="Logo" style="width: 80px; height: auto;"></a>
+        <a href="https://arredamentifumagalli1957.it/" target="_blank"><img src="{% static 'fumagalli.png' %}" alt="Logo" style="width: 180px; height: auto;"></a>
         {% endif %}
     </div>
 
@@ -98,7 +93,7 @@
         </main>
 
         <div class="footer">
-            <p>&copy; 2024 Tutti i diritti riservati.</p>
+            
         </div>
     </div>
 

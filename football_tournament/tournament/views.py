@@ -3,6 +3,7 @@ from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm,
 from django.db.models import Prefetch
 import random
 from django.db.models import Count, Sum, F, Case, When, IntegerField, F, Q, Value
+from django.db.models.functions import Coalesce
 from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
 from django.views.generic.edit import CreateView, DeleteView
@@ -12,9 +13,9 @@ from collections import defaultdict
 from django.utils import timezone
 from operator import itemgetter
 
-def ranking(request):
-    # Assuming 'groups' is your dict with group names as keys and lists of team stats as values
-    groups
+# def ranking(request):
+#     # Assuming 'groups' is your dict with group names as keys and lists of team stats as values
+#     groups
 
 # Create your views here.
 def home(request):
@@ -144,23 +145,34 @@ def ranking(request):
     else:
         sorted_groups = None
         
-    return render(request, 'tournament/ranking.html', {'groups': sorted_groups, 'drawing_done': drawing_done})
+    top_scorers = Player.objects.annotate(
+        total_goals=Coalesce(Sum('goals__number_of_goals'), 0)
+    ).filter(
+        total_goals__gt=0  # This filters out players with 0 goals
+    ).order_by('-total_goals')[:10]
+        
+    return render(request, 'tournament/ranking.html', {'groups': sorted_groups, 'drawing_done': drawing_done, 'top_scorers': top_scorers,})
         
 @login_required
 def edit_match(request, match_id):
     match = get_object_or_404(Match, pk=match_id)
     if request.method == 'POST':
         match_form = MatchForm(request.POST, instance=match)
-        home_goals_form = PlayerGoalsForm(request.POST, team=match.home_team)
-        away_goals_form = PlayerGoalsForm(request.POST, team=match.away_team)
+        home_goals_form = PlayerGoalsForm(request.POST, team=match.home_team, match=match)
+        away_goals_form = PlayerGoalsForm(request.POST, team=match.away_team, match=match)
+        
         if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
-            match_form.save()
-            # Logic to save goal data, including autogols
+            print("Form is valid")
+            updated_match = match_form.save()
+            save_goals(home_goals_form, match, match.home_team)
+            save_goals(away_goals_form, match, match.away_team)
             return redirect('manage_matches')
+        else:
+            print("Form not valid")
     else:
         match_form = MatchForm(instance=match)
-        home_goals_form = PlayerGoalsForm(team=match.home_team)
-        away_goals_form = PlayerGoalsForm(team=match.away_team)
+        home_goals_form = PlayerGoalsForm(request.POST or None, team=match.home_team, match=match)
+        away_goals_form = PlayerGoalsForm(request.POST or None, team=match.away_team, match=match)
 
     return render(request, 'tournament/edit_match.html', {
         'match_form': match_form,
@@ -168,6 +180,22 @@ def edit_match(request, match_id):
         'away_goals_form': away_goals_form,
     })
 
+def save_goals(form, match, team):
+    print("Save")
+    print(form)
+    for field_name, value in form.cleaned_data.items():
+        print(field_name)
+        print(value)
+        if value:  # Make sure there is a value to save
+            player_id = int(field_name.split('_')[1])
+            player = Player.objects.get(id=player_id)
+            print(player)
+            Goal.objects.update_or_create(
+                match=match,
+                player=player,
+                defaults={'number_of_goals': value}
+            )
+            
 def team_and_player_list(request):
     teams = Team.objects.prefetch_related('players').order_by('name')
     # Find the maximum number of players in any team to define the number of rows

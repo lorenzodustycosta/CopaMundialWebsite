@@ -5,6 +5,7 @@ from django.db import models
 from django import forms
 from django.forms.models import BaseInlineFormSet
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Sum
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
@@ -37,7 +38,7 @@ class Match(models.Model):
     score_away_team =  models.IntegerField(_("Away Score"), default=0)
     stage = models.CharField(_("Stage"), max_length=50, default='Gironi')
     group = models.CharField(_("Group"), max_length=50, default='')
-    validated = models.BooleanField(default=False)
+    validated = models.BooleanField(_('Validate'), default=False)
 
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
@@ -46,7 +47,7 @@ class MatchForm(forms.ModelForm):
     class Meta:
         model = Match
         fields = ['date', 'time', 'home_team', 'away_team', 'score_home_team',
-                  'score_away_team', 'pitch', 'stage', 'group']
+                  'score_away_team', 'pitch', 'stage', 'group', 'validated']
         labels = {
             'date': _('Date'),
             'time': _('Time'),
@@ -57,6 +58,7 @@ class MatchForm(forms.ModelForm):
             'stage': _('Stage'),
             'home_team': _('Home Team'),
             'away team': _('Away Team'),
+            'validated': _('Validated')
         }
 
 class Player(models.Model):
@@ -64,7 +66,7 @@ class Player(models.Model):
     name = models.CharField(max_length=100, default='')
     surname = models.CharField(max_length=100, default='')
     def __str__(self):
-            return f"{self.surname} {self.name}"
+            return f"{self.surname} {self.name} {self.team}"
         
 class Goal(models.Model):
     match = models.ForeignKey('Match', on_delete=models.CASCADE, related_name='goals')
@@ -98,11 +100,14 @@ class PlayerGoalsForm(forms.ModelForm):
         fields = []
 
     def __init__(self, *args, **kwargs):
-        team = kwargs.pop('team', None)
+        team = kwargs.pop('team', None)  # Extract the team argument before initializing the superclass
+        match = kwargs.pop('match', None)
         super(PlayerGoalsForm, self).__init__(*args, **kwargs)
-        if team:
+        
+        if team and match:
             for player in Player.objects.filter(team=team):
                 field_name = f'goals_{player.id}'
+                initial_goals = Goal.objects.filter(player=player, match=match).aggregate(Sum('number_of_goals'))['number_of_goals__sum'] or 0
                 self.fields[field_name] = forms.IntegerField(
                     required=False,
                     label=f'{player.name} {player.surname}',
@@ -110,12 +115,5 @@ class PlayerGoalsForm(forms.ModelForm):
                         'placeholder': 'Goals',
                         'style': 'width: 60px; margin-left: 10px;',
                     }),
-                    initial=0
+                    initial=initial_goals
                 )
-            
-            self.fields[f'autogol_{team.id}'] = forms.IntegerField(
-            label='Autogol',
-            initial=0,
-            required=False,
-            widget=forms.NumberInput(attrs={'placeholder': 'Enter autogols', 'style': 'width: 60px;'})
-        )
