@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm, Goal, PlayerGoalsForm
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count
 import random
 from django.db.models import Count, Sum, F, Case, When, IntegerField, F, Q, Value
 from django.db.models.functions import Coalesce
@@ -8,14 +8,13 @@ from django.contrib.auth.decorators import login_required
 from django.forms import inlineformset_factory
 from django.views.generic.edit import CreateView, DeleteView
 from django.urls import reverse_lazy
-from itertools import combinations
+from itertools import combinations, cycle
 from collections import defaultdict 
 from django.utils import timezone
 from operator import itemgetter
-
-# def ranking(request):
-#     # Assuming 'groups' is your dict with group names as keys and lists of team stats as values
-#     groups
+from datetime import date, timedelta
+import datetime
+from django.db import transaction
 
 # Create your views here.
 def home(request):
@@ -69,25 +68,115 @@ def group_draw(request):
         # Reset all group-team assignments
         Team.objects.all().update(group=None)
     elif 'start_tournament' in request.POST:
-        # Logic to initialize matches
-        Match.objects.all().delete()
-        groups = Group.objects.annotate(num_teams=Count('teams')).filter(num_teams__gt=1)
-        for group in groups:
-            teams = list(group.teams.all())
-            # Create a match for every possible pairing if not already created
-            for home_team, away_team in combinations(teams, 2):
-                Match.objects.get_or_create(
-                    group=group,
-                    home_team=home_team,
-                    away_team=away_team,
-                    #defaults={'score_home_team': 0, 'score_away_team': 0, 'date': None}  # Set a default date or modify as needed
-                )
-        
+        with transaction.atomic():
+            cleanup_matches()
+            start_date = date(2024, 6, 4)
+            all_groups = Group.objects.all()
+            tournament_schedule = create_tournament_schedule(start_date, all_groups)
+            tournament_schedule = adjust_for_special_team(tournament_schedule)
+            
+            for group_name, matches in tournament_schedule.items():
+                    for match_info in matches:
+                        Match.objects.create(
+                            group=Group.objects.get(name=group_name),
+                            home_team=Team.objects.get(name=match_info['home_team']),
+                            away_team=Team.objects.get(name=match_info['away_team']),
+                            date=match_info['date'],
+                            time=match_info['time'],
+                            pitch=match_info['pitch'],
+                        )
+                            
     # Teams without a group
     unassigned_teams = Team.objects.filter(group__isnull=True)
     # All groups (to display assigned teams under each group)
     groups = Group.objects.prefetch_related('teams').order_by('name').all()
     return render(request, 'tournament/group_draw.html', {'unassigned_teams': unassigned_teams, 'groups': groups})
+
+def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini Gialli'):
+    for group_name, matches in tournament_schedule.items():
+        for match_info in matches:
+            # Check if the special team is playing in this match
+            if match_info['home_team'] == special_team_name or match_info['away_team'] == special_team_name:
+                # Assign the special team to the Green pitch
+                match_info['pitch'] = 'Green'
+
+                # Find the match at the same time that is not the special team's match
+                for other_match_info in matches:
+                    if (other_match_info['date'] == match_info['date'] and
+                        other_match_info['time'] == match_info['time'] and
+                        other_match_info is not match_info):
+                        # Assign the other match to the Blue pitch
+                        other_match_info['pitch'] = 'Blu'
+    return tournament_schedule
+
+def cleanup_matches():
+    # Assuming `Match` has related objects that need to be cleared as well
+    # This will delete all matches and any related objects via cascade deletion
+    Match.objects.all().delete()
+    
+def create_tournament_schedule(start_date, groups):
+    schedule = {}
+    match_days = [1, 2]  # 1 for Tuesday, 2 for Wednesday
+    match_times = cycle(['21:00', '22:00'])  # Cycle through match times for each match day
+    pitches = ['Blu', 'Green']  # Available pitches
+    current_date = start_date
+
+    # Ensure start_date is a Tuesday
+    while current_date.weekday() != match_days[0]:
+        current_date += timedelta(days=1)
+
+    # Loop through the groups and create a round-robin schedule for each
+    for group in groups:
+        rounds = round_robin(list(group.teams.all()))
+        for round_num, round_matches in enumerate(rounds):
+            # Determine the match day (Tuesday or Wednesday) and time slots
+            day_matches_count = 0
+            for match in round_matches:
+                # Schedule matches for Tuesday first, then Wednesday
+                if day_matches_count == 4:
+                    # If it's already Wednesday, move to next week's Tuesday
+                    if current_date.weekday() == match_days[1]:
+                        current_date += timedelta(days=6)
+                    else:  # Otherwise, just move to the next day (Wednesday)
+                        current_date += timedelta(days=1)
+                    day_matches_count = 0
+
+                time_slot = next(match_times)  # Get the next available time slot
+                pitch = pitches[day_matches_count % len(pitches)]  # Alternate between pitches
+
+                # Create match entry if not a dummy team
+                if match[0] is not None and match[1] is not None:
+                    schedule.setdefault(group.name, []).append({
+                        'date': current_date,
+                        'home_team': match[0].name,
+                        'away_team': match[1].name,
+                        'time': time_slot,
+                        'pitch': pitch
+                    })
+                    day_matches_count += 1
+
+            # After scheduling a round (2 matches per group), move to the next week
+            if current_date.weekday() == match_days[1]:
+                current_date += timedelta(days=6)
+            else:  # It's a Tuesday, move to the next day (Wednesday)
+                current_date += timedelta(days=1)
+
+    return schedule
+
+def round_robin(teams):
+    """Generates a round-robin schedule for a list of teams."""
+    schedule = []
+    if len(teams) % 2:
+        teams.append(None)  # If odd number of teams, add a dummy team for bye weeks
+
+    for i in range(len(teams) - 1):
+        round_matches = []
+        for j in range(len(teams) // 2):
+            if teams[j] is not None and teams[-j - 1] is not None:
+                round_matches.append((teams[j], teams[-j - 1]))
+        teams.insert(1, teams.pop())  # Rotate the list of teams
+        schedule.append(round_matches)
+    return schedule
 
 def ranking(request):
     groups = defaultdict(list)
@@ -162,13 +251,11 @@ def edit_match(request, match_id):
         away_goals_form = PlayerGoalsForm(request.POST, team=match.away_team, match=match)
         
         if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
-            print("Form is valid")
             updated_match = match_form.save()
             save_goals(home_goals_form, match, match.home_team)
             save_goals(away_goals_form, match, match.away_team)
             return redirect('manage_matches')
-        else:
-            print("Form not valid")
+
     else:
         match_form = MatchForm(instance=match)
         home_goals_form = PlayerGoalsForm(request.POST or None, team=match.home_team, match=match)
@@ -181,15 +268,10 @@ def edit_match(request, match_id):
     })
 
 def save_goals(form, match, team):
-    print("Save")
-    print(form)
     for field_name, value in form.cleaned_data.items():
-        print(field_name)
-        print(value)
         if value:  # Make sure there is a value to save
             player_id = int(field_name.split('_')[1])
             player = Player.objects.get(id=player_id)
-            print(player)
             Goal.objects.update_or_create(
                 match=match,
                 player=player,
@@ -258,3 +340,17 @@ class DeleteTeamView(DeleteView):
         context = super().get_context_data(**kwargs)
         context['cancel_url'] = reverse_lazy('manage_teams')
         return context
+
+
+# Assuming you have models named Match, Goal, and Team
+def match_detail(request, match_id):
+    match = get_object_or_404(Match, id=match_id)
+    # Assuming that Goal has a 'player' ForeignKey and 'team' ForeignKey
+    home_goals = Goal.objects.filter(match=match, player__team=match.home_team).select_related('player').annotate(total_goals=Sum('number_of_goals')).order_by('-total_goals')
+    away_goals = Goal.objects.filter(match=match, player__team=match.away_team).select_related('player').annotate(total_goals=Sum('number_of_goals')).order_by('-total_goals')
+
+    return render(request, 'tournament/match_detail.html', {
+        'match': match,
+        'home_goals': home_goals,
+        'away_goals': away_goals
+    })

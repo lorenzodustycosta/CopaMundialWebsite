@@ -73,6 +73,10 @@ class Goal(models.Model):
     player = models.ForeignKey('Player', on_delete=models.CASCADE, related_name='goals')
     number_of_goals = models.PositiveIntegerField(default=0)
 
+    @property
+    def goals_count(self):
+        return range(self.number_of_goals)
+    
     def __str__(self):
         return f"{self.player.name} scored {self.number_of_goals} goals in {self.match}"
     

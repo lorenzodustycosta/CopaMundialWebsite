@@ -1,0 +1,38 @@
+{% extends 'tournament/base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/match_detail.css' %}">
+<h2>Dettagli Partita</h2>
+<div class="match-details">
+    <div class="team-info-container">
+        <div class="team-info">
+            <div class="team-header">
+                <h3>{{ match.home_team.name }}</h3>
+                <div class="score">{{ match.score_home_team }}</div>
+            </div>
+            {% for goal in home_goals %}
+            <div class="goal-scorer">
+                {{ goal.player.name }} <span class="goals">{{ goal.total_goals|make_balls }}</span>
+            </div>
+            {% empty %}
+            <p>No goals scored by home team.</p>
+            {% endfor %}
+        </div>
+        <div class="versus">-</div>
+        <div class="team-info">
+            <div class="team-header">
+                <h3>{{ match.away_team.name }}</h3>
+                <div class="score">{{ match.score_away_team }}</div>
+            </div>
+            {% for goal in away_goals %}
+            <div class="goal-scorer">
+                {{ goal.player.name }} <span class="goals">{{ goal.total_goals|make_balls }}</span>
+            </div>
+            {% empty %}
+            <p>No goals scored by away team.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

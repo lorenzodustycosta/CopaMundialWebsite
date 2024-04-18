@@ -1,0 +1,94 @@
+.matches-container {
+    /* Add styles for the overall container */
+}
+
+.match-entry {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.match-date {
+    width: 120px; /* Adjust as necessary for your preferred width */
+}
+
+.match-time {
+    width: 60px; /* Adjust as necessary for your preferred width */
+}
+
+.match-detail {
+    display: flex;
+    align-items: center;
+    width: 150px; /* Adjust as necessary for your preferred width */
+}
+
+.scorer-name {
+    margin-right: 15px; /* Space between the name and the goals */
+}
+
+.scorer-goals .goal-ball {
+    height: 20px;
+    margin-right: 5px; /* Space between each ball icon */
+}
+
+.match-pitch, .match-group {
+    width: 70px; /* Adjust as necessary to make room for both pitch and group */
+    text-align: left;
+}
+
+.match-teams {
+    flex-grow: 2;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.match-home, .match-away {
+    min-width: 100px; /* Adjust as necessary */
+}
+
+.match-vs {
+    margin: 0 10px;
+}
+
+.match-score {
+    width: 50px; /* Adjust as necessary */
+    text-align: center;
+}
+
+.match-status {
+    width: 100px; /* Adjust as necessary */
+    text-align: left;
+}
+
+.status-concluded {
+    color: green;
+}
+
+.status-scheduled {
+    color: orange;
+}
+
+.team-section {
+    margin-top: 20px;
+}
+
+.goal-scorer {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.scorer-name {
+    margin-right: 10px;
+}
+
+.scorer-goals {
+    display: flex;
+    align-items: center;
+}
+
+.goal-ball {
+    margin-right: 5px;
+}

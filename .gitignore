@@ -1,4 +1,5 @@
 venv/
 .env
-football_tournament/__pycache__/
-tournament/__pycache__/
+football_tournament/football_tournament/__pycache__/
+football_tournament/tournament/__pycache__/
+football_tournament/tournament/templatetags/__pycache__/

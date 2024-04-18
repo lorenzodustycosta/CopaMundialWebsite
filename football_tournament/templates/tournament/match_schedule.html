@@ -1,59 +1,35 @@
-<!-- templates/tournament/match_schedule.html -->
 {% extends 'tournament/base.html' %} <!-- Assuming you have a base template -->
 
+{% load static%}
 {% block content %}
-<style>
-    .matches-table th,
-    .matches-table td {
-        text-align: center;
-        /* Centers text in table headers and cells */
-        padding: 8px;
-        /* Adjust padding as needed for aesthetics */
-    }
-
-    .matches-table {
-        width: 100%;
-        /* Makes the table use the full width of its container */
-        border-collapse: collapse;
-        /* Optional: for styling */
-    }
-
-    /* Additional styles for borders or aesthetics as desired */
-    .matches-table th,
-    .matches-table td {
-        border: 1px solid #ddd;
-        /* Example border style */
-    }
-</style>
+<link rel="stylesheet" href="{% static 'styles/match_schedule.css' %}">
+<!-- It's recommended to use an external stylesheet for more complex CSS -->
 <h2>Calendario e Risultati</h2>
-<table class="matches-table">
-    <tr>
-        <th>Data</th>
-        <th>Ora</th>
-        <th>Campo</th>
-        <th>Gruppo</th>
-        <th>Casa</th>
-        <th>Trasferta</th>
-        <th>Risultato</th>
-        <th>Stato</th>
-    </tr>
+<div class="matches-container">
     {% for match in matches %}
-    <tr>
-        <td>{{ match.date|date:"l, d F Y" }}</td>
-        <td>{{ match.time|time:"H:i" }}</td>
-        <td>{{ match.pitch }} </td>
-        <td>{{ match.group }} </td>
-        <td>{{ match.home_team.name }}</td>
-        <td>{{ match.away_team.name }}</td>
-        <td>{{ match.score_home_team }} - {{ match.score_away_team }}</td>
-        <td>
+    <div class="match-entry">
+        <div class="match-date">{{ match.date|date:"l, d F Y" }}</div>
+        <div class="match-time">{{ match.time|time:"H:i" }}</div>
+        <div class="match-detail">
+            <div class="match-pitch">Campo {{ match.pitch }}</div>
+            <div class="match-group">{{ match.group.name }}</div>
+        </div>
+        <div class="match-teams">
+            <span class="match-home">{{ match.home_team.name }}</span>
+            <span class="match-vs">vs</span>
+            <span class="match-away">{{ match.away_team.name }}</span>
+        </div>
+        <div class="match-score">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
+        <div class="match-status">
             {% if match.validated %}
-            Concluso
+            <a href="{% url 'match_detail' match.id %}" class="status-concluded">Concluso</a>
             {% else %}
-            In programma
+            <span class="status-scheduled">In programma</span>
             {% endif %}
-        </td>
-    </tr>
+        </div>
+    </div>
+    {% empty %}
+    <p>Nessuna partita in programma.</p>
     {% endfor %}
-</table>
+</div>
 {% endblock %}
