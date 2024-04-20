@@ -12,7 +12,7 @@
         <div class="match-time">{{ match.time|time:"H:i" }}</div>
         <div class="match-detail">
             <div class="match-pitch">Campo {{ match.pitch }}</div>
-            <div class="match-group">{{ match.group.name }}</div>
+            <div class="match-group">{{ match.group }}</div>
         </div>
         <div class="match-teams">
             <span class="match-home">{{ match.home_team.name }}</span>
@@ -32,4 +32,6 @@
     <p>Nessuna partita in programma.</p>
     {% endfor %}
 </div>
+
+
 {% endblock %}

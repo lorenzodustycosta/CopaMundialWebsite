@@ -9,6 +9,7 @@ urlpatterns = [
     path('sorteggio/', views.group_draw, name='group_draw'),
     path('ranking/', views.ranking, name='ranking'),
     path('matches/edit/<int:match_id>/', views.edit_match, name='edit_match'),
+    path('matches/end_group/', views.end_group, name='end_group'),
     path('login/', LoginView.as_view(template_name='../templates/tournament/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
     path('team_and_player_list/', views.team_and_player_list, name='team_and_player_list'),

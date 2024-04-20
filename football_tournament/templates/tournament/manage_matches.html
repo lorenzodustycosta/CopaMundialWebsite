@@ -24,6 +24,9 @@
         border: 1px solid #ddd;
         /* Example border style */
     }
+    .end-group-button {
+        margin-top: 10px;
+    }
 </style>
 <h2>Calendario e Risultati</h2>
 <table class="matches-table">
@@ -32,6 +35,7 @@
         <th>Ora</th>
         <th>Campo</th>
         <th>Gruppo</th>
+        <th>Fase</th>
         <th>Casa</th>
         <th>Trasferta</th>
         <th>Risultato</th>
@@ -43,6 +47,7 @@
         <td>{{ match.time|time:"H:i" }}</td>
         <td>{{ match.pitch }} </td>
         <td>{{ match.group }} </td>
+        <td>{{ match.stage }} </td>
         <td>{{ match.home_team.name }}</td>
         <td>{{ match.away_team.name }}</td>
         <td>{{ match.score_home_team }} - {{ match.score_away_team }}</td>
@@ -63,4 +68,10 @@
     </tr>
     {% endfor %}
 </table>
+
+<form class="end-group-button" action="{% url 'end_group' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Termina fase a gironi</button>
+</form>
+
 {% endblock %}
