@@ -1,7 +1,10 @@
 {% extends 'tournament/base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'styles/edit_match.css' %}">
 <form method="post">
     {% csrf_token %}
     <h2>{% trans "Edit Match Details" %}</h2>
@@ -28,15 +31,5 @@
     <button type="submit">{% trans "Save Changes" %}</button>
 </form>
 
-<style>
-    .player-goal-entry {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-    .player-goal-entry label, .player-goal-entry input {
-        margin-right: 10px;
-    }
-</style>
+
 {% endblock %}

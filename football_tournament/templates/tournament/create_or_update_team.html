@@ -1,6 +1,9 @@
 {% extends 'tournament/base.html' %}
 
 {% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/create_or_update_team.css' %}">
 <div class="container" style="margin-top: 50px;"> <!-- Increased top margin for overall container -->
     <h2 style="margin-bottom: 50px;">{% if team %}Aggiorna Squadra{% else %}Crea Nuova Squadra{% endif %}</h2>
     <form method="post" action="{% if team %}{% url 'create_or_update_team' team.pk %}{% else %}{% url 'create_team' %}{% endif %}">
@@ -30,12 +33,4 @@
     </form>
 </div>
 
-<style>
-    .player {
-        display: flex;
-    }
-    .player-field {
-        margin-right: 20px;
-    }
-</style>
 {% endblock %}

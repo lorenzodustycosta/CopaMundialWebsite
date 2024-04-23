@@ -1,6 +1,9 @@
 {% extends 'tournament/base.html' %}
 
 {% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}">
 <h2>Sorteggio</h2>
 
 <form method="post" style="margin-bottom: 20px;">
@@ -12,22 +15,6 @@
     {% endif %}
 </form>
 
-<style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(4, 3fr);
-        gap: 300px;
-    }
-    .column {
-        display: flex;
-        flex-direction: column;
-        font-size: 26px;
-    }
-    .team, .group {
-        margin: 5px 0;
-        font-size: 20px;
-    }
-</style>
 
 <div class="grid-container">
     <div class="column">

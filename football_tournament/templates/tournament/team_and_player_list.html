@@ -1,4 +1,9 @@
 {% extends 'tournament/base.html' %}
+{% load static%}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/team_and_player_list.css' %}">
+{% endblock %}
 
 {% block content %}
 <h2>Rose</h2>
@@ -23,31 +28,5 @@
     </tbody>
 </table>
 
-
-<style>
-    table {
-        width: 100%;
-        border-collapse: collapse; /* Merges borders between cells */
-    }
-    
-    th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-    }
-    
-    th:first-child, td:first-child {
-        width: 5px; /* Adjust the width as needed */
-    }
-    
-    thead th {
-        background-color: #f4f4f4;
-    }
-    
-    tbody td {
-        padding-left: 15px; /* Add padding as needed */
-        padding-right: 15px;
-    }
-    </style>
 
 {% endblock %}

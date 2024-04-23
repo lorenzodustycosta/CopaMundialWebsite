@@ -5,7 +5,7 @@ register = template.Library()
 
 @register.filter
 def make_balls(value):
-    html = ''.join(['<img class="goal-ball" src="/static/football_ball.png" alt="Ball">' for _ in range(value)])
+    html = ''.join(['<img class="goal-ball" src="/static/images/football_ball.png" alt="Ball">' for _ in range(value)])
     return mark_safe(html)
 
 @register.filter

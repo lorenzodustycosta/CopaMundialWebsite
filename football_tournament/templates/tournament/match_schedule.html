@@ -1,33 +1,37 @@
 {% extends 'tournament/base.html' %} <!-- Assuming you have a base template -->
 
 {% load static%}
-{% block content %}
+
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/match_schedule.css' %}">
-<!-- It's recommended to use an external stylesheet for more complex CSS -->
+{% endblock %}
+
+
+{% block content %}
 <h2>Calendario e Risultati</h2>
 <div class="matches-container">
     {% for match in matches %}
-    <div class="match-entry">
-        <div class="match-date">{{ match.date|date:"l, d F Y" }}</div>
-        <div class="match-time">{{ match.time|time:"H:i" }}</div>
-        <div class="match-detail">
+    <a href="{% url 'match_detail' match.id %}" class="match-entry-link">
+        <div class="match-entry">
+            <div class="match-date">{{ match.date|date:"l, d F Y" }}</div>
+            <div class="match-time">{{ match.time|time:"H:i" }}</div>
             <div class="match-pitch">Campo {{ match.pitch }}</div>
             <div class="match-group">{{ match.group }}</div>
+            <div class="match-teams">
+                <span class="match-home">{{ match.home_team.name }}</span>
+                <span class="match-vs">vs</span>
+                <span class="match-away">{{ match.away_team.name }}</span>
+            </div>
+            <div class="match-score">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
+            <div class="match-status">
+                {% if match.validated %}
+                <span class="status-concluded">Concluso</span>
+                {% else %}
+                <span class="status-scheduled">In programma</span>
+                {% endif %}
+            </div>
         </div>
-        <div class="match-teams">
-            <span class="match-home">{{ match.home_team.name }}</span>
-            <span class="match-vs">vs</span>
-            <span class="match-away">{{ match.away_team.name }}</span>
-        </div>
-        <div class="match-score">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
-        <div class="match-status">
-            {% if match.validated %}
-            <a href="{% url 'match_detail' match.id %}" class="status-concluded">Concluso</a>
-            {% else %}
-            <span class="status-scheduled">In programma</span>
-            {% endif %}
-        </div>
-    </div>
+    </a>
     {% empty %}
     <p>Nessuna partita in programma.</p>
     {% endfor %}

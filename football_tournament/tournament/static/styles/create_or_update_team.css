@@ -1,0 +1,6 @@
+.player {
+    display: flex;
+}
+.player-field {
+    margin-right: 20px;
+}

@@ -20,30 +20,157 @@ import random
 def home(request):
     return render(request, 'tournament/home.html')
 
-
 def match_schedule(request):
     # Fetching all matches ordered by date
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/match_schedule.html', {'matches': matches})
 
-
 def manage_matches(request):
     # Fetching all matches ordered by date
     matches = Match.objects.all().order_by('date')
+    
+    group_matches = matches.filter(group__startswith='Gruppo')
+    if group_matches.count() > 0:
+        group_all_validated = group_matches.filter(validated=False).count() == 0
+    else:
+        group_all_validated = False
+
+    quarterfinals_matches = matches.filter(group='Quarti')
+    if quarterfinals_matches.count() > 0:
+        quarterfinals_all_validated = quarterfinals_matches.filter(validated=False).count() == 0
+    else:
+        quarterfinals_all_validated = False
+
+    semifinals_matches = matches.filter(group='Semifinali')
+    if semifinals_matches.count() > 0:
+        semifinals_all_validated = semifinals_matches.filter(validated=False).count() == 0
+    else:
+        semifinals_all_validated = False
+        
+    finals_matches = matches.filter(group='Finali')
+    if finals_matches.count() > 0:
+        finals_all_validated = finals_matches.filter(validated=False).count() == 0
+    else:
+        finals_all_validated = False
+        
+    context = {
+        'group_all_validated': group_all_validated,
+        'quarterfinals_all_validated': quarterfinals_all_validated,
+        'semifinals_all_validated': semifinals_all_validated,
+        'finals_all_validated': finals_all_validated
+    }
+    
+    return render(request, 'tournament/manage_matches.html', {'matches': matches, 'context': context})
+
+def end_quarterfinals(request):
+    all_matches = Match.objects.filter(validated=True, group='Quarti')
+    winners = []
+    for m in all_matches:
+        if m.score_home_team > m.score_away_team:
+            winners.append(m.home_team)
+        else:
+            winners.append(m.away_team)
+   
+    Match.objects.create(
+        stage='Eliminazione',
+        group='Semifinali',
+        home_team=winners[0],
+        away_team=winners[1],
+        date=date(2024, 7, 2),
+        pitch = 'Blu',
+        time = '20:30',
+        
+    )
+
+    Match.objects.create(
+        stage='Eliminazione',
+        group='Semifinali',
+        home_team=winners[2],
+        away_team=winners[3],
+        date=date(2024, 7, 2),
+        pitch = 'Blu',
+        time = '21:30',
+    )
+
+    return redirect('manage_matches')
+
+def end_semifinals(request):
+    matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/manage_matches.html', {'matches': matches})
 
+def end_finals(request):
+    matches = Match.objects.all().order_by('date')
+    return render(request, 'tournament/manage_matches.html', {'matches': matches})
 
-def teams_and_playoffs(request):
-    # Example: Fetch all teams (modify this logic to calculate group standings and playoff seeding)
-    groups = calculate_group_standings()
-    playoffs = determine_playoff_teams(groups)
-    # Assume these functions return data structures that your template can iterate over
-    context = {
-        'groups': groups,
-        'playoffs': playoffs,
-    }
-    return render(request, 'tournament/teams_and_playoffs.html', context)
+def end_group(request):
 
+    all_teams = Team.objects.all()
+    sorted_groups = compute_ranking(all_teams)
+    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(sorted_groups)
+
+    matchups = create_quarterfinals_matchups( first_place_teams, second_place_teams, qualified_third_place_teams)
+
+    time = cycle(['20:30','21:30'])
+    print(len(matchups))
+    for i, teams in enumerate(matchups):
+        Match.objects.create(
+            stage='Eliminazione',
+            group='Quarti',
+            home_team=Team.objects.get(name=teams[0]['team_name']),
+            away_team=Team.objects.get(name=teams[1]['team_name']),
+            date=date(2024, 6, 25) if i<=1 else date(2024, 6, 26),
+            pitch = 'Blu',
+            time = next(time),
+            
+        )
+
+    matches = Match.objects.all().order_by('date')
+
+    return redirect('manage_matches')
+
+def create_quarterfinals_matchups( first_place_teams, second_place_teams, qualified_third_place_teams):
+
+    matchups = []
+    
+    matchups.append([first_place_teams[0], qualified_third_place_teams[1]])
+    matchups.append([second_place_teams[0], second_place_teams[1]])
+    matchups.append([first_place_teams[2], second_place_teams[2]])
+    matchups.append([first_place_teams[1], qualified_third_place_teams[0]])
+
+    return matchups
+
+def get_knockout_teams(sorted_groups):
+    first_place_teams = []
+    second_place_teams = []
+    third_place_teams = []
+
+    # Iterate over each group and their teams, already sorted by standings
+    for group_name, teams in sorted_groups.items():
+        first_place_teams.append(teams[0])
+        second_place_teams.append(teams[1])
+        third_place_teams.append(teams[2])
+
+
+    first_place_teams = sorted(
+        first_place_teams,
+        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
+        reverse=True
+    )
+    
+    second_place_teams = sorted(
+        second_place_teams,
+        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
+        reverse=True
+    )
+
+    # Sort the third place teams based on the criteria and select the top two
+    qualified_third_place_teams = sorted(
+        third_place_teams,
+        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
+        reverse=True
+    )[:2]
+
+    return first_place_teams, second_place_teams, qualified_third_place_teams
 
 def group_draw(request):
     if 'draw' in request.POST:
@@ -90,7 +217,6 @@ def group_draw(request):
     groups = Group.objects.prefetch_related('teams').order_by('name').all()
     return render(request, 'tournament/group_draw.html', {'unassigned_teams': unassigned_teams, 'groups': groups})
 
-
 def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini Gialli'):
     # Go through each match in the schedule
     for match_info in tournament_schedule:
@@ -103,7 +229,8 @@ def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini 
             match_time = match_info['time']
 
             # Find all matches that occur at the same date and time
-            same_time_matches = [m for m in tournament_schedule if m['date'] == match_date and m['time'] == match_time]
+            same_time_matches = [
+                m for m in tournament_schedule if m['date'] == match_date and m['time'] == match_time]
 
             # Assign the other match at the same time to the Blue pitch
             for other_match_info in same_time_matches:
@@ -112,12 +239,10 @@ def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini 
 
     return tournament_schedule
 
-
 def cleanup_matches():
     # Assuming `Match` has related objects that need to be cleared as well
     # This will delete all matches and any related objects via cascade deletion
     Match.objects.all().delete()
-
 
 def create_tournament_schedule(start_date, groups_queryset):
     # Initialize a list for all matches across all groups
@@ -169,7 +294,6 @@ def create_tournament_schedule(start_date, groups_queryset):
 
     return sorted_schedule
 
-
 def round_robin(teams):
     """Generates a round-robin schedule for an even list of teams."""
     # If the number of teams is odd, add a dummy team for byes
@@ -192,58 +316,57 @@ def round_robin(teams):
 
     return schedule
 
-
 def compute_ranking(all_teams):
-    groups = defaultdict(list)
+    # Initialize groups with a dictionary to hold team data by team name.
+    groups = defaultdict(dict)
+
+    # Initialize team data structure.
     for team in all_teams:
-        groups[team.group.name].append({
-            'team_name': team.name,
-            'points': 0,
-            'goals_scored': 0,
-            'goals_conceded': 0,
-            'goal_difference': 0,
-        })
+        if team.group:  # Make sure the team is assigned to a group
+            groups[team.group.name][team.name] = {
+                'team_name': team.name,
+                'points': 0,
+                'goals_scored': 0,
+                'goals_conceded': 0,
+                'goal_difference': 0,
+            }
 
-        validated_matches = Match.objects.filter(validated=True)
+    # Fetch matches grouped by group name
+    for group_name, teams_info in groups.items():
+        validated_matches = Match.objects.filter(
+            validated=True, group=group_name)
+
         for match in validated_matches:
-            # Determine points, goals scored, goals conceded, and goal difference from the match
+            home_team = match.home_team.name
+            away_team = match.away_team.name
+
+            # Calculate points and goal differences
             if match.score_home_team > match.score_away_team:
-                home_team_points = 3
-                away_team_points = 0
+                home_points, away_points = 3, 0
             elif match.score_home_team < match.score_away_team:
-                home_team_points = 0
-                away_team_points = 3
+                home_points, away_points = 0, 3
             else:
-                home_team_points = 1
-                away_team_points = 1
+                home_points, away_points = 1, 1
 
-            home_team_goal_difference = match.score_home_team - match.score_away_team
-            away_team_goal_difference = match.score_away_team - match.score_home_team
+            home_goal_diff = match.score_home_team - match.score_away_team
+            away_goal_diff = match.score_away_team - match.score_home_team
 
-            # Update statistics for home_team and away_team in the groups dictionary
-            for team_stats in groups[match.group]:
-                if team_stats['team_name'] == match.home_team.name:
-                    team_stats['points'] += home_team_points
-                    team_stats['goals_scored'] += match.score_home_team
-                    team_stats['goals_conceded'] += match.score_away_team
-                    team_stats['goal_difference'] += home_team_goal_difference
-                elif team_stats['team_name'] == match.away_team.name:
-                    team_stats['points'] += away_team_points
-                    team_stats['goals_scored'] += match.score_away_team
-                    team_stats['goals_conceded'] += match.score_home_team
-                    team_stats['goal_difference'] += away_team_goal_difference
+            # Update team statistics
+            teams_info[home_team]['points'] += home_points
+            teams_info[home_team]['goals_scored'] += match.score_home_team
+            teams_info[home_team]['goals_conceded'] += match.score_away_team
+            teams_info[home_team]['goal_difference'] += home_goal_diff
+
+            teams_info[away_team]['points'] += away_points
+            teams_info[away_team]['goals_scored'] += match.score_away_team
+            teams_info[away_team]['goals_conceded'] += match.score_home_team
+            teams_info[away_team]['goal_difference'] += away_goal_diff
 
     # Sort teams within each group
-    sorted_groups = {}
-    for group_name, teams in sorted(groups.items()):
-        sorted_teams = sorted(
-            teams, key=lambda x: (-x['points'], -x['goal_difference'], -x['goals_scored'], x['team_name']))
-        sorted_groups[group_name] = sorted_teams
-
-    sorted_groups = sorted_groups.items()
+    sorted_groups = {group_name: sorted(team_stats.values(), key=lambda x: (-x['points'], -x['goal_difference'], -x['goals_scored'], x['team_name']))
+                     for group_name, team_stats in groups.items()}
 
     return sorted_groups
-
 
 def ranking(request):
 
@@ -261,83 +384,28 @@ def ranking(request):
         total_goals__gt=0  # This filters out players with 0 goals
     ).order_by('-total_goals')[:10]
 
-    ko_matches = Match.objects.filter(group='Eliminazione')
-    qualified_teams = get_knockout_teams(sorted_groups)
+    quarterfinals_matches = Match.objects.filter(
+        stage='Eliminazione', group='Quarti')
+    semifinals_matches = Match.objects.filter(
+        stage='Eliminazione', group='Semifinali')
+    finals_matches = Match.objects.filter(stage='Eliminazione', group='Finali')
 
-    return render(request, 'tournament/ranking.html', {'groups': sorted_groups,
+    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(sorted_groups)
+    qualified_teams = first_place_teams + second_place_teams + qualified_third_place_teams
+    qualified_team_names = [team['team_name'] for team in qualified_teams]
+
+    context = {
+        'qualified_team_names': qualified_team_names,
+        'quarterfinals_matches': quarterfinals_matches,
+        'semifinals_matches': semifinals_matches,
+        'finals_matches': finals_matches,
+    }
+
+    return render(request, 'tournament/ranking.html', {'sorted_groups': sorted_groups,
                                                        'drawing_done': drawing_done,
                                                        'top_scorers': top_scorers,
-                                                       'qualified_teams': qualified_teams,
-                                                       'ko_matches': ko_matches
+                                                       'context': context
                                                        })
-
-# @transaction.atomic
-
-
-def end_group(request):
-
-    all_teams = Team.objects.all()
-    sorted_groups = compute_ranking(all_teams)
-    qualified_teams = get_knockout_teams(sorted_groups)
-    matchups = create_quarterfinals_matchups(qualified_teams)
-    print(matchups)
-    print("------------------------")
-    for home_team, away_team in matchups:
-        Match.objects.create(
-            stage='Quarti',
-            group='Eliminazione',
-            home_team=Team.objects.get(name=home_team['team_name']),
-            away_team=Team.objects.get(name=away_team['team_name']),
-            date=date(2024, 6, 25)
-        )
-
-    matches = Match.objects.all().order_by('date')
-    print("All mathes")
-    print(matches)
-    print("------------------")
-    return render(request, 'tournament/manage_matches.html', {'matches': matches})
-
-
-def create_quarterfinals_matchups(qualified_teams):
-    # Sort teams based on rank
-    qualified_teams.sort(
-        key=lambda x: (-x['points'], -x['goal_difference'], -x['goals_scored']))
-    # Create matchups: 1st vs 8th, 2nd vs 7th, etc.
-    num_teams = len(qualified_teams)
-    matchups = [
-        (qualified_teams[i], qualified_teams[num_teams - i - 1])
-        for i in range(num_teams // 2)
-    ]
-    return matchups
-
-
-def get_knockout_teams(sorted_groups):
-    top_two_teams = []
-    third_place_teams = []
-
-    # Iterate over each group and their teams, already sorted by standings
-    for group_name, teams in sorted_groups:
-        # Add top two teams from each group to the list of top two teams
-        if len(teams) >= 2:
-            top_two_teams.extend(teams[:2])
-
-        # Collect the third place team from each group
-        if len(teams) > 2:
-            third_place_teams.append(teams[2])
-
-    # Sort the third place teams based on the criteria and select the top two
-    qualified_third_place_teams = sorted(
-        third_place_teams,
-        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
-        reverse=True
-    )[:2]
-
-    # Combine top two teams from all groups with the top two from the third place teams
-
-    team_to_ko = top_two_teams + qualified_third_place_teams
-
-    return top_two_teams + qualified_third_place_teams
-
 
 @login_required
 def edit_match(request, match_id):
@@ -368,7 +436,6 @@ def edit_match(request, match_id):
         'away_goals_form': away_goals_form,
     })
 
-
 def save_goals(form, match, team):
     for field_name, value in form.cleaned_data.items():
         if value:  # Make sure there is a value to save
@@ -379,7 +446,6 @@ def save_goals(form, match, team):
                 player=player,
                 defaults={'number_of_goals': value}
             )
-
 
 def team_and_player_list(request):
     teams = Team.objects.prefetch_related('players').order_by('name')
@@ -397,12 +463,10 @@ def team_and_player_list(request):
 
     return render(request, 'tournament/team_and_player_list.html', {'teams': teams, 'player_rows': player_rows})
 
-
 @login_required
 def team_list(request):
     teams = Team.objects.order_by('name')
     return render(request, 'tournament/team_list.html', {'teams': teams})
-
 
 @login_required
 def create_or_update_team(request, pk=None):
@@ -411,41 +475,41 @@ def create_or_update_team(request, pk=None):
         team = get_object_or_404(Team, pk=pk)
     else:
         team = None  # Define team as None if no pk is provided
+
+    TeamFormSet = inlineformset_factory(
+        Team, Player, form=PlayerForm, extra=12, can_delete=True)
+
     if request.method == 'POST':
-        # Bind form to POST data and instance
         team_form = TeamForm(request.POST, instance=team)
-        PlayerFormSet = inlineformset_factory(
-            Team, Player, form=PlayerForm, extra=10, can_delete=True)
-        # Bind formset to POST data and instance
-        formset = PlayerFormSet(request.POST, instance=team)
+        formset = TeamFormSet(request.POST, instance=team)
 
         if team_form.is_valid() and formset.is_valid():
             created_team = team_form.save()  # Save the team and capture the instance
-            # Ensure the formset instance is the newly created team
             formset.instance = created_team
             formset.save()  # Save the formset data
-            # Redirect to a page that lists all teams
             return redirect('manage_teams')
-        else:
-            if not team_form.is_valid():
-                print("Team Form Errors:", team_form.errors)
-            if not formset.is_valid():
-                print("Formset Errors:", formset.errors)
 
     else:
-        # Unbound form for initial GET request
         team_form = TeamForm(instance=team)
-        PlayerFormSet = inlineformset_factory(
-            Team, Player, form=PlayerForm, extra=10, can_delete=True)
-        # Unbound formset for initial GET request
-        formset = PlayerFormSet(instance=team)
+
+        if team is None:
+            # If creating a new team, prepopulate the players
+            initial_players = [{
+                'name': f'name_{i}',
+                'surname': f'surname_{i}'
+            } for i in range(1, 13)]
+
+            formset = TeamFormSet(instance=team, initial=initial_players)
+        else:
+            TeamFormSet = inlineformset_factory(
+                Team, Player, form=PlayerForm, extra=0, can_delete=True)
+            formset = TeamFormSet(instance=team)
 
     return render(request, 'tournament/create_or_update_team.html', {
         'team_form': team_form,
         'formset': formset,
         'team': team
     })
-
 
 class DeleteTeamView(DeleteView):
     model = Team
@@ -459,7 +523,6 @@ class DeleteTeamView(DeleteView):
         return context
 
 # Assuming you have models named Match, Goal, and Team
-
 
 def match_detail(request, match_id):
     match = get_object_or_404(Match, id=match_id)

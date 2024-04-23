@@ -1,57 +1,11 @@
 {% extends 'tournament/base.html' %}
+{% load static%}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/ranking.css' %}">
+{% endblock %}
 
 {% block content %}
-<style>
-    .content-grid {
-        display: grid;
-        grid-template-columns: 2fr 5fr; /* Increased left side space, decreased right side */
-        gap: 20px;
-        align-items: start;
-    }
-    .highlight {
-        background-color: #83ff73; /* Light green background for highlighting */
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        text-align: center;
-        padding: 8px;
-    }
-
-    th.team-name, td.team-name {
-        width: 30%;
-    }
-
-    th, td {
-        width: 17.5%; /* This might need adjustment if it causes visual inconsistency */
-    }
-
-    .knockout-schedule {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .round {
-        margin-bottom: 20px;
-    }
-
-    .matchup {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-
-    .matchup span {
-        flex-basis: 40%;
-    }
-
-</style>
 <div class="content-grid">
     <div>
         <h2>Classifiche</h2>
@@ -60,26 +14,26 @@
             <p>Il sorteggio dei gruppi non è ancora stato fatto. Ritorna più tardi.</p>
         </div>
         {% else %}
-        {% for group_name, teams in groups %}
-            <h3>{{ group_name }}</h3>
-            <table>
-                <tr>
-                    <th class="team-name">Squadra</th>
-                    <th>Punti</th>
-                    <th>Goal Fatti</th>
-                    <th>Goal Subiti</th>
-                    <th>Differenza Reti</th>
-                </tr>
-                {% for team in teams %}
-                <tr class="{% if team in qualified_teams %}highlight{% endif %}">
-                        <td class="team-name">{{ team.team_name }}</td>
-                        <td>{{ team.points }}</td>
-                        <td>{{ team.goals_scored }}</td>
-                        <td>{{ team.goals_conceded }}</td>
-                        <td>{{ team.goal_difference }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
+        {% for group_name, teams in sorted_groups.items %}
+        <h3>{{ group_name }}</h3>
+        <table>
+            <tr>
+                <th class="team-name">Squadra</th>
+                <th>Punti</th>
+                <th>Goal Fatti</th>
+                <th>Goal Subiti</th>
+                <th>Differenza Reti</th>
+            </tr>
+            {% for team in teams %}
+            <tr class="{% if team.team_name in context.qualified_team_names %}highlight{% endif %}">
+                <td class="team-name">{{ team.team_name }}</td>
+                <td>{{ team.points }}</td>
+                <td>{{ team.goals_scored }}</td>
+                <td>{{ team.goals_conceded }}</td>
+                <td>{{ team.goal_difference }}</td>
+            </tr>
+            {% endfor %}
+        </table>
         {% endfor %}
         {% endif %}
 
@@ -102,43 +56,48 @@
             {% endfor %}
         </table>
     </div>
-
     <div class="knockout-schedule">
         <h2>Fase ad Eliminazione</h2>
-        <div class="knockout-schedule">
-            <div class="round quarterfinals">
-                <h3>Quarti di Finale</h3>
-                <!-- Replace with your specific template variables for matches -->
-                {% for match in quarterfinals %}
-                <div class="matchup">
-                    <span>{{ match.home_team.name }}</span>
-                    <span>vs</span>
-                    <span>{{ match.away_team.name }}</span>
-                </div>
-                {% endfor %}
+        <div>
+            <h3>Quarti di Finale</h3>
+            {% for match in context.quarterfinals_matches %}
+            <div class="matchup">
+                <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
+                    {{ match.home_team.name }}
+                </span>
+                <span>vs</span>
+                <span class="{% if match.score_home_team < match.score_away_team %}next-turn{% endif %}">
+                    {{ match.away_team.name }}
+                </span>
+                <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
             </div>
-            <div class="round semifinals">
-                <h3>Semifinali</h3>
-                <!-- Replace with your specific template variables for matches -->
-                {% for match in semifinals %}
-                <div class="matchup">
-                    <span>{{ match.home_team.name }}</span>
-                    <span>vs</span>
-                    <span>{{ match.away_team.name }}</span>
-                </div>
-                {% endfor %}
+            {% endfor %}
+            <h3>Semifinali</h3>
+            {% for match in context.semifinals_matches %}
+            <div class="matchup">
+                <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
+                    {{ match.home_team.name }}
+                </span>
+                <span>vs</span>
+                <span class="{% if match.score_home_team < match.score_away_team %}next-turn{% endif %}">
+                    {{ match.away_team.name }}
+                </span>
+                <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
             </div>
-            <div class="round final">
-                <h3>Finali</h3>
-                <!-- Replace with your specific template variables for matches -->
-                {% for match in finals %}
-                <div class="matchup">
-                    <span>{{ match.home_team.name }}</span>
-                    <span>vs</span>
-                    <span>{{ match.away_team.name }}</span>
-                </div>
-                {% endfor %}
+            {% endfor %}
+            <h3>Finali</h3>
+            {% for match in context.finals_matches %}
+            <div class="matchup">
+                <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
+                    {{ match.home_team.name }}
+                </span>
+                <span>vs</span>
+                <span class="{% if match.score_home_team < match.score_away_team %}next-turn{% endif %}">
+                    {{ match.away_team.name }}
+                </span>
+                <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>

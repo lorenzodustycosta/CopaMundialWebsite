@@ -1,0 +1,24 @@
+.matches-table th,
+.matches-table td {
+    text-align: center;
+    /* Centers text in table headers and cells */
+    padding: 8px;
+    /* Adjust padding as needed for aesthetics */
+}
+
+.matches-table {
+    width: 100%;
+    /* Makes the table use the full width of its container */
+    border-collapse: collapse;
+    /* Optional: for styling */
+}
+
+/* Additional styles for borders or aesthetics as desired */
+.matches-table th,
+.matches-table td {
+    border: 1px solid #ddd;
+    /* Example border style */
+}
+.end-group-button {
+    margin-top: 10px;
+}

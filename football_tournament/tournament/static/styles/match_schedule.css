@@ -1,66 +1,54 @@
 .matches-container {
-    /* Add styles for the overall container */
+    display: flex;
+    flex-direction: column;
+    width: 100%;  /* Ensure the container takes full width */
+}
+
+
+.match-entry-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.match-entry-link:hover .match-entry {
+    background-color: #ececec;
+    text-decoration: none;
 }
 
 .match-entry {
-    display: flex;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: 0.5fr 0.25fr 0.5fr 0.5fr 1fr 0.5fr 0.5fr; /* Adjust this based on your content needs */
     align-items: center;
+    width: 100%;
     padding: 10px;
-    border-bottom: 1px solid #ddd;
-    margin-left: 50px;
+    border-bottom: 1px solid #ddd; /* Adds a horizontal border between rows */
+    transition: background-color 0.3s ease;
 }
 
-.match-date {
-    width: 120px; /* Adjust as necessary for your preferred width */
-}
-
-.match-time {
-    width: 60px; /* Adjust as necessary for your preferred width */
-}
-
-.match-detail {
-    display: flex;
-    align-items: center;
-    width: 150px; /* Adjust as necessary for your preferred width */
-}
-
-.scorer-name {
-    margin-right: 15px; /* Space between the name and the goals */
-}
-
-.scorer-goals .goal-ball {
-    height: 20px;
-    margin-right: 5px; /* Space between each ball icon */
-}
-
-.match-pitch, .match-group {
-    width: 70px; /* Adjust as necessary to make room for both pitch and group */
-    text-align: left;
-}
-
-.match-teams {
-    flex-grow: 2;
-    display: flex;
-    justify-content: flex-start;
-}
-
-.match-home, .match-away {
-    min-width: 100px; /* Adjust as necessary */
-}
-
-.match-vs {
-    margin: 0 10px;
+.match-date, .match-time, .match-pitch, .match-teams, .match-status {
+    padding: 0 10px; /* Adds padding for better spacing */
 }
 
 .match-score {
-    width: 50px; /* Adjust as necessary */
-    text-align: center;
+    text-align: center;  /* Centers the score horizontally within its cell */
+    flex-grow: 1;        /* Allows the score cell to expand if needed */
+    display: flex;       /* Use flexbox within the cell for vertical centering */
+    align-items: center; /* Vertically centers the content within the cell */
+    justify-content: center; /* Horizontally centers the flex items */
+}
+
+.match-home, .match-vs, .match-away {
+    margin: 0 5px; /* Adds margin within the teams container */
+}
+
+.match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ensures team names are aligned to the left */
 }
 
 .match-status {
-    width: 100px; /* Adjust as necessary */
-    text-align: left;
+    text-align: right; /* Aligns the status to the right */
 }
 
 .status-concluded {
@@ -69,10 +57,6 @@
 
 .status-scheduled {
     color: orange;
-}
-
-.team-section {
-    margin-top: 20px;
 }
 
 .goal-scorer {
@@ -85,11 +69,7 @@
     margin-right: 10px;
 }
 
-.scorer-goals {
-    display: flex;
-    align-items: center;
-}
-
-.goal-ball {
-    margin-right: 5px;
+.scorer-goals .goal-ball {
+    height: 20px;
+    margin-right: 5px; /* Space between each ball icon */
 }

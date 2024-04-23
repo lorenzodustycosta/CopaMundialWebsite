@@ -1,33 +1,9 @@
 <!-- templates/tournament/match_schedule.html -->
 {% extends 'tournament/base.html' %} <!-- Assuming you have a base template -->
-
+{% load static %}
 {% block content %}
-<style>
-    .matches-table th,
-    .matches-table td {
-        text-align: center;
-        /* Centers text in table headers and cells */
-        padding: 8px;
-        /* Adjust padding as needed for aesthetics */
-    }
 
-    .matches-table {
-        width: 100%;
-        /* Makes the table use the full width of its container */
-        border-collapse: collapse;
-        /* Optional: for styling */
-    }
-
-    /* Additional styles for borders or aesthetics as desired */
-    .matches-table th,
-    .matches-table td {
-        border: 1px solid #ddd;
-        /* Example border style */
-    }
-    .end-group-button {
-        margin-top: 10px;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'styles/manage_matches.css' %}">
 <h2>Calendario e Risultati</h2>
 <table class="matches-table">
     <tr>
@@ -71,7 +47,19 @@
 
 <form class="end-group-button" action="{% url 'end_group' %}" method="post">
     {% csrf_token %}
+    <!-- <button type="submit" {% if not context.group_all_validated %}disabled="disabled"{% endif %}>Termina fase a gironi</button> -->
     <button type="submit">Termina fase a gironi</button>
 </form>
-
+<form class="end-group-button" action="{% url 'end_quarterfinals' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" {% if not context.quarterfinals_all_validated %}disabled="disabled"{% endif %}>Termina quarti</button>
+</form>
+<form class="end-group-button" action="{% url 'end_semifinals' %}" method="post">
+    {% csrf_token %}
+    <button type="submit"  {% if not context.semifinals_all_validated %}disabled="disabled"{% endif %}>Termina semifinali</button>
+</form>
+<form class="end-group-button" action="{% url 'end_finals' %}" method="post">
+    {% csrf_token %}
+    <button type="submit"  {% if not context.finals_all_validated %}disabled="disabled"{% endif %}>Termina finali</button>
+</form>
 {% endblock %}
