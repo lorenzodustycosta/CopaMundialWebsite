@@ -1,50 +1,52 @@
-.match-details {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start; /* Align items at the top of the container */
-    text-align: center;
+.match-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* Defines three columns for the layout */
+    grid-template-areas:
+        "home score away"
+        "home-goals . away-goals";
+    grid-template-rows: minmax(100px, auto) auto;
+    text-size-adjust: 100%;
+    font-size: 64px;
+    color: #EBF3F8;
+    text-shadow: 2px 2px 5px black;
 }
 
-.team-info-container {
-    display: flex;
-    align-items: flex-start; /* Align items at the top of the container */
-    justify-content: center;
-    width: 100%; /* Use full width to give space between teams */
-}
-
-.team-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 20px; /* Adjust margin as needed */
-}
-
-.team-header h3 {
-    margin-bottom: 10px; /* Adjust space below the team name */
+.team-name-home, .team-name-away {
+    align-self: start; /* Keeps the name at the top of the container */
+    text-align: center; /* Centers the text */
+    grid-row: 1; /* Position in the first row */
+    margin: 0 auto; /* Center horizontally in their column */
+    font-size: 64px; /* Adjust size as needed */
+    line-height: 1.2; /* Adjust line height for better readability when wrapping */
+    max-width: 50%; /* Prevents text from taking up the entire grid space */
+    overflow-wrap: break-word; /* Allows long words to be broken and wrapped to the next line */
+    margin-bottom: 20px;
 }
 
 .score {
-    font-size: 2em; /* Makes the score larger */
-    margin-bottom: 10px; /* Adjust space below the score */
+    grid-area: score;
+    align-self: top; /* Vertically centers the score */
+    justify-self: center; /* Horizontally centers the score */
+    font-size: 64px; /* Ensures score size is consistent */
+    grid-row: 1 / span 2; /* Extends the score cell across both rows to maintain position */
 }
+
 
 .goal-scorer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 0; /* Adjust space between goal scorers */
-}
-
-.versus {
-    font-size: 24px; /* Adjust size as needed */
-    margin: 0 20px; /* Provide some horizontal spacing */
-    align-self: flex-start; /* Align 'versus' at the top of the flex container */
-    margin-top: 50px; /* Adjust this value to align at the top with the scores */
+    display: flex; /* Use flexbox to align items in a row */
+    align-items: center; /* Vertically centers the items within the container */
+    white-space: nowrap; /* Prevents wrapping of text to a new line */
+    font-size: 48px; /* Example font size */
+    color: #E9F0F8; /* Example color */
+    margin-top: 30px;
 }
 
 .goal-ball {
-    width: 20px;
-    height: 20px;
-    background-size: cover;
-    margin-left: 5px; /* Adds space between text and balls */
+    width: 48px; /* Width of the ball icon */
+    height: 48px; /* Height of the ball icon */
+    background-size: cover; /* Ensures the background image covers the element */
+    background-image: url('/path/to/ball-image.png'); /* URL to the ball icon image */
+    margin-left: 30px; /* Space between text and the first ball icon */
+    margin-right: 5px; /* Space between text and the first ball icon */
+    display: inline-block; /* Ensures the icon is treated as inline element */
 }

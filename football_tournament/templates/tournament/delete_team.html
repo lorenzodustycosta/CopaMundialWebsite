@@ -1,11 +1,11 @@
 {% extends 'tournament/base.html' %}
 
 {% block content %}
-  <p>Are you sure you want to delete "{{ object.name }}"?</p>
+  <p>Sei sicuro di voler cancellare "{{ object.name }}"?</p>
 
   <form action="" method="post">
     {% csrf_token %}
-    <input type="submit" value="Confirm">
-    <a href="{{ cancel_url }}">Cancel</a>
+    <input type="submit" value="Conferma">
+    <a href="{{ cancel_url }}">Cancella</a>
   </form>
 {% endblock %}

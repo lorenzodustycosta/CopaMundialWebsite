@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;  /* Ensure the container takes full width */
+    font-size: 16px;
 }
-
 
 .match-entry-link {
     text-decoration: none;
@@ -56,7 +56,7 @@
 }
 
 .status-scheduled {
-    color: orange;
+    color: rgb(168, 123, 39);
 }
 
 .goal-scorer {

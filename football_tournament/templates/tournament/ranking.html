@@ -7,15 +7,15 @@
 
 {% block content %}
 <div class="content-grid">
-    <div>
-        <h2>Classifiche</h2>
+    <div class="knockout-schedule">
+        <h2 class="stage">Classifiche</h2>
         {% if not drawing_done %}
         <div class="alert">
             <p>Il sorteggio dei gruppi non è ancora stato fatto. Ritorna più tardi.</p>
         </div>
         {% else %}
         {% for group_name, teams in sorted_groups.items %}
-        <h3>{{ group_name }}</h3>
+        <h3 class="stage">{{ group_name }}</h3>
         <table>
             <tr>
                 <th class="team-name">Squadra</th>
@@ -57,9 +57,9 @@
         </table>
     </div>
     <div class="knockout-schedule">
-        <h2>Fase ad Eliminazione</h2>
+        <h2 class="stage">Fase ad Eliminazione</h2>
         <div>
-            <h3>Quarti di Finale</h3>
+            <h3 class="stage">Quarti di Finale</h3>
             {% for match in context.quarterfinals_matches %}
             <div class="matchup">
                 <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
@@ -72,7 +72,7 @@
                 <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
             </div>
             {% endfor %}
-            <h3>Semifinali</h3>
+            <h3 class="stage">Semifinali</h3>
             {% for match in context.semifinals_matches %}
             <div class="matchup">
                 <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
@@ -85,7 +85,7 @@
                 <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
             </div>
             {% endfor %}
-            <h3>Finali</h3>
+            <h3 class="stage">Finali</h3>
             {% for match in context.finals_matches %}
             <div class="matchup">
                 <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">

@@ -364,7 +364,7 @@ def compute_ranking(all_teams):
 
     # Sort teams within each group
     sorted_groups = {group_name: sorted(team_stats.values(), key=lambda x: (-x['points'], -x['goal_difference'], -x['goals_scored'], x['team_name']))
-                     for group_name, team_stats in groups.items()}
+                     for group_name, team_stats in sorted(groups.items())}
 
     return sorted_groups
 
@@ -400,7 +400,7 @@ def ranking(request):
         'semifinals_matches': semifinals_matches,
         'finals_matches': finals_matches,
     }
-
+    
     return render(request, 'tournament/ranking.html', {'sorted_groups': sorted_groups,
                                                        'drawing_done': drawing_done,
                                                        'top_scorers': top_scorers,

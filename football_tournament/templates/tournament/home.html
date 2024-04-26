@@ -1,24 +1,39 @@
 {% extends 'tournament/base.html' %}
 
-{% load static %} <!-- This should be at the very top of the file -->
+{% load static %}
+{% load i18n %}
 
-{% block title %}Home - CopaMundial 2024{% endblock title %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/home.css' %}">
+{% endblock %}
 
 {% block content %}
-<h1>Benvenuti nel sito della CopaMundial 2024</h1>
-<p>Qui potete rimanere aggiornati sulle prossimi sfide, risultati e marcatori.</p>
-<p><b>Quando</b>: Dal 4 Giugno al 5 Luglio, </p>
-<p><b>Dove</b>:
-    <a href="https://www.google.com/maps/place/Sport+Live,+Via+Giuseppe+Verdi,+20010+Santo+Stefano+Ticino+MI,+Italia/@45.4806187,8.9111423,17z/data=!3m1!4b1!4m6!3m5!1s0x4786edfe0a9ab43f:0x761b621acb79cb5a!8m2!3d45.4806097!4d8.9160114!16s%2Fg%2F11c0vbv2w_?entry=ttu">Sport Live - Viale Della Stazione, 17, 20010, Santo Stefano Ticino </a></p>
-<p><b>Cosa ci sarà</b>: 12 squadre, 17 partite, interviste, premi, due eventi per le serate di apertura e la finalissima
-    e tanto divertimento</p>
-<p><b>Eventi</b></p>
-<ul style="list-style-type: none; margin-left: 5px;">
-    <li style="margin-bottom: 20px;">
-        4 Giugno: Concerto Live dei <a href="https://www.instagram.com/dementosofficial/">Dementos</a> (Cover Band dei GemBoy) + Aperitivo
+<div class="title">Benvenuti nel sito della CopaMundial 2024</div>
+<div class="text">Qui potete rimanere aggiornati sulle prossime sfide, risultati e marcatori.</div>
+<div class="text"><b>Quando</b>: Dal 4 Giugno al 5 Luglio </div>
+<div class="text"><b>Dove</b>:
+    <a
+        href="https://www.google.com/maps/place/Sport+Live,+Via+Giuseppe+Verdi,+20010+Santo+Stefano+Ticino+MI,+Italia/@45.4806187,8.9111423,17z/data=!3m1!4b1!4m6!3m5!1s0x4786edfe0a9ab43f:0x761b621acb79cb5a!8m2!3d45.4806097!4d8.9160114!16s%2Fg%2F11c0vbv2w_?entry=ttu">Sport
+        Live - Viale Della Stazione, 17, 20010, Santo Stefano Ticino </a>
+</div>
+<div class="text"><b>Cosa ci sarà:</b>
+<ul class="text" style="list-style-type: none; margin-left: 5px;">
+    <li class="text" style="margin-bottom: 20px;">
+        12 squadre
     </li>
-    <li style="margin-bottom: 20px;">
-        5 Luglio: Finalissime 1°-2° posto e 3°-4° posto, premiazioni, paninaro, dj set con vocalist
+    <li class="text" style="margin-bottom: 20px;">
+        26 partite
+    </li>
+    <li class="text" style="margin-bottom: 20px;">
+        Serata di apertura il 4 Giugno con Concerto Live dei <a
+            href="https://www.instagram.com/dementosofficial/">Dementos</a> (Cover Band dei GemBoy) + Aperitivo
+    </li>
+    <li class="text" style="margin-bottom: 20px;">
+        Serata di chiusura il 5 Luglio con le Finalissime 1° - 2° posto e 3° - 4° posto, premiazioni, paninaro, dj set con
+        vocalist
     </li>
 </ul>
-{% endblock content %}
+</div>
+<div class="text"><b>Social</b>: Potete seguirci anche sulla nostra pagina Instagram: <a  href="https://www.instagram.com/torneo_copamundial/">torneo_copamundial</a> </div>
+{% endblock %}

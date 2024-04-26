@@ -85,7 +85,10 @@ class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ['name']
-
+        labels = {
+            'name': _('Team Name'),
+        }
+        
 class PlayerForm(forms.ModelForm):
     class Meta:
         model = Player
@@ -96,7 +99,10 @@ class PlayerForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
         }
-
+        labels = {
+            'name': _('Name'),
+            'surname': _('Surname'),
+        }
         
 class PlayerGoalsForm(forms.ModelForm):
     class Meta:

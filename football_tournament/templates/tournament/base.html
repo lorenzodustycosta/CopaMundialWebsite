@@ -3,8 +3,6 @@
 
 {% load static %}
 
-
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,42 +14,44 @@
 <body>
 
     <div class="sidebar">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'team_and_player_list' %}">Squadre</a>
-        <a href="{% url 'match_schedule' %}">Partite</a>
-        <a href="{% url 'ranking' %}">Classifiche</a>
-        <a href="{% url 'login' %}?next={{ request.path }}">Area Riservata</a>
-        {% if user.is_authenticated %}
-        <div class="authenticated-links">
-            <a href="{% url 'manage_teams' %}">Gestione Squadre</a>
-            <a href="{% url 'manage_matches' %}">Gestione Partite</a>
-            <a href="{% url 'group_draw' %}">Sorteggio</a>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                {% csrf_token %}
-            </form>
+        <div class="link-section">
+            <a href="{% url 'home' %}">HOME</a>
+            <a href="{% url 'team_and_player_list' %}">SQUADRE</a>
+            <a href="{% url 'match_schedule' %}">PARTITE</a>
+            <a href="{% url 'ranking' %}">CLASSIFICHE</a>
+            <a href="{% url 'login' %}?next={{ request.path }}">AREA RISERVATA</a>
+            {% if user.is_authenticated %}
+            <div class="authenticated-links">
+                <a href="{% url 'manage_teams' %}">Gestione Squadre</a>
+                <a href="{% url 'manage_matches' %}">Gestione Partite</a>
+                <a href="{% url 'group_draw' %}">Sorteggio</a>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                </form>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
-        <a class="sponsor">Gli Amici della CopaMundial</a>
-        <a href="https://www.instagram.com/selos_design/" target="_blank"><img src="{% static 'images/selos.png' %}"
-                alt="Logo" style="width: 80px; height: auto;"></a>
-        <a href="https://arredamentifumagalli1957.it/" target="_blank"><img src="{% static 'images/fumagalli.png' %}"
-                alt="Logo" style="width: 180px; height: auto;"></a>
+        <div class="sponsor">
+            GLI AMICI DELLA COPAMUNDIAL
+            <a href="https://www.instagram.com/selos_design/" target="_blank"><img src="{% static 'images/selos.png' %}" alt="Logo"></a>
+            <a href="https://arredamentifumagalli1957.it/" target="_blank"><img src="{% static 'images/fumagalli.png' %}" alt="Logo"></a>
+        </div>
     </div>
 
     <div class="main-content">
-
         <main>
             {% block content %}
-            <!-- This block will be overridden by child templates -->
             {% endblock content %}
+            {% block extra_js %}
+            {% endblock %}
         </main>
 
         <div class="footer">
 
         </div>
     </div>
-
+ 
 </body>
 
 </html>

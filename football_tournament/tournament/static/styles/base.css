@@ -1,51 +1,93 @@
-       /* Add your CSS styling here */
-       body {
-        display: flex;
-        overflow-x: hidden; /* Only horizontal scrolling is disabled */
-        height: 100%; /* Full height to the body might be necessary */
-    }
+/* Add your CSS styling here */
+body {
+    position: relative;
+    /* Ensure the relative positioning for absolute children */
+    min-height: 100vh;
+    height: auto;
+    /* Full viewport height */
+    margin: 0;
+    /* Reset margins */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+    display: flex;
+    /* Flexbox layout for the body */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+}
 
-    .sidebar {
-        height: 100vh;
-        /* Full height */
-        width: 250px;
-        /* Sidebar width */
-        position: fixed;
-        /* Fixed Sidebar (stay in place on scroll) */
-        z-index: 1;
-        /* Stay on top */
-        top: 0;
-        /* Stay at the top */
-        left: 0;
-        background-color: #1C4192;
-        /* Black */
-        overflow-x: hidden;
-        /* Disable horizontal scroll */
-        padding-top: 20px;
-    }
+body::before {
+    content: "";
+    position: absolute;
+    /* Positioned absolutely relative to the body */
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Cover the entire width of the body */
+    height: 100%;
+    /* Cover the entire height of the body */
+    background: url('/static/images/5618236.jpg') center/cover no-repeat scroll;
+    background-size: cover;
+    /* Your background image */
+    opacity: 0.4;
+    /* Apply opacity to the pseudo-element only */
+    z-index: -1;
+    /* Ensure it stays behind all other content */
+}
 
-    .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 18px;
-        color: white;
-        display: block;
-    }
+.main-content {
+    margin-left: 220px;
+    width: 100%;
+    /* Same as the width of the sidebar */
+    padding: 10px;
+}
 
-    .sidebar a:hover {
-        color: #f1f1f1;
-    }
+.sidebar {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    justify-content: space-between; /* Space between top links and sponsor */
+    height: 100vh;
+    width: 200px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    overflow-x: hidden;
+    padding: 20px 0; /* Vertical padding */
+    border-right: 2px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
 
-    .main-content {
-        margin-left: 250px;
-        /* Same as the width of the sidebar */
-        padding: 0px 10px;
-    }
+.sidebar .link-section a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 20px;
+    color:  rgb(194, 194, 236);
+    display: block;
+}
 
-    .sidebar .authenticated-links {
-        padding-left: 20px;
-        /* Add left padding to indent the links */
-    }
-    .sponsor {
-        margin-top: 100px
-    }
+.sidebar .link-section a:hover {
+    color: rgb(36, 36, 180);
+}
+
+.sponsor {
+    padding: 10px 15px;
+    margin-top: auto; /* Pushes to the bottom */
+    text-decoration: none; /* Prevents underlining */
+    color: rgb(194, 194, 236); /* Set a fixed color */
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.sponsor a {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: inherit; /* Inherits color from the parent class .sponsor */
+    margin-bottom: 50px;
+    margin-top: 10px;
+    font-size: 20px
+}
+
+.sponsor img {
+    width: 80%; /* Ensure the images use the full width of the sidebar */
+    height: auto;
+    margin-top: 10px;
+}

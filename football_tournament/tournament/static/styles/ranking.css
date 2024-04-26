@@ -3,6 +3,7 @@
     grid-template-columns: 2fr 5fr; /* Increased left side space, decreased right side */
     gap: 20px;
     align-items: start;
+    font-size: 16px;
 }
 .highlight {
     background-color: #1aa538; /* Light green background for highlighting */
@@ -16,6 +17,7 @@ th, td {
     border: 1px solid #ddd;
     text-align: center;
     padding: 8px;
+    height: 30px; 
 }
 
 th.team-name, td.team-name {
@@ -35,6 +37,12 @@ th, td {
 
 .round {
     margin-bottom: 20px;
+}
+
+.stage {
+    text-align: center;
+    margin-top: 20px; /* Ensures there is a uniform gap from the top of its container */
+    margin-bottom: 20px; /* Ensures there is a uniform gap below it */
 }
 
 .matchup {

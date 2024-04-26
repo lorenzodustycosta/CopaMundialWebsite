@@ -1,23 +1,38 @@
-table {
-    width: 100%;
-    border-collapse: collapse; /* Merges borders between cells */
+.teams-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates a responsive grid with a minimum column width of 300px */
+    gap: 10px; /* Space between grid items */
+    padding: 5px; /* Padding around the entire grid container */
+    grid-template-columns: repeat(6, 1fr); /* Creates six columns */
+    grid-template-rows: repeat(2, 1fr); /* Creates two rows */
 }
 
-th, td {
+.team-card {
+    background: #f9f9f9;
     border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column; /* Ensures content flows vertically */
 }
 
-th:first-child, td:first-child {
-    width: 5px; /* Adjust the width as needed */
+.team-card h3 {
+    text-align: left; /* Aligns team name to the left */
+    margin-bottom: 15px; /* Space between the team name and the player list */
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 5px 5px;
 }
 
-thead th {
-    background-color: #f4f4f4;
+.team-card ul {
+    list-style-type: none;
+    padding: 5px 5px;
+    margin: 0; /* Aligns the start of the list with the team name */
 }
 
-tbody td {
-    padding-left: 15px; /* Add padding as needed */
-    padding-right: 15px;
+.team-card li {
+    padding: 5px 0; /* Vertical padding for each list item */
+}
+
+.team-card li:last-child {
+    border-bottom: none; /* Removes the border from the last item for cleanliness */
 }

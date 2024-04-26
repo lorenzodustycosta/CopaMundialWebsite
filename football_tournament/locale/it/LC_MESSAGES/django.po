@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-13 18:25+0000\n"
+"POT-Creation-Date: 2024-04-24 14:47+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,54 +18,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: templates/tournament/edit_match.html:7
+#: templates/tournament/edit_match.html:10
 msgid "Edit Match Details"
 msgstr "Modifica Dettagli Partita"
 
-#: templates/tournament/edit_match.html:10
+#: templates/tournament/edit_match.html:13
 msgid "Home Team Goals"
 msgstr "Goal Squadra Casa"
 
-#: templates/tournament/edit_match.html:19
+#: templates/tournament/edit_match.html:22
 msgid "Away Team Goals"
 msgstr "Goal Squadra Trasferta"
 
-#: templates/tournament/edit_match.html:28
+#: templates/tournament/edit_match.html:31
 msgid "Save Changes"
 msgstr "Salva"
 
-#: tournament/models.py:31 tournament/models.py:51
+#: tournament/models.py:32 tournament/models.py:52
 msgid "Date"
 msgstr "Data"
 
-#: tournament/models.py:32 tournament/models.py:52
+#: tournament/models.py:33 tournament/models.py:53
 msgid "Time"
 msgstr "Ora"
 
-#: tournament/models.py:33 tournament/models.py:58
+#: tournament/models.py:34 tournament/models.py:59
 msgid "Home Team"
 msgstr "Squadra di Casa"
 
-#: tournament/models.py:34 tournament/models.py:59
+#: tournament/models.py:35 tournament/models.py:60
 msgid "Away Team"
 msgstr "Squadra in Trasferta"
 
-#: tournament/models.py:35 tournament/models.py:55
+#: tournament/models.py:36 tournament/models.py:56
 msgid "Pitch"
 msgstr "Campo"
 
-#: tournament/models.py:36 tournament/models.py:53
+#: tournament/models.py:37 tournament/models.py:54
 msgid "Home Score"
 msgstr "Goal Casa"
 
-#: tournament/models.py:37 tournament/models.py:54
+#: tournament/models.py:38 tournament/models.py:55
 msgid "Away Score"
 msgstr "Goal Trasferta"
 
-#: tournament/models.py:38 tournament/models.py:57
+#: tournament/models.py:39 tournament/models.py:58
 msgid "Stage"
 msgstr "Fase"
 
-#: tournament/models.py:39 tournament/models.py:56
+#: tournament/models.py:40 tournament/models.py:57
 msgid "Group"
 msgstr "Gruppo"
+
+#: tournament/models.py:41
+#, fuzzy
+#| msgid "Validated"
+msgid "Validate"
+msgstr "Convalida"
+
+#: tournament/models.py:61
+msgid "Validated"
+msgstr "Convalida"
+
+#: tournament/models.py:89
+msgid "Team Name"
+msgstr "Nome Squadra"
+
+#: tournament/models.py:103
+msgid "Name"
+msgstr "Nome"
+
+#: tournament/models.py:104
+msgid "Surname"
+msgstr "Cognome"
