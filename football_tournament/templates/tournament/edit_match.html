@@ -8,28 +8,43 @@
 <form method="post">
     {% csrf_token %}
     <h2>{% trans "Edit Match Details" %}</h2>
-    {{ match_form.as_p }}
+    {% for field in match_form %}
+    {% if field.name != "validated" %}
+    <p>
+        {{ field.errors }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+    </p>
+    {% endif %}
+    {% endfor %}
 
     <h2>{% trans "Home Team Goals" %}</h2>
     {% for field in home_goals_form %}
-        <div class="player-goal-entry">
-            {{ field.errors }}
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-        </div>
+    <div class="player-goal-entry">
+        {{ field.errors }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+    </div>
     {% endfor %}
 
     <h2>{% trans "Away Team Goals" %}</h2>
     {% for field in away_goals_form %}
-        <div class="player-goal-entry">
-            {{ field.errors }}
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-        </div>
+    <div class="player-goal-entry">
+        {{ field.errors }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+    </div>
     {% endfor %}
+    
+    <hr>
+
+    <div class="validated-field" style="margin-bottom: 10px">
+        {{ match_form.validated.errors }}
+        <label for="{{ match_form.validated.id_for_label }}">{{ match_form.validated.label }}</label>
+        {{ match_form.validated }}
+    </div>
 
     <button type="submit">{% trans "Save Changes" %}</button>
 </form>
-
 
 {% endblock %}

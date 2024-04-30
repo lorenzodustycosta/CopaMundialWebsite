@@ -45,7 +45,15 @@
     width: 48px; /* Width of the ball icon */
     height: 48px; /* Height of the ball icon */
     background-size: cover; /* Ensures the background image covers the element */
-    background-image: url('/path/to/ball-image.png'); /* URL to the ball icon image */
+    margin-left: 30px; /* Space between text and the first ball icon */
+    margin-right: 5px; /* Space between text and the first ball icon */
+    display: inline-block; /* Ensures the icon is treated as inline element */
+}
+
+.mvp {
+    width: 48px; /* Width of the ball icon */
+    height: 58px; /* Height of the ball icon */
+    background-size: cover; /* Ensures the background image covers the element */
     margin-left: 30px; /* Space between text and the first ball icon */
     margin-right: 5px; /* Space between text and the first ball icon */
     display: inline-block; /* Ensures the icon is treated as inline element */

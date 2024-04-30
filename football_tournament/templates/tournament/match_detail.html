@@ -13,15 +13,20 @@
         {{ match.home_team.name }}
         <div class="goal-scorer-home">
             {% for scorer in home_goals %}
-                <div class="goal-scorer">
-                    {{ scorer.player.surname }} {{1 | make_balls}} ({{scorer.total_goals}})
-                </div>
+            <div class="goal-scorer">
+                {{ scorer.player.surname }} {{1 | make_balls}} ({{scorer.total_goals}})
+            </div>
             {% endfor %}
+            {% if mvp.team.name == match.home_team.name %}
+            <div class="goal-scorer">
+                {{ mvp.surname }} {{1 | make_cup}}
+            </div>
+            {% endif %}
         </div>
     </div>
 
     <div class="score">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
-    
+
     <div class="team-name-away">
         {{ match.away_team.name }}
         <div class="goal-scorer-away">
@@ -30,8 +35,13 @@
                 {{ scorer.player.surname }} {{1 | make_balls}}({{scorer.total_goals}})
             </div>
             {% endfor %}
+            {% if mvp.team.name == match.away_team.name %}
+            <div class="goal-scorer">
+                {{ mvp.surname }} {{1 | make_cup}}
+            </div>
+            {% endif %}
+
         </div>
     </div>
 </div>
 {% endblock %}
-

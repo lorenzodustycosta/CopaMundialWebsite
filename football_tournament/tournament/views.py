@@ -17,50 +17,58 @@ import datetime
 from django.db import transaction
 import random
 
+
 def home(request):
     return render(request, 'tournament/home.html')
+
 
 def match_schedule(request):
     # Fetching all matches ordered by date
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/match_schedule.html', {'matches': matches})
 
+
 def manage_matches(request):
     # Fetching all matches ordered by date
     matches = Match.objects.all().order_by('date')
-    
+
     group_matches = matches.filter(group__startswith='Gruppo')
     if group_matches.count() > 0:
-        group_all_validated = group_matches.filter(validated=False).count() == 0
+        group_all_validated = group_matches.filter(
+            validated=False).count() == 0
     else:
         group_all_validated = False
 
     quarterfinals_matches = matches.filter(group='Quarti')
     if quarterfinals_matches.count() > 0:
-        quarterfinals_all_validated = quarterfinals_matches.filter(validated=False).count() == 0
+        quarterfinals_all_validated = quarterfinals_matches.filter(
+            validated=False).count() == 0
     else:
         quarterfinals_all_validated = False
 
     semifinals_matches = matches.filter(group='Semifinali')
     if semifinals_matches.count() > 0:
-        semifinals_all_validated = semifinals_matches.filter(validated=False).count() == 0
+        semifinals_all_validated = semifinals_matches.filter(
+            validated=False).count() == 0
     else:
         semifinals_all_validated = False
-        
+
     finals_matches = matches.filter(group='Finali')
     if finals_matches.count() > 0:
-        finals_all_validated = finals_matches.filter(validated=False).count() == 0
+        finals_all_validated = finals_matches.filter(
+            validated=False).count() == 0
     else:
         finals_all_validated = False
-        
+
     context = {
         'group_all_validated': group_all_validated,
         'quarterfinals_all_validated': quarterfinals_all_validated,
         'semifinals_all_validated': semifinals_all_validated,
         'finals_all_validated': finals_all_validated
     }
-    
+
     return render(request, 'tournament/manage_matches.html', {'matches': matches, 'context': context})
+
 
 def end_quarterfinals(request):
     all_matches = Match.objects.filter(validated=True, group='Quarti')
@@ -70,16 +78,16 @@ def end_quarterfinals(request):
             winners.append(m.home_team)
         else:
             winners.append(m.away_team)
-   
+
     Match.objects.create(
         stage='Eliminazione',
         group='Semifinali',
         home_team=winners[0],
         away_team=winners[1],
         date=date(2024, 7, 2),
-        pitch = 'Blu',
-        time = '20:30',
-        
+        pitch='Blu',
+        time='20:30',
+
     )
 
     Match.objects.create(
@@ -88,29 +96,34 @@ def end_quarterfinals(request):
         home_team=winners[2],
         away_team=winners[3],
         date=date(2024, 7, 2),
-        pitch = 'Blu',
-        time = '21:30',
+        pitch='Blu',
+        time='21:30',
     )
 
     return redirect('manage_matches')
+
 
 def end_semifinals(request):
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/manage_matches.html', {'matches': matches})
 
+
 def end_finals(request):
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/manage_matches.html', {'matches': matches})
+
 
 def end_group(request):
 
     all_teams = Team.objects.all()
     sorted_groups = compute_ranking(all_teams)
-    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(sorted_groups)
+    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+        sorted_groups)
 
-    matchups = create_quarterfinals_matchups( first_place_teams, second_place_teams, qualified_third_place_teams)
+    matchups = create_quarterfinals_matchups(
+        first_place_teams, second_place_teams, qualified_third_place_teams)
 
-    time = cycle(['20:30','21:30'])
+    time = cycle(['20:30', '21:30'])
     print(len(matchups))
     for i, teams in enumerate(matchups):
         Match.objects.create(
@@ -118,26 +131,28 @@ def end_group(request):
             group='Quarti',
             home_team=Team.objects.get(name=teams[0]['team_name']),
             away_team=Team.objects.get(name=teams[1]['team_name']),
-            date=date(2024, 6, 25) if i<=1 else date(2024, 6, 26),
-            pitch = 'Blu',
-            time = next(time),
-            
+            date=date(2024, 6, 25) if i <= 1 else date(2024, 6, 26),
+            pitch='Blu',
+            time=next(time),
+
         )
 
     matches = Match.objects.all().order_by('date')
 
     return redirect('manage_matches')
 
-def create_quarterfinals_matchups( first_place_teams, second_place_teams, qualified_third_place_teams):
+
+def create_quarterfinals_matchups(first_place_teams, second_place_teams, qualified_third_place_teams):
 
     matchups = []
-    
+
     matchups.append([first_place_teams[0], qualified_third_place_teams[1]])
     matchups.append([second_place_teams[0], second_place_teams[1]])
     matchups.append([first_place_teams[2], second_place_teams[2]])
     matchups.append([first_place_teams[1], qualified_third_place_teams[0]])
 
     return matchups
+
 
 def get_knockout_teams(sorted_groups):
     first_place_teams = []
@@ -150,13 +165,12 @@ def get_knockout_teams(sorted_groups):
         second_place_teams.append(teams[1])
         third_place_teams.append(teams[2])
 
-
     first_place_teams = sorted(
         first_place_teams,
         key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
         reverse=True
     )
-    
+
     second_place_teams = sorted(
         second_place_teams,
         key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
@@ -171,6 +185,7 @@ def get_knockout_teams(sorted_groups):
     )[:2]
 
     return first_place_teams, second_place_teams, qualified_third_place_teams
+
 
 def group_draw(request):
     if 'draw' in request.POST:
@@ -209,6 +224,7 @@ def group_draw(request):
                     date=match_info['date'],
                     time=match_info['time'],
                     pitch=match_info['pitch'],
+                    mvp=None
                 )
 
     # Teams without a group
@@ -217,13 +233,14 @@ def group_draw(request):
     groups = Group.objects.prefetch_related('teams').order_by('name').all()
     return render(request, 'tournament/group_draw.html', {'unassigned_teams': unassigned_teams, 'groups': groups})
 
+
 def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini Gialli'):
     # Go through each match in the schedule
     for match_info in tournament_schedule:
         # Check if the special team is playing in this match
         if match_info['home_team'] == special_team_name or match_info['away_team'] == special_team_name:
             # Assign the special team to the Green pitch
-            match_info['pitch'] = 'Green'
+            match_info['pitch'] = 'Verde'
             # Get the date and time of the current match
             match_date = match_info['date']
             match_time = match_info['time']
@@ -239,10 +256,12 @@ def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini 
 
     return tournament_schedule
 
+
 def cleanup_matches():
     # Assuming `Match` has related objects that need to be cleared as well
     # This will delete all matches and any related objects via cascade deletion
     Match.objects.all().delete()
+
 
 def create_tournament_schedule(start_date, groups_queryset):
     # Initialize a list for all matches across all groups
@@ -276,12 +295,12 @@ def create_tournament_schedule(start_date, groups_queryset):
                                           1) if i != 0 else timedelta(0)
             # Alternate match times for Tuesday
             match_time = '20:30' if i % 2 == 0 else '21:30'
-            pitch = 'Blu' if i % 4 < 2 else 'Green'  # Alternate pitches
+            pitch = 'Blu' if i % 4 < 2 else 'Verde'  # Alternate pitches
         else:  # Remaining two matches on Wednesday
             if i % 6 == 4:  # Move to Wednesday after the first four matches
                 current_date += timedelta(days=1)
             match_time = '20:30'  # Fixed match time for Wednesday
-            pitch = 'Blu' if i % 6 == 4 else 'Green'  # Alternate pitches
+            pitch = 'Blu' if i % 6 == 4 else 'Verde'  # Alternate pitches
 
         sorted_schedule.append({
             'date': current_date,
@@ -293,6 +312,7 @@ def create_tournament_schedule(start_date, groups_queryset):
         })
 
     return sorted_schedule
+
 
 def round_robin(teams):
     """Generates a round-robin schedule for an even list of teams."""
@@ -315,6 +335,7 @@ def round_robin(teams):
         schedule.append(day_matches)
 
     return schedule
+
 
 def compute_ranking(all_teams):
     # Initialize groups with a dictionary to hold team data by team name.
@@ -368,6 +389,7 @@ def compute_ranking(all_teams):
 
     return sorted_groups
 
+
 def ranking(request):
 
     all_teams = Team.objects.all()
@@ -384,14 +406,20 @@ def ranking(request):
         total_goals__gt=0  # This filters out players with 0 goals
     ).order_by('-total_goals')[:10]
 
+    mvp_ranking = Player.objects.annotate(
+        mvp_count=Count('mvp_matches')).filter(
+        mvp_count__gt=0).order_by('-mvp_count')[:5]
+
     quarterfinals_matches = Match.objects.filter(
         stage='Eliminazione', group='Quarti')
     semifinals_matches = Match.objects.filter(
         stage='Eliminazione', group='Semifinali')
     finals_matches = Match.objects.filter(stage='Eliminazione', group='Finali')
 
-    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(sorted_groups)
-    qualified_teams = first_place_teams + second_place_teams + qualified_third_place_teams
+    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+        sorted_groups)
+    qualified_teams = first_place_teams + \
+        second_place_teams + qualified_third_place_teams
     qualified_team_names = [team['team_name'] for team in qualified_teams]
 
     context = {
@@ -400,12 +428,14 @@ def ranking(request):
         'semifinals_matches': semifinals_matches,
         'finals_matches': finals_matches,
     }
-    
+
     return render(request, 'tournament/ranking.html', {'sorted_groups': sorted_groups,
                                                        'drawing_done': drawing_done,
                                                        'top_scorers': top_scorers,
+                                                       'mvp_ranking': mvp_ranking,
                                                        'context': context
                                                        })
+
 
 @login_required
 def edit_match(request, match_id):
@@ -418,6 +448,7 @@ def edit_match(request, match_id):
             request.POST, team=match.away_team, match=match)
 
         if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
+            print(match_form)
             updated_match = match_form.save()
             save_goals(home_goals_form, match, match.home_team)
             save_goals(away_goals_form, match, match.away_team)
@@ -436,16 +467,20 @@ def edit_match(request, match_id):
         'away_goals_form': away_goals_form,
     })
 
+
 def save_goals(form, match, team):
     for field_name, value in form.cleaned_data.items():
-        if value:  # Make sure there is a value to save
+        print(field_name, value)
+        if value and value>0:  # Make sure there is a value to save
             player_id = int(field_name.split('_')[1])
             player = Player.objects.get(id=player_id)
+            print(player, value)
             Goal.objects.update_or_create(
                 match=match,
                 player=player,
                 defaults={'number_of_goals': value}
             )
+
 
 def team_and_player_list(request):
     teams = Team.objects.prefetch_related('players').order_by('name')
@@ -463,10 +498,12 @@ def team_and_player_list(request):
 
     return render(request, 'tournament/team_and_player_list.html', {'teams': teams, 'player_rows': player_rows})
 
+
 @login_required
 def team_list(request):
     teams = Team.objects.order_by('name')
     return render(request, 'tournament/team_list.html', {'teams': teams})
+
 
 @login_required
 def create_or_update_team(request, pk=None):
@@ -511,6 +548,7 @@ def create_or_update_team(request, pk=None):
         'team': team
     })
 
+
 class DeleteTeamView(DeleteView):
     model = Team
     # Name of the confirmation template
@@ -524,6 +562,7 @@ class DeleteTeamView(DeleteView):
 
 # Assuming you have models named Match, Goal, and Team
 
+
 def match_detail(request, match_id):
     match = get_object_or_404(Match, id=match_id)
     # Assuming that Goal has a 'player' ForeignKey and 'team' ForeignKey
@@ -535,5 +574,6 @@ def match_detail(request, match_id):
     return render(request, 'tournament/match_detail.html', {
         'match': match,
         'home_goals': home_goals,
-        'away_goals': away_goals
+        'away_goals': away_goals,
+        'mvp': match.mvp
     })

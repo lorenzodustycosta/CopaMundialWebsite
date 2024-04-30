@@ -1,5 +1,5 @@
 {% extends 'tournament/base.html' %}
-{% load static%}
+{% load static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/ranking.css' %}">
@@ -7,6 +7,7 @@
 
 {% block content %}
 <div class="content-grid">
+    <!-- Column 1: Group Rankings -->
     <div class="knockout-schedule">
         <h2 class="stage">Classifiche</h2>
         {% if not drawing_done %}
@@ -36,9 +37,45 @@
         </table>
         {% endfor %}
         {% endif %}
+    </div>
 
-        <!-- Goal Scorers Table -->
-        <h2>Classifica Marcatori</h2>
+    <!-- Column 2: Knockout Phase -->
+    <div class="knockout-schedule">
+        <h2 class="stage">Fase ad Eliminazione</h2>
+        <!-- Example for one phase, repeat for others -->
+        <h3 class="stage">Quarti di Finale</h3>
+        {% for match in context.quarterfinals_matches %}
+        <div class="matchup">
+            <span>{{ match.home_team.name }}</span>
+            <span>vs</span>
+            <span>{{ match.away_team.name }}</span>
+            <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
+        </div>
+        {% endfor %}
+        <h3 class="stage">Semifinali</h3>
+        {% for match in context.semifinals_matches %}
+        <div class="matchup">
+            <span>{{ match.home_team.name }}</span>
+            <span>vs</span>
+            <span>{{ match.away_team.name }}</span>
+            <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
+        </div>
+        {% endfor %}
+        <h3 class="stage">Finali</h3>
+        {% for match in context.finals_matches %}
+        <div class="matchup">
+            <span>{{ match.home_team.name }}</span>
+            <span>vs</span>
+            <span>{{ match.away_team.name }}</span>
+            <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Column 3: Goal Scorers and MVPs -->
+    <div class="knockout-schedule">
+        <h2>Classifiche Giocatori</h2>
+        <h3>Classifica Marcatori</h2>
         <table>
             <tr>
                 <th>Posizione</th>
@@ -55,50 +92,24 @@
             </tr>
             {% endfor %}
         </table>
-    </div>
-    <div class="knockout-schedule">
-        <h2 class="stage">Fase ad Eliminazione</h2>
-        <div>
-            <h3 class="stage">Quarti di Finale</h3>
-            {% for match in context.quarterfinals_matches %}
-            <div class="matchup">
-                <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
-                    {{ match.home_team.name }}
-                </span>
-                <span>vs</span>
-                <span class="{% if match.score_home_team < match.score_away_team %}next-turn{% endif %}">
-                    {{ match.away_team.name }}
-                </span>
-                <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
-            </div>
+
+        <h3>Classifica MVP</h2>
+        <table>
+            <tr>
+                <th>Posizione</th>
+                <th>Giocatore</th>
+                <th>Squadra</th>
+                <th>MVP</th>
+            </tr>
+            {% for mvp in mvp_ranking %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ mvp.name }}</td>
+                <td>{{ mvp.team.name }}</td>
+                <td>{{ mvp.mvp_count }}</td>
+            </tr>
             {% endfor %}
-            <h3 class="stage">Semifinali</h3>
-            {% for match in context.semifinals_matches %}
-            <div class="matchup">
-                <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
-                    {{ match.home_team.name }}
-                </span>
-                <span>vs</span>
-                <span class="{% if match.score_home_team < match.score_away_team %}next-turn{% endif %}">
-                    {{ match.away_team.name }}
-                </span>
-                <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
-            </div>
-            {% endfor %}
-            <h3 class="stage">Finali</h3>
-            {% for match in context.finals_matches %}
-            <div class="matchup">
-                <span class="{% if match.score_home_team > match.score_away_team %}next-turn{% endif %}">
-                    {{ match.home_team.name }}
-                </span>
-                <span>vs</span>
-                <span class="{% if match.score_home_team < match.score_away_team %}next-turn{% endif %}">
-                    {{ match.away_team.name }}
-                </span>
-                <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
-            </div>
-            {% endfor %}
-        </div>
+        </table>
     </div>
 </div>
 {% endblock %}

@@ -11,7 +11,8 @@ body {
     /* Prevent horizontal scroll */
     display: flex;
     /* Flexbox layout for the body */
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+    font-family: Montserrat;
+    color: #333333
 }
 
 body::before {
@@ -24,7 +25,7 @@ body::before {
     /* Cover the entire width of the body */
     height: 100%;
     /* Cover the entire height of the body */
-    background: url('/static/images/5618236.jpg') center/cover no-repeat scroll;
+    background: url('/static/images/background.png') center/cover no-repeat scroll;
     background-size: cover;
     /* Your background image */
     opacity: 0.4;
@@ -49,37 +50,35 @@ body::before {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: #8CAF71;
     overflow-x: hidden;
     padding: 20px 0; /* Vertical padding */
     border-right: 2px solid #ccc;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .sidebar .link-section a {
     padding: 10px 15px;
     text-decoration: none;
     font-size: 20px;
-    color:  rgb(194, 194, 236);
+    color: #333333;
     display: block;
 }
 
 .sidebar .link-section a:hover {
-    color: rgb(36, 36, 180);
+    color: white;
 }
 
 .sponsor {
     padding: 10px 15px;
     margin-top: auto; /* Pushes to the bottom */
     text-decoration: none; /* Prevents underlining */
-    color: rgb(194, 194, 236); /* Set a fixed color */
+    color:  #333333; /* Set a fixed color */
     font-size: 20px;
     margin-bottom: 20px;
 }
 
 .sponsor a {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: inherit; /* Inherits color from the parent class .sponsor */
     margin-bottom: 50px;
     margin-top: 10px;

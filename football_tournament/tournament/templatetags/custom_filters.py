@@ -9,5 +9,10 @@ def make_balls(value):
     return mark_safe(html)
 
 @register.filter
+def make_cup(value):
+    html = ''.join(['<img class="mvp" src="/static/images/mvp.png" alt="Cup">' for _ in range(value)])
+    return mark_safe(html)
+
+@register.filter
 def is_in_knockout(team, knockout_teams):
     return team in knockout_teams

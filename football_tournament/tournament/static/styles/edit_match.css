@@ -1,9 +1,11 @@
 .player-goal-entry {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 4fr 4fr;
+    /* justify-content: space-between; */
     align-items: center;
     margin-bottom: 15px;
 }
 .player-goal-entry label, .player-goal-entry input {
-    margin-right: 10px;
+    /* margin-right: 10px; */
+    text-align: center;
 }

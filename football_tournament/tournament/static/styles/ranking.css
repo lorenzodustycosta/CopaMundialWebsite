@@ -1,16 +1,21 @@
 .content-grid {
     display: grid;
-    grid-template-columns: 2fr 5fr; /* Increased left side space, decreased right side */
+    grid-template-columns: .9fr 1.2fr .9fr; /* Equal distribution of space among three columns */
     gap: 20px;
     align-items: start;
     font-size: 16px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
+
 .highlight {
-    background-color: #1aa538; /* Light green background for highlighting */
+    background-color: #a9c191; /* Light green background for highlighting */
 }
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 50px;
+    /* background-color: white; */
 }
 
 th, td {

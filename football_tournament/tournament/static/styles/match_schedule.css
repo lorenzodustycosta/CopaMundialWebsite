@@ -17,7 +17,7 @@
 
 .match-entry {
     display: grid;
-    grid-template-columns: 0.5fr 0.25fr 0.5fr 0.5fr 1fr 0.5fr 0.5fr; /* Adjust this based on your content needs */
+    grid-template-columns: 0.5fr 0.1fr 0.25fr 0.25fr 1fr 0.5fr 0.5fr; /* Adjust this based on your content needs */
     align-items: center;
     width: 100%;
     padding: 10px;
@@ -52,11 +52,12 @@
 }
 
 .status-concluded {
-    color: green;
+    color: #6d955e;
+    font-weight: bold;
 }
 
 .status-scheduled {
-    color: rgb(168, 123, 39);
+    color: #333333;
 }
 
 .goal-scorer {

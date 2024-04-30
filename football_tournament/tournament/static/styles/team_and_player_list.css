@@ -1,6 +1,5 @@
 .teams-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Creates a responsive grid with a minimum column width of 300px */
     gap: 10px; /* Space between grid items */
     padding: 5px; /* Padding around the entire grid container */
     grid-template-columns: repeat(6, 1fr); /* Creates six columns */
@@ -8,19 +7,21 @@
 }
 
 .team-card {
-    background: #f9f9f9;
+    background: transparent;
     border: 1px solid #ccc;
-    padding: 20px;
+    padding: 5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column; /* Ensures content flows vertically */
 }
 
 .team-card h3 {
-    text-align: left; /* Aligns team name to the left */
-    margin-bottom: 15px; /* Space between the team name and the player list */
-    background-color: rgba(0, 0, 0, 0.3);
+    margin-top: 5px;
+    text-align: center; /* Aligns team name to the left */
+    margin-bottom: 10px; /* Space between the team name and the player list */
+    background-color: #8CAF71;
     padding: 5px 5px;
+    color: #333333
 }
 
 .team-card ul {
