@@ -80,9 +80,9 @@ WSGI_APPLICATION = 'football_tournament.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DBNAME'], #'copamundial',
-        'USER': os.environ['DBUSERNAME'], #'lorenzo',
-        'PASSWORD': os.environ['DBPASSWORD'], #'CopaMundial2024',
+        'NAME': os.environ['DBNAME'],
+        'USER': os.environ['DBUSERNAME'],
+        'PASSWORD': os.environ['DBPASSWORD'],
         'HOST': 'localhost',  # Or the IP address of your database server
         'PORT': '5432',  # Default PostgreSQL port
     }
