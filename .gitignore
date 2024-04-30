@@ -3,3 +3,5 @@ venv/
 football_tournament/football_tournament/__pycache__/
 football_tournament/tournament/__pycache__/
 football_tournament/tournament/templatetags/__pycache__/
+football_tournament/staticfiles
+football_tournament/tournament/migrations/__pycache__/

@@ -1,1 +1,1 @@
-web: gunicorn copamundialwebsite.wsgi:tournament
+web: gunicorn football_tournament.wsgi:application
