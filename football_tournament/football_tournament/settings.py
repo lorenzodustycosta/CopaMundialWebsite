@@ -84,8 +84,8 @@ DATABASES = {
         'NAME': os.environ['DBNAME'],
         'USER': os.environ['DBUSERNAME'],
         'PASSWORD': os.environ['DBPASSWORD'],
-        'HOST': 'localhost',  # Or the IP address of your database server
-        'PORT': '5432',  # Default PostgreSQL port
+        'HOST': os.environ.get('DATABASE_URL', 'localhost'),
+        'PORT': os.environ.get('DBPORT', '5432'),
     }
 }
 
