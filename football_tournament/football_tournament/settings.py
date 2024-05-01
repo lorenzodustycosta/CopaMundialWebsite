@@ -79,14 +79,10 @@ WSGI_APPLICATION = 'football_tournament.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DBNAME'],
-        'USER': os.environ['DBUSERNAME'],
-        'PASSWORD': os.environ['DBPASSWORD'],
-        'HOST': dj_database_url.config(default=os.environ.get('DATABASE_URL')),
-        'PORT': os.environ.get('DBPORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 'fallback_database_url_if_any'),
+        conn_max_age=600  # Optional: Use persistent connections; it's the max age of each connection
+    )
 }
 
 # Password validation
