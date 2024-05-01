@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': os.environ['DBNAME'],
         'USER': os.environ['DBUSERNAME'],
         'PASSWORD': os.environ['DBPASSWORD'],
-        'HOST': os.environ.get('DATABASE_URL', 'localhost'),
+        'HOST': dj_database_url.config(default=os.environ.get('DATABASE_URL')),
         'PORT': os.environ.get('DBPORT', '5432'),
     }
 }
