@@ -25,9 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l5m%#vlg9e&2e82nwkt26b4_cp%4l+zp1=9un1akem4&8elm6z'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = ['torneocopamundial.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
@@ -143,3 +140,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+
+
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.loc_mem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
