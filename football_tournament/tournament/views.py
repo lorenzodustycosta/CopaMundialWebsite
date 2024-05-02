@@ -124,7 +124,7 @@ def end_group(request):
         first_place_teams, second_place_teams, qualified_third_place_teams)
 
     time = cycle(['20:30', '21:30'])
-    print(len(matchups))
+
     for i, teams in enumerate(matchups):
         Match.objects.create(
             stage='Eliminazione',
@@ -212,7 +212,7 @@ def group_draw(request):
             tournament_schedule = create_tournament_schedule(
                 start_date, all_groups)
             tournament_schedule = adjust_for_special_team(tournament_schedule)
-            print(tournament_schedule)
+
             for match_info in tournament_schedule:
                 group = get_object_or_404(Group, name=match_info['group'])
                 Match.objects.create(
@@ -331,7 +331,7 @@ def round_robin(teams):
             if teams[i] is not None and teams[-i - 1] is not None:  # Skip byes
                 day_matches.append((teams[i], teams[-i - 1]))
         teams.insert(1, teams.pop())  # Rotate the list of teams
-        print(day_matches)
+
         schedule.append(day_matches)
 
     return schedule
@@ -392,42 +392,46 @@ def compute_ranking(all_teams):
 
 def ranking(request):
 
+    sorted_groups = None
+    top_scorers = None
+    mvp_ranking = None
+    context = None
+    
     all_teams = Team.objects.all()
     drawing_done = any(team.group for team in all_teams)
-
+    
     if drawing_done:
         sorted_groups = compute_ranking(all_teams)
-    else:
-        sorted_groups = None
 
-    top_scorers = Player.objects.annotate(
-        total_goals=Coalesce(Sum('goals__number_of_goals'), 0)
-    ).filter(
-        total_goals__gt=0  # This filters out players with 0 goals
-    ).order_by('-total_goals')[:10]
+        top_scorers = Player.objects.annotate(
+            total_goals=Coalesce(Sum('goals__number_of_goals'), 0)
+        ).filter(
+            total_goals__gt=0  # This filters out players with 0 goals
+        ).order_by('-total_goals')[:10]
 
-    mvp_ranking = Player.objects.annotate(
-        mvp_count=Count('mvp_matches')).filter(
-        mvp_count__gt=0).order_by('-mvp_count')[:5]
+        mvp_ranking = Player.objects.annotate(
+            mvp_count=Count('mvp_matches')).filter(
+            mvp_count__gt=0).order_by('-mvp_count')[:5]
 
-    quarterfinals_matches = Match.objects.filter(
-        stage='Eliminazione', group='Quarti')
-    semifinals_matches = Match.objects.filter(
-        stage='Eliminazione', group='Semifinali')
-    finals_matches = Match.objects.filter(stage='Eliminazione', group='Finali')
+        quarterfinals_matches = Match.objects.filter(
+            stage='Eliminazione', group='Quarti')
+        semifinals_matches = Match.objects.filter(
+            stage='Eliminazione', group='Semifinali')
+        finals_matches = Match.objects.filter(
+            stage='Eliminazione', group='Finali')
 
-    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
-        sorted_groups)
-    qualified_teams = first_place_teams + \
-        second_place_teams + qualified_third_place_teams
-    qualified_team_names = [team['team_name'] for team in qualified_teams]
+        first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+            sorted_groups)
+        qualified_teams = first_place_teams + \
+            second_place_teams + qualified_third_place_teams
+        qualified_team_names = [team['team_name'] for team in qualified_teams]
 
-    context = {
-        'qualified_team_names': qualified_team_names,
-        'quarterfinals_matches': quarterfinals_matches,
-        'semifinals_matches': semifinals_matches,
-        'finals_matches': finals_matches,
-    }
+        context = {
+            'qualified_team_names': qualified_team_names,
+            'quarterfinals_matches': quarterfinals_matches,
+            'semifinals_matches': semifinals_matches,
+            'finals_matches': finals_matches,
+        }
 
     return render(request, 'tournament/ranking.html', {'sorted_groups': sorted_groups,
                                                        'drawing_done': drawing_done,
@@ -448,7 +452,7 @@ def edit_match(request, match_id):
             request.POST, team=match.away_team, match=match)
 
         if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
-            print(match_form)
+
             updated_match = match_form.save()
             save_goals(home_goals_form, match, match.home_team)
             save_goals(away_goals_form, match, match.away_team)
@@ -470,11 +474,9 @@ def edit_match(request, match_id):
 
 def save_goals(form, match, team):
     for field_name, value in form.cleaned_data.items():
-        print(field_name, value)
-        if value and value>0:  # Make sure there is a value to save
+        if value and value > 0:  # Make sure there is a value to save
             player_id = int(field_name.split('_')[1])
             player = Player.objects.get(id=player_id)
-            print(player, value)
             Goal.objects.update_or_create(
                 match=match,
                 player=player,

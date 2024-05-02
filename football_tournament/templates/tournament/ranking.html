@@ -40,6 +40,7 @@
     </div>
 
     <!-- Column 2: Knockout Phase -->
+    {% if drawing_done %}
     <div class="knockout-schedule">
         <h2 class="stage">Fase ad Eliminazione</h2>
         <!-- Example for one phase, repeat for others -->
@@ -71,8 +72,10 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 
     <!-- Column 3: Goal Scorers and MVPs -->
+    {% if drawing_done %}
     <div class="knockout-schedule">
         <h2>Classifiche Giocatori</h2>
         <h3>Classifica Marcatori</h2>
@@ -111,5 +114,6 @@
             {% endfor %}
         </table>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

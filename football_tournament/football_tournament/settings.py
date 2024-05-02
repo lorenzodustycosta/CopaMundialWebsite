@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'football_tournament.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'fallback_database_url_if_any'),
+        default=os.environ.get('DATABASE_URL', f'postgresql://{os.environ["DBUSERNAME"]}:{os.environ["DBPASSWORD"]}@localhost:5432/{os.environ["DBNAME"]}'),
         conn_max_age=600  # Optional: Use persistent connections; it's the max age of each connection
     )
 }
