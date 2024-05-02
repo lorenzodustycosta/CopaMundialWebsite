@@ -16,7 +16,7 @@ from datetime import date, timedelta
 import datetime
 from django.db import transaction
 import random
-
+from django.http import HttpResponse
 
 def home(request):
     return render(request, 'tournament/home.html')
