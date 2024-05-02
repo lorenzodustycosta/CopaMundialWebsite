@@ -579,3 +579,6 @@ def match_detail(request, match_id):
         'away_goals': away_goals,
         'mvp': match.mvp
     })
+
+def health_check(request):
+    return HttpResponse("OK", content_type="text/plain")
