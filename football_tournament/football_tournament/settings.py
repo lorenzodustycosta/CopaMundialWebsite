@@ -143,7 +143,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = not DEBUG
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CACHES = {
     'default': {
@@ -151,3 +151,4 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+APPEND_SLASH=False
