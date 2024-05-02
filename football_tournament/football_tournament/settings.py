@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-l5m%#vlg9e&2e82nwkt26b4_cp%4l+zp1=9un1akem4&8elm6z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['copamundialwebsite.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['torneocopamundial.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
