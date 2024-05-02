@@ -13,7 +13,7 @@ python manage.py migrate
 
 # Check if the superuser exists and create if not
 if ! python manage.py checksuperuser; then
-    python manage.py createsuperuser --no-input
+    python manage.py createsuperuser
 fi
 
 # Deactivate the virtual environment
