@@ -485,20 +485,35 @@ def save_goals(form, match, team):
 
 
 def team_and_player_list(request):
+    # Fetch all teams, ordered by name
     teams = Team.objects.prefetch_related('players').order_by('name')
-    # Find the maximum number of players in any team to define the number of rows
-    max_players = max([team.players.count() for team in teams]) if teams else 0
+    
+    # Dictionary to hold sorted players for each team
+    sorted_players = {}
+    max_players = 0
 
-    # Create a list of lists, each sublist being a row of players in the position order across all teams
+    # Iterate over each team to sort players by surname and update the maximum count
+    for team in teams:
+        # Sort players by surname
+        players = list(team.players.all().order_by('surname'))
+        sorted_players[team.id] = players
+        # Update maximum number of players for any team
+        if len(players) > max_players:
+            max_players = len(players)
+
+    # Create a list of lists for the player rows
     player_rows = [[] for _ in range(max_players)]
     for team in teams:
-        players = list(team.players.all())
-        # Fill the rows with players or None if the team has fewer players
+        players = sorted_players[team.id]
+        # Fill rows with players or None if fewer players in this team
         for index in range(max_players):
-            player_rows[index].append(
-                players[index] if index < len(players) else None)
+            player_rows[index].append(players[index] if index < len(players) else None)
 
-    return render(request, 'tournament/team_and_player_list.html', {'teams': teams, 'player_rows': player_rows})
+    return render(request, 'tournament/team_and_player_list.html', {
+        'teams': teams,
+        'player_rows': player_rows,
+        'sorted_players': sorted_players
+    })
 
 
 @login_required
@@ -581,4 +596,6 @@ def match_detail(request, match_id):
     })
 
 def health_check(request):
+    response = HttpResponse("OK", content_type="text/plain")
+    print(response)
     return HttpResponse("OK", content_type="text/plain")

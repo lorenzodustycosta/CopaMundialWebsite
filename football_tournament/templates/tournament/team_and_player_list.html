@@ -1,5 +1,6 @@
 {% extends 'tournament/base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'styles/team_and_player_list.css' %}">
@@ -12,7 +13,7 @@
     <div class="team-card">
         <h3>{{ team.name }}</h3>
         <ul>
-            {% for player in team.players.all %}
+            {% for player in sorted_players|get_item:team.id %}
             <li>{{ player.surname }} {{ player.name }}</li>
             {% empty %}
             <li>No players listed.</li>
