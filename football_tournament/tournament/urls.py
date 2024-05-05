@@ -22,5 +22,7 @@ urlpatterns = [
     path('teams/<int:pk>/delete/', views.DeleteTeamView.as_view(), name='delete_team'),
     path('team/<int:pk>/edit/', views.create_or_update_team, name='create_or_update_team'),  # For editing an existing team
     path('matches/<int:match_id>/', views.match_detail, name='match_detail'),
+    path('document_list/', views.document_list, name='document_list'),
+    path('download/<int:doc_id>/', views.download_document, name='download_document'),
     path('health-check/', views.health_check, name='health-check'),
 ]

@@ -1,0 +1,21 @@
+{% extends 'tournament/base.html' %}
+
+{% load static %}
+{% load i18n %}
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Documenti</h2>
+<ul>
+    {% for document in documents %}
+    <li>
+        {{ document.title }}: 
+        <a href="{% url 'download_document' document.id %}">Download</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -15,6 +15,3 @@ python manage.py migrate
 if ! python manage.py checksuperuser; then
     python manage.py createsuperuser
 fi
-
-# Deactivate the virtual environment
-deactivate

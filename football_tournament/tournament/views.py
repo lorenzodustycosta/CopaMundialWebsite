@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm, Goal, PlayerGoalsForm
+from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm, Goal, PlayerGoalsForm, Document
 from django.db.models import Prefetch, Count
 import random
 from django.db.models import Count, Sum, F, Case, When, IntegerField, F, Q, Value
@@ -595,7 +595,19 @@ def match_detail(request, match_id):
         'mvp': match.mvp
     })
 
+
+def document_list(request):
+    documents = Document.objects.all()
+    return render(request, 'tournament/document_list.html', {'documents': documents})
+
+
+def download_document(request, doc_id):
+    doc = get_object_or_404(Document, id=doc_id)
+    response = HttpResponse(doc.file, content_type='application/octet-stream')
+    new_filename = doc.file.name.replace("documents/","").replace("_","")
+    response['Content-Disposition'] = 'attachment; filename="%s"' % new_filename
+    return response
+
 def health_check(request):
     response = HttpResponse("OK", content_type="text/plain")
-    print(response)
-    return HttpResponse("OK", content_type="text/plain")
+    return response
