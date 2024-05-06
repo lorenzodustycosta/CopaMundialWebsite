@@ -604,7 +604,7 @@ def document_list(request):
 def download_document(request, doc_id):
     doc = get_object_or_404(Document, id=doc_id)
     response = HttpResponse(doc.file, content_type='application/octet-stream')
-    new_filename = doc.file.name.replace("documents/","").replace("_","")
+    new_filename = doc.file.name.replace("documents/","").replace("_","").capitalize()
     response['Content-Disposition'] = 'attachment; filename="%s"' % new_filename
     return response
 
