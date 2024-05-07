@@ -62,6 +62,10 @@
             <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
         </div>
         {% endfor %}
+        {% if context.finals_matches|length == 0 %}
+        <h3 class="stage">Finale 3-4</h3>
+        <h3 class="stage">Finale 1-2</h3>
+        {% else %}
         {% for match in context.finals_matches %}
         <h3 class="stage">{{match.group}}</h3>
         <div class="matchup">
@@ -71,6 +75,7 @@
             <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
         </div>
         {% endfor %}
+        {% endif %}
         <h3 class="stage">Podio</h3>
         {% for team in context.winners %}
         <div class="matchup">

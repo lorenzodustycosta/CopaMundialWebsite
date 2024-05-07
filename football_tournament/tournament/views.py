@@ -437,21 +437,22 @@ def ranking(request):
 
         finale_3_4 = Match.objects.filter(validated=True, group='Finale 3-4')
         finale_1_2 = Match.objects.filter(validated=True, group='Finale 1-2')
-        finale_3_4 = finale_3_4[0]
-        finale_1_2 = finale_1_2[0]
-
         winners = []
-        if finale_1_2.score_home_team > finale_1_2.score_away_team:
-            winners.append(finale_1_2.home_team)
-            winners.append(finale_1_2.away_team)
-        else:
-            winners.append(finale_1_2.away_team)
-            winners.append(finale_1_2.home_team)
-            
-        if finale_3_4.score_home_team > finale_3_4.score_away_team:
-            winners.append(finale_3_4.home_team)
-        else:
-            winners.append(finale_3_4.away_team)
+        if finale_3_4 and finale_1_2:
+            finale_3_4 = finale_3_4[0]
+            finale_1_2 = finale_1_2[0]
+
+            if finale_1_2.score_home_team > finale_1_2.score_away_team:
+                winners.append(finale_1_2.home_team)
+                winners.append(finale_1_2.away_team)
+            else:
+                winners.append(finale_1_2.away_team)
+                winners.append(finale_1_2.home_team)
+                
+            if finale_3_4.score_home_team > finale_3_4.score_away_team:
+                winners.append(finale_3_4.home_team)
+            else:
+                winners.append(finale_3_4.away_team)
 
         context = {
             'qualified_team_names': qualified_team_names,
