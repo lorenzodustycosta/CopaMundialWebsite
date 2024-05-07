@@ -27,8 +27,8 @@ class Team(models.Model):
 class Player(models.Model):
     team = models.ForeignKey(
         Team, related_name='players', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, default='')
-    surname = models.CharField(max_length=100, default='')
+    name = models.CharField(max_length=100, default='', blank=True)
+    surname = models.CharField(max_length=100, default='', blank=True)
 
     def __str__(self):
         return f"{self.surname} {self.name} {self.team.name}"

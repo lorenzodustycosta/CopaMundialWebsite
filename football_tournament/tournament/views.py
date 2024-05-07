@@ -211,8 +211,7 @@ def group_draw(request):
             all_groups = Group.objects.all()
             tournament_schedule = create_tournament_schedule(
                 start_date, all_groups)
-            tournament_schedule = adjust_for_special_team(tournament_schedule)
-
+            
             for match_info in tournament_schedule:
                 group = get_object_or_404(Group, name=match_info['group'])
                 Match.objects.create(
@@ -234,29 +233,6 @@ def group_draw(request):
     return render(request, 'tournament/group_draw.html', {'unassigned_teams': unassigned_teams, 'groups': groups})
 
 
-def adjust_for_special_team(tournament_schedule, special_team_name='Sottomarini Gialli'):
-    # Go through each match in the schedule
-    for match_info in tournament_schedule:
-        # Check if the special team is playing in this match
-        if match_info['home_team'] == special_team_name or match_info['away_team'] == special_team_name:
-            # Assign the special team to the Green pitch
-            match_info['pitch'] = 'Verde'
-            # Get the date and time of the current match
-            match_date = match_info['date']
-            match_time = match_info['time']
-
-            # Find all matches that occur at the same date and time
-            same_time_matches = [
-                m for m in tournament_schedule if m['date'] == match_date and m['time'] == match_time]
-
-            # Assign the other match at the same time to the Blue pitch
-            for other_match_info in same_time_matches:
-                if other_match_info is not match_info:
-                    other_match_info['pitch'] = 'Blu'
-
-    return tournament_schedule
-
-
 def cleanup_matches():
     # Assuming `Match` has related objects that need to be cleared as well
     # This will delete all matches and any related objects via cascade deletion
@@ -267,6 +243,8 @@ def create_tournament_schedule(start_date, groups_queryset):
     # Initialize a list for all matches across all groups
     all_matches = []
 
+    match_times = cycle(['20:30','21:30','22:30'])
+    
     # Generate round-robin schedules for each group
     for group in groups_queryset:
         rounds = round_robin(list(group.teams.all()))
@@ -289,26 +267,24 @@ def create_tournament_schedule(start_date, groups_queryset):
     # Assign match dates, times, and pitches
     current_date = start_date
     for i, match in enumerate(all_matches):
-        if i % 6 < 4:  # First four matches on Tuesday
+        if i % 6 < 3:  # First four matches on Tuesday
             if i % 6 == 0:  # Reset to the next Tuesday every 6 matches
                 current_date += timedelta(days=7 - current_date.weekday() +
-                                          1) if i != 0 else timedelta(0)
-            # Alternate match times for Tuesday
-            match_time = '20:30' if i % 2 == 0 else '21:30'
-            pitch = 'Blu' if i % 4 < 2 else 'Verde'  # Alternate pitches
+                                                1) if i != 0 else timedelta(0)
         else:  # Remaining two matches on Wednesday
-            if i % 6 == 4:  # Move to Wednesday after the first four matches
+            if i % 6 == 3:  # Move to Wednesday after the first four matches
                 current_date += timedelta(days=1)
-            match_time = '20:30'  # Fixed match time for Wednesday
-            pitch = 'Blu' if i % 6 == 4 else 'Verde'  # Alternate pitches
+        
+        print(f"{i} {current_date} {match['home_team']} - {match['away_team']}")
 
+        match_time = next(match_times)
         sorted_schedule.append({
             'date': current_date,
             'group': match['group'],
             'home_team': match['home_team'],
             'away_team': match['away_team'],
             'time': match_time,
-            'pitch': pitch
+            'pitch': 'Blu'
         })
 
     return sorted_schedule
