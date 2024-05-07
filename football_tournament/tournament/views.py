@@ -53,7 +53,7 @@ def manage_matches(request):
     else:
         semifinals_all_validated = False
 
-    finals_matches = matches.filter(group='Finali')
+    finals_matches = matches.filter(group__startswith='Finale')
     if finals_matches.count() > 0:
         finals_all_validated = finals_matches.filter(
             validated=False).count() == 0
@@ -104,11 +104,43 @@ def end_quarterfinals(request):
 
 
 def end_semifinals(request):
+    all_matches = Match.objects.filter(validated=True, group='Semifinali')
+    winners = []
+    loosers = []
+    for m in all_matches:
+        if m.score_home_team > m.score_away_team:
+            winners.append(m.home_team)
+            loosers.append(m.away_team)
+        else:
+            winners.append(m.away_team)
+            loosers.append(m.home_team)
+    
+    Match.objects.create(
+        stage='Eliminazione',
+        group='Finale 3-4',
+        home_team=loosers[0],
+        away_team=loosers[1],
+        date=date(2024, 7, 2),
+        pitch='Blu',
+        time='20:30',
+    )
+    
+    Match.objects.create(
+        stage='Eliminazione',
+        group='Finale 1-2',
+        home_team=winners[0],
+        away_team=winners[1],
+        date=date(2024, 7, 2),
+        pitch='Blu',
+        time='21:30',
+    )
+           
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/manage_matches.html', {'matches': matches})
 
 
-def end_finals(request):
+
+def end_finals(request):      
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/manage_matches.html', {'matches': matches})
 
@@ -394,7 +426,7 @@ def ranking(request):
         semifinals_matches = Match.objects.filter(
             stage='Eliminazione', group='Semifinali')
         finals_matches = Match.objects.filter(
-            stage='Eliminazione', group='Finali')
+            stage='Eliminazione', group__startswith='Finale')
 
         first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
             sorted_groups)
@@ -402,18 +434,39 @@ def ranking(request):
             second_place_teams + qualified_third_place_teams
         qualified_team_names = [team['team_name'] for team in qualified_teams]
 
+
+        finale_3_4 = Match.objects.filter(validated=True, group='Finale 3-4')
+        finale_1_2 = Match.objects.filter(validated=True, group='Finale 1-2')
+        finale_3_4 = finale_3_4[0]
+        finale_1_2 = finale_1_2[0]
+
+        winners = []
+        if finale_1_2.score_home_team > finale_1_2.score_away_team:
+            winners.append(finale_1_2.home_team)
+            winners.append(finale_1_2.away_team)
+        else:
+            winners.append(finale_1_2.away_team)
+            winners.append(finale_1_2.home_team)
+            
+        if finale_3_4.score_home_team > finale_3_4.score_away_team:
+            winners.append(finale_3_4.home_team)
+        else:
+            winners.append(finale_3_4.away_team)
+
         context = {
             'qualified_team_names': qualified_team_names,
             'quarterfinals_matches': quarterfinals_matches,
             'semifinals_matches': semifinals_matches,
             'finals_matches': finals_matches,
+            'winners': winners
         }
 
     return render(request, 'tournament/ranking.html', {'sorted_groups': sorted_groups,
                                                        'drawing_done': drawing_done,
                                                        'top_scorers': top_scorers,
                                                        'mvp_ranking': mvp_ranking,
-                                                       'context': context
+                                                       'context': context,
+                                                       'winners': winners
                                                        })
 
 
@@ -500,41 +553,50 @@ def team_list(request):
 
 @login_required
 def create_or_update_team(request, pk=None):
-    if pk:
-        # Safely get the object or return 404
-        team = get_object_or_404(Team, pk=pk)
-    else:
-        team = None  # Define team as None if no pk is provided
+    # Fetch the team instance by pk or set to None for creation
+    team = get_object_or_404(Team, pk=pk) if pk else None
 
+    # Define the formset with deletion enabled
     TeamFormSet = inlineformset_factory(
-        Team, Player, form=PlayerForm, extra=12, can_delete=True)
+        Team, Player, form=PlayerForm, extra=12 if not pk else 0, can_delete=True)
 
     if request.method == 'POST':
-        team_form = TeamForm(request.POST, instance=team)
-        formset = TeamFormSet(request.POST, instance=team)
-
-        if team_form.is_valid() and formset.is_valid():
-            created_team = team_form.save()  # Save the team and capture the instance
-            formset.instance = created_team
-            formset.save()  # Save the formset data
-            return redirect('manage_teams')
-
+        # Handle form submission
+        return handle_post(request, team, TeamFormSet)
     else:
-        team_form = TeamForm(instance=team)
+        # Handle initial form loading
+        return handle_initial_form(request, team, TeamFormSet)
 
-        if team is None:
-            # If creating a new team, prepopulate the players
-            initial_players = [{
-                'name': f'name_{i}',
-                'surname': f'surname_{i}'
-            } for i in range(1, 13)]
+def handle_post(request, team, TeamFormSet):
+    print("Handle post")
+    # Initialize forms with POST data
+    team_form = TeamForm(request.POST, instance=team)
+    formset = TeamFormSet(request.POST, instance=team)
 
-            formset = TeamFormSet(instance=team, initial=initial_players)
-        else:
-            TeamFormSet = inlineformset_factory(
-                Team, Player, form=PlayerForm, extra=0, can_delete=True)
-            formset = TeamFormSet(instance=team)
+    if team_form.is_valid() and formset.is_valid():
+        # Save the team and update the formset instance
+        created_team = team_form.save()
+        formset.instance = created_team
+        formset.save()
+        return redirect('manage_teams')
+    
+    # If forms are not valid, re-render the page with error messages
+    return render(request, 'tournament/create_or_update_team.html', {
+        'team_form': team_form,
+        'formset': formset,
+        'team': team
+    })
 
+def handle_initial_form(request, team, TeamFormSet):
+    print("Handle Initial Form")
+    # Prepare an empty form or preload data for editing
+    team_form = TeamForm(instance=team)
+    initial_players = [{
+        'name': f'name_{i}',
+        'surname': f'surname_{i}'
+    } for i in range(1, 13)] if team is None else []
+
+    formset = TeamFormSet(instance=team, initial=initial_players)
     return render(request, 'tournament/create_or_update_team.html', {
         'team_form': team_form,
         'formset': formset,

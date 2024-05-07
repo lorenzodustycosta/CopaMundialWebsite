@@ -5,9 +5,10 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'styles/create_or_update_team.css' %}">
-<div class="container" style="margin-top: 50px;"> <!-- Increased top margin for overall container -->
+<div class="container" style="margin-top: 50px;">
     <h2 style="margin-bottom: 50px;">{% if team %}Aggiorna Squadra{% else %}Crea Nuova Squadra{% endif %}</h2>
-    <form method="post" action="{% if team %}{% url 'create_or_update_team' team.pk %}{% else %}{% url 'create_team' %}{% endif %}">
+    <form method="post"
+        action="{% if team %}{% url 'create_or_update_team' team.pk %}{% else %}{% url 'create_team' %}{% endif %}">
         {% csrf_token %}
         <div>
             <label for="id_name">{% trans "Team Name" %}:</label>
@@ -15,23 +16,78 @@
         </div>
 
         {{ formset.management_form }}
-        
-        {% for form in formset %}
-        {{ form.id }}
-        <div class="player" style="margin-bottom: 20px; margin-top: 20px;"> <!-- Increased space between players -->
-            <div class="player-field">
-                <label for="{{ form.name.id_for_label }}">{% trans "Name" %}:</label>
-                {{ form.name }}
+
+        <div id="formset-container">
+            {% for form in formset %}
+            {{ form.id }}
+            <div class="player" style="margin-bottom: 20px; margin-top: 20px;">
+                <div class="player-field">
+                    <label for="{{ form.name.id_for_label }}">{% trans "Name" %}:</label>
+                    {{ form.name }}
+                </div>
+                <div class="player-field">
+                    <label for="{{ form.surname.id_for_label }}">{% trans "Surname" %}:</label>
+                    {{ form.surname }}
+                </div>
+                <div class="player-field">
+                    <label for="{{ form.DELETE.id_for_label }}">{{ form.DELETE.label }}</label>
+                    {{ form.DELETE }}
+                </div>
             </div>
-            <div class="player-field">
-                <label for="{{ form.surname.id_for_label }}">{% trans "Surname" %}:</label>
-                {{ form.surname }}
-            </div>
+            {% endfor %}
+            <!-- This input is part of the management form Django uses to track the total number of forms in the formset -->
         </div>
-        {% endfor %}
-        
+        <input type="hidden" name="form-TOTAL_FORMS" id="id_form-TOTAL_FORMS" value="{{ formset.total_form_count }}"
+            class="total-forms">
+
+        <button type="button" id="add-player" class="btn btn-info">Add Player</button>
         <button type="submit" class="btn btn-success">Save Team</button>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var container = document.getElementById('formset-container');
+    var addButton = document.getElementById('add-player');
+    var totalForms = document.getElementById('id_players-TOTAL_FORMS'); // Access the correct ID for TOTAL_FORMS
+
+    var formCount = parseInt(totalForms.value, 10);
+
+    addButton.addEventListener('click', function() {
+        var lastPlayerForm = container.querySelector('.player:last-child');
+        if (lastPlayerForm) {
+            var newForm = lastPlayerForm.cloneNode(true);
+            var newIndex = formCount;  // Determine the new index for the cloned form
+
+            newForm.querySelectorAll('input, label').forEach(function(element) {
+                // Update IDs and names for new form index
+                if (element.name) {
+                    element.name = element.name.replace(/-\d+-/, '-' + newIndex + '-');
+                }
+                if (element.id) {
+                    element.id = element.id.replace(/-\d+-/, '-' + newIndex + '-');
+                }
+                if (element.tagName === 'LABEL' && element.htmlFor) {
+                    element.htmlFor = element.htmlFor.replace(/-\d+-/, '-' + newIndex + '-');
+                }
+                // Reset values for text inputs and uncheck checkboxes
+                if (element.type === 'text') {
+                    element.value = '';
+                } else if (element.type === 'checkbox') {
+                    element.checked = false;
+                }
+            });
+
+            container.appendChild(newForm);
+            formCount++;  // Increment form count
+            totalForms.value = formCount.toString();  // Update the TOTAL_FORMS input
+        } else {
+            alert("No player form found for cloning.");
+        }
+    });
+});
+</script>
+
+
 
 {% endblock %}

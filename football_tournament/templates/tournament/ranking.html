@@ -62,13 +62,19 @@
             <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
         </div>
         {% endfor %}
-        <h3 class="stage">Finali</h3>
         {% for match in context.finals_matches %}
+        <h3 class="stage">{{match.group}}</h3>
         <div class="matchup">
             <span>{{ match.home_team.name }}</span>
             <span>vs</span>
             <span>{{ match.away_team.name }}</span>
             <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
+        </div>
+        {% endfor %}
+        <h3 class="stage">Podio</h3>
+        {% for team in context.winners %}
+        <div class="matchup">
+            <span>{{ team.name }}</span>
         </div>
         {% endfor %}
     </div>
