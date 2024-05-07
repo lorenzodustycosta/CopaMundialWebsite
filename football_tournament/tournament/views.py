@@ -438,6 +438,7 @@ def ranking(request):
         finale_3_4 = Match.objects.filter(validated=True, group='Finale 3-4')
         finale_1_2 = Match.objects.filter(validated=True, group='Finale 1-2')
         winners = []
+        
         if finale_3_4 and finale_1_2:
             finale_3_4 = finale_3_4[0]
             finale_1_2 = finale_1_2[0]
@@ -467,7 +468,6 @@ def ranking(request):
                                                        'top_scorers': top_scorers,
                                                        'mvp_ranking': mvp_ranking,
                                                        'context': context,
-                                                       'winners': winners
                                                        })
 
 
