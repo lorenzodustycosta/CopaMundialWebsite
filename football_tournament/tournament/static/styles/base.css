@@ -82,11 +82,13 @@ body::before {
     color: inherit; /* Inherits color from the parent class .sponsor */
     margin-bottom: 50px;
     margin-top: 10px;
-    font-size: 20px
+    font-size: 20px;
+    justify-self: center;
 }
 
 .sponsor img {
-    width: 80%; /* Ensure the images use the full width of the sidebar */
+    width: 90%; /* Ensure the images use the full width of the sidebar */
     height: auto;
     margin-top: 10px;
+    justify-self: center;
 }
