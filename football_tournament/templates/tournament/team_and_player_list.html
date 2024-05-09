@@ -14,7 +14,9 @@
         <h3>{{ team.name }}</h3>
         <ul>
             {% for player in sorted_players|get_item:team.id %}
+            {% if player.is_fake == False%}
             <li>{{ player.surname }} {{ player.name }}</li>
+            {% endif %}
             {% empty %}
             <li>No players listed.</li>
             {% endfor %}

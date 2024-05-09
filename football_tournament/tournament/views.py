@@ -220,49 +220,50 @@ def get_knockout_teams(sorted_groups):
 
 
 def group_draw(request):
+    last_picked_team_id = None  # Initialize variable to store the ID of the last picked team
+
     if 'draw' in request.POST:
-        # Perform draw for one random team
         unassigned_teams = Team.objects.filter(group__isnull=True)
         if unassigned_teams:
-            team = random.choice(unassigned_teams)
-            # Get groups with less than 4 teams
+            team = random.choice(list(unassigned_teams))
             groups = Group.objects.annotate(
                 num_teams=Count('teams')).filter(num_teams__lt=4)
             if groups:
                 group = random.choice(list(groups))
                 team.group = group
                 team.save()
+                last_picked_team_id = team.id  # Store the last picked team's ID
 
     elif 'reset' in request.POST:
-        # Reset all group-team assignments
         Team.objects.all().update(group=None)
+
     elif 'start_tournament' in request.POST:
         with transaction.atomic():
+            # Assume cleanup_matches() and create_tournament_schedule() are defined elsewhere
             cleanup_matches()
             start_date = date(2024, 6, 4)
             all_groups = Group.objects.all()
-            tournament_schedule = create_tournament_schedule(
-                start_date, all_groups)
-            
+            tournament_schedule = create_tournament_schedule(start_date, all_groups)
+
             for match_info in tournament_schedule:
                 group = get_object_or_404(Group, name=match_info['group'])
                 Match.objects.create(
                     group=group,
-                    home_team=Team.objects.get(
-                        name=match_info['home_team']),
-                    away_team=Team.objects.get(
-                        name=match_info['away_team']),
+                    home_team=Team.objects.get(name=match_info['home_team']),
+                    away_team=Team.objects.get(name=match_info['away_team']),
                     date=match_info['date'],
                     time=match_info['time'],
                     pitch=match_info['pitch'],
                     mvp=None
                 )
 
-    # Teams without a group
     unassigned_teams = Team.objects.filter(group__isnull=True)
-    # All groups (to display assigned teams under each group)
     groups = Group.objects.prefetch_related('teams').order_by('name').all()
-    return render(request, 'tournament/group_draw.html', {'unassigned_teams': unassigned_teams, 'groups': groups})
+    return render(request, 'tournament/group_draw.html', {
+        'unassigned_teams': unassigned_teams,
+        'groups': groups,
+        'last_picked_team_id': last_picked_team_id  # Pass the last picked team's ID to the template
+    })
 
 
 def cleanup_matches():
@@ -412,9 +413,9 @@ def ranking(request):
         sorted_groups = compute_ranking(all_teams)
 
         top_scorers = Player.objects.annotate(
-            total_goals=Coalesce(Sum('goals__number_of_goals'), 0)
+            total_goals=Coalesce(Sum('goal__number_of_goals'), 0)
         ).filter(
-            total_goals__gt=0  # This filters out players with 0 goals
+            total_goals__gt=0, is_fake=False # This filters out players with 0 goals
         ).order_by('-total_goals')[:10]
 
         mvp_ranking = Player.objects.annotate(
@@ -490,10 +491,8 @@ def edit_match(request, match_id):
 
     else:
         match_form = MatchForm(instance=match)
-        home_goals_form = PlayerGoalsForm(
-            request.POST or None, team=match.home_team, match=match)
-        away_goals_form = PlayerGoalsForm(
-            request.POST or None, team=match.away_team, match=match)
+        home_goals_form = PlayerGoalsForm(team=match.home_team, match=match)
+        away_goals_form = PlayerGoalsForm(team=match.away_team, match=match)
 
     return render(request, 'tournament/edit_match.html', {
         'match_form': match_form,
@@ -503,16 +502,22 @@ def edit_match(request, match_id):
 
 
 def save_goals(form, match, team):
+    print(form)
     for field_name, value in form.cleaned_data.items():
         if value and value > 0:  # Make sure there is a value to save
-            player_id = int(field_name.split('_')[1])
-            player = Player.objects.get(id=player_id)
-            Goal.objects.update_or_create(
+            if field_name.startswith('goals'):
+                player_id = int(field_name.split('_')[1])
+                player = Player.objects.get(id=player_id)
+            else:
+                # Use the dummy player for own goals
+                player = Player.objects.get(id=-1, team=team)
+                print(player)
+            # Handle saving/updating the goal
+            g, created = Goal.objects.update_or_create(
                 match=match,
                 player=player,
                 defaults={'number_of_goals': value}
             )
-
 
 def team_and_player_list(request):
     # Fetch all teams, ordered by name
@@ -579,6 +584,13 @@ def handle_post(request, team, TeamFormSet):
         created_team = team_form.save()
         formset.instance = created_team
         formset.save()
+        
+        Player.objects.update_or_create(
+            team=created_team,
+            is_fake=True,
+            defaults={'name': 'autogoal', 'surname': 'autogoal'}
+        )
+                
         return redirect('manage_teams')
     
     # If forms are not valid, re-render the page with error messages
@@ -592,11 +604,13 @@ def handle_initial_form(request, team, TeamFormSet):
     print("Handle Initial Form")
     # Prepare an empty form or preload data for editing
     team_form = TeamForm(instance=team)
-    initial_players = [{
-        'name': f'name_{i}',
-        'surname': f'surname_{i}'
-    } for i in range(1, 13)] if team is None else []
-
+    if team is None:
+        initial_players = [{'name': 'autogoal', 'surname': 'autogoal', 'is_fake': True}] + [{
+            'name': f'name_{i}',
+            'surname': f'surname_{i}'
+        } for i in range(1, 13)] 
+    else:
+        initial_players = []
     formset = TeamFormSet(instance=team, initial=initial_players)
     return render(request, 'tournament/create_or_update_team.html', {
         'team_form': team_form,

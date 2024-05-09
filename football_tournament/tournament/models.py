@@ -29,6 +29,7 @@ class Player(models.Model):
         Team, related_name='players', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, default='', blank=True)
     surname = models.CharField(max_length=100, default='', blank=True)
+    is_fake = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.surname} {self.name} {self.team.name}"
@@ -42,10 +43,12 @@ class Match(models.Model):
     )
     date = models.DateField(_("Date"), default="2024-06-05")
     time = models.TimeField(_("Time"), default="20:00:00")
-    home_team = models.ForeignKey(Team, related_name='home_matches', on_delete=models.CASCADE, verbose_name=_("Home Team"))
-    away_team = models.ForeignKey(Team, related_name='away_matches', on_delete=models.CASCADE, verbose_name=_("Away Team"))
+    home_team = models.ForeignKey(
+        Team, related_name='home_matches', on_delete=models.CASCADE, verbose_name=_("Home Team"))
+    away_team = models.ForeignKey(
+        Team, related_name='away_matches', on_delete=models.CASCADE, verbose_name=_("Away Team"))
     pitch = models.CharField(
-        _("Pitch"), 
+        _("Pitch"),
         max_length=50,
         choices=PITCH_CHOICES,
         default='Da definire'
@@ -65,53 +68,52 @@ class Match(models.Model):
     def __str__(self):
         return f"{self.home_team} vs {self.away_team}"
 
+
 class MatchForm(forms.ModelForm):
+
     class Meta:
         model = Match
-        fields = ['date', 'time', 'home_team', 'away_team', 'score_home_team',
-                  'score_away_team', 'pitch', 'stage', 'group', 'mvp', 'validated']
+        fields = ['date', 'time', 'home_team', 'away_team', 'score_home_team', 'score_away_team',
+                  'pitch', 'stage', 'group', 'mvp', 'validated']
         labels = {
             'date': _('Date'),
             'time': _('Time'),
+            'home_team': _('Home Team'),
+            'away_team': _('Away Team'),
             'score_home_team': _('Home Score'),
             'score_away_team': _('Away Score'),
             'pitch': _('Pitch'),
-            'group': _('Group'),
             'stage': _('Stage'),
-            'home_team': _('Home Team'),
-            'away team': _('Away Team'),
-            'validated': _('Validated'),
-            'mvp': _('MVP')
+            'group': _('Group'),
+            'mvp': _('MVP'),
+            'validated': _('Validated')
         }
 
     def __init__(self, *args, **kwargs):
-            super(MatchForm, self).__init__(*args, **kwargs)
-            instance = kwargs.get('instance')
-            
-            # Filter the mvp queryset based on the instance of the match if it exists
-            if instance and instance.home_team and instance.away_team:
-                valid_teams = [instance.home_team_id, instance.away_team_id]
-                self.fields['mvp'].queryset = Player.objects.filter(team_id__in=valid_teams)
-            elif self.is_bound:
-                # Handle dynamically when creating a new match or when teams are changed in the form
-                home_team_id = self.data.get('home_team')
-                away_team_id = self.data.get('away_team')
-                if home_team_id and away_team_id:
-                    valid_teams = [home_team_id, away_team_id]
-                    self.fields['mvp'].queryset = Player.objects.filter(team_id__in=valid_teams)
-                else:
-                    self.fields['mvp'].queryset = Player.objects.none()
+        super(MatchForm, self).__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+
+        if instance:
+            valid_teams = [instance.home_team_id, instance.away_team_id]
+            self.fields['mvp'].queryset = Player.objects.filter(
+                team_id__in=valid_teams,  is_fake=False)
+        elif self.is_bound:
+            home_team_id = self.data.get('home_team')
+            away_team_id = self.data.get('away_team')
+            if home_team_id and away_team_id:
+                valid_teams = [home_team_id, away_team_id]
+                self.fields['mvp'].queryset = Player.objects.filter(
+                    team_id__in=valid_teams, is_fake=False)
             else:
-                # Default empty queryset or all players if no teams are selected yet
                 self.fields['mvp'].queryset = Player.objects.none()
-                
+        else:
+            self.fields['mvp'].queryset = Player.objects.none()
+
 
 class Goal(models.Model):
-    match = models.ForeignKey(
-        'Match', on_delete=models.CASCADE, related_name='goals')
-    player = models.ForeignKey(
-        'Player', on_delete=models.CASCADE, related_name='goals')
-    number_of_goals = models.PositiveIntegerField(default=0)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True, blank=True)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    number_of_goals = models.IntegerField(default=0)
 
     @property
     def goals_count(self):
@@ -147,15 +149,15 @@ class PlayerForm(forms.ModelForm):
 class PlayerGoalsForm(forms.ModelForm):
     class Meta:
         model = Goal
-        fields = []
+        fields = []  # No fields defined since we're adding them dynamically
 
     def __init__(self, *args, **kwargs):
-        # Extract the team argument before initializing the superclass
         team = kwargs.pop('team', None)
         match = kwargs.pop('match', None)
         super(PlayerGoalsForm, self).__init__(*args, **kwargs)
 
         if team and match:
+            # Add fields for real players
             for player in Player.objects.filter(team=team):
                 field_name = f'goals_{player.id}'
                 initial_goals = Goal.objects.filter(player=player, match=match).aggregate(

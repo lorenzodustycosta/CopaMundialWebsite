@@ -1,11 +1,16 @@
 .player-goal-entry {
     display: grid;
-    grid-template-columns: 1fr 4fr 4fr;
-    /* justify-content: space-between; */
+    grid-template-columns: 1fr 4fr 1fr; /* Adjusted the column sizes for a better fit */
     align-items: center;
     margin-bottom: 15px;
 }
-.player-goal-entry label, .player-goal-entry input {
-    /* margin-right: 10px; */
-    text-align: center;
+
+.player-goal-entry label {
+    text-align: right; /* Ensures labels are right-aligned */
+    padding-right: 10px; /* Adds some spacing between label and input */
+}
+
+.player-goal-entry input, .player-goal-entry select {
+    width: 100%; /* Forces inputs to take up the full column width */
+    box-sizing: border-box; /* Includes padding and border in the element's width */
 }

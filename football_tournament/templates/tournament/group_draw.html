@@ -15,7 +15,6 @@
     {% endif %}
 </form>
 
-
 <div class="grid-container">
     <div class="column">
         <h3>Squadre</h3>
@@ -27,7 +26,7 @@
     <div class="column">
         <h3>{{ group.name }}</h3>
         {% for team in group.teams.all %}
-            <div class="group">{{ team.name }}</div>
+            <div class="group {% if team.id == last_picked_team_id %}highlight{% endif %}">{{ team.name }}</div>
         {% endfor %}
     </div>
     {% endfor %}
