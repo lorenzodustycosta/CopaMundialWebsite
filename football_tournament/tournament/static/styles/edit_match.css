@@ -1,12 +1,12 @@
 .player-goal-entry {
     display: grid;
-    grid-template-columns: 1fr 4fr 1fr; /* Adjusted the column sizes for a better fit */
+    grid-template-columns: 1fr 1fr 4fr; /* Adjusted the column sizes for a better fit */
     align-items: center;
     margin-bottom: 15px;
 }
 
 .player-goal-entry label {
-    text-align: right; /* Ensures labels are right-aligned */
+    text-align: left; /* Ensures labels are right-aligned */
     padding-right: 10px; /* Adds some spacing between label and input */
 }
 

@@ -588,7 +588,7 @@ def handle_post(request, team, TeamFormSet):
         Player.objects.update_or_create(
             team=created_team,
             is_fake=True,
-            defaults={'name': 'autogoal', 'surname': 'autogoal'}
+            defaults={'name': 'autogoal', 'surname': 'autogoal', 'is_fake': True}
         )
                 
         return redirect('manage_teams')
@@ -605,7 +605,7 @@ def handle_initial_form(request, team, TeamFormSet):
     # Prepare an empty form or preload data for editing
     team_form = TeamForm(instance=team)
     if team is None:
-        initial_players = [{'name': 'autogoal', 'surname': 'autogoal', 'is_fake': True}] + [{
+        initial_players = [{
             'name': f'name_{i}',
             'surname': f'surname_{i}'
         } for i in range(1, 13)] 

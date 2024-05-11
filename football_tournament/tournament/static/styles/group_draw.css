@@ -23,3 +23,45 @@
     font-weight: bold;
     color: white;
 }
+
+h2 {
+    font-size: 28px;
+}
+
+form {
+    display: flex; /* Uses Flexbox to layout the buttons */
+    justify-content: center; /* Distributes space between buttons evenly */
+    align-items: center; /* Vertically aligns the buttons at their center */
+    margin-bottom: 20px; /* Keeps the original margin */
+}
+
+.submit {
+    width: 200px; /* Keeps the original width */
+    height: 200px; /* Keeps the original height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    border: none;
+    background-color: #f0f0f0; /* Example background color */
+    color: #333; /* Example text color */
+    font-size: 16px;
+    cursor: pointer;
+    border: 2px;
+    margin-right: 20px;
+    font-size: 20px;
+    border: 2px solid #333; /* Adds a blue border */
+    border-radius: 5px; /* Optional: adds slight rounding to corners */
+}
+
+.submit:last-child {
+    margin-right: 0; /* Removes margin from the last button */
+}
+
+.submit img {
+    margin-top: 10px; /* Adds space between the text and the image */
+    width: 70px; /* Example size, adjust as needed */
+    height: 70px; /* Example size, adjust as needed */
+}
