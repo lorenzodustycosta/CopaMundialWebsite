@@ -22,7 +22,15 @@
                 <span class="match-vs">vs</span>
                 <span class="match-away">{{ match.away_team.name }}</span>
             </div>
-            <div class="match-score">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
+            <div class="match-score">
+                {{ match.score_home_team }} - {{ match.score_away_team }}
+                {% if match.dts %}
+                (dts)
+                {% endif %}
+                {% if match.dcr %}
+                (dcr)
+                {% endif %}
+            </div>
             <div class="match-status">
                 {% if match.validated %}
                 <span class="status-concluded">Concluso</span>

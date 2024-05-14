@@ -120,7 +120,7 @@ def end_semifinals(request):
         group='Finale 3-4',
         home_team=loosers[0],
         away_team=loosers[1],
-        date=date(2024, 7, 2),
+        date=date(2024, 7, 5),
         pitch='Blu',
         time='20:30',
     )
@@ -130,14 +130,13 @@ def end_semifinals(request):
         group='Finale 1-2',
         home_team=winners[0],
         away_team=winners[1],
-        date=date(2024, 7, 2),
+        date=date(2024, 7, 5),
         pitch='Blu',
         time='21:30',
     )
            
     matches = Match.objects.all().order_by('date')
     return render(request, 'tournament/manage_matches.html', {'matches': matches})
-
 
 
 def end_finals(request):      

@@ -13,8 +13,8 @@ from tournament.views import end_group, end_quarterfinals, end_semifinals, end_f
 def simulate_matches(matches, max_goals_per_player=4):
     for match in matches:
         print("Match:", match)
-        home_players = list(match.home_team.players.all())
-        away_players = list(match.away_team.players.all())
+        home_players = list(match.home_team.players.all())[:3]
+        away_players = list(match.away_team.players.all())[:3]
         all_players = home_players + away_players  # Combine lists of players from both teams
 
         # Assign goals for each player as previously described
@@ -36,6 +36,22 @@ def simulate_matches(matches, max_goals_per_player=4):
         total_home_goals = sum(goal.number_of_goals for goal in Goal.objects.filter(match=match, player__in=home_players))
         total_away_goals = sum(goal.number_of_goals for goal in Goal.objects.filter(match=match, player__in=away_players))
         
+        if match.group in ['Quarti', 'Semifinali'] or match.group.startswith('Finale'):
+            if total_home_goals == total_away_goals:
+                r = random.random()
+                if r < 0.25:
+                    total_home_goals+=1
+                    match.dts = True
+                elif 0.25<=r<0.5:
+                    total_away_goals+=1
+                    match.dts = True
+                elif 0.5<=r<0.75:
+                    total_home_goals+=1
+                    match.dcr = True
+                else:
+                    total_away_goals+=1
+                    match.dcr = True
+
         match.score_home_team = total_home_goals
         match.score_away_team = total_away_goals
         match.validated = True
