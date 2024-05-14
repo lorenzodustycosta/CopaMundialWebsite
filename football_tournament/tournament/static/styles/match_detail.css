@@ -4,23 +4,25 @@
     grid-template-areas:
         "home score away"
         "home-goals . away-goals";
-    grid-template-rows: minmax(100px, auto) auto;
+    grid-template-rows: auto auto; /* Defines rows for the layout */
     text-size-adjust: 100%;
     font-size: 64px;
     color: #EBF3F8;
     text-shadow: 2px 2px 5px black;
+    margin-top: 50px;
 }
 
 .team-name-home, .team-name-away {
-    align-self: start; /* Keeps the name at the top of the container */
     text-align: center; /* Centers the text */
-    grid-row: 1; /* Position in the first row */
     margin: 0 auto; /* Center horizontally in their column */
     font-size: 64px; /* Adjust size as needed */
     line-height: 1.2; /* Adjust line height for better readability when wrapping */
-    max-width: 50%; /* Prevents text from taking up the entire grid space */
-    overflow-wrap: break-word; /* Allows long words to be broken and wrapped to the next line */
-    margin-bottom: 20px;
+    max-width: 100%; /* Prevents text from taking up the entire grid space */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Arrange items in a column */
+    align-items: center; /* Center align the items */
+    line-height: 1.2; /* Adjust line height for better readability when wrapping */
+    max-width: 80%; /* Prevents text from taking up the entire grid space */
 }
 
 .score {
@@ -28,9 +30,17 @@
     align-self: top; /* Vertically centers the score */
     justify-self: center; /* Horizontally centers the score */
     font-size: 64px; /* Ensures score size is consistent */
-    grid-row: 1 / span 2; /* Extends the score cell across both rows to maintain position */
 }
 
+.goal-scorer-home, .goal-scorer-away {
+    display: flex; /* Use flexbox to align items in a row */
+    flex-direction: column; /* Arrange items in a column */
+    align-items: center; /* Center align the items */
+    grid-area: home-goals, away-goals; /* Position in the respective areas */
+    font-size: 48px; /* Example font size */
+    color: #E9F0F8; /* Example color */
+    margin-top: 100px;
+}
 
 .goal-scorer {
     display: flex; /* Use flexbox to align items in a row */
@@ -38,7 +48,7 @@
     white-space: nowrap; /* Prevents wrapping of text to a new line */
     font-size: 48px; /* Example font size */
     color: #E9F0F8; /* Example color */
-    margin-top: 30px;
+    margin-top: 20px; /* Space between goal scorer entries */
 }
 
 .goal-ball {
@@ -46,7 +56,7 @@
     height: 48px; /* Height of the ball icon */
     background-size: cover; /* Ensures the background image covers the element */
     margin-left: 30px; /* Space between text and the first ball icon */
-    margin-right: 5px; /* Space between text and the first ball icon */
+    margin-right: 10px; /* Space between text and the first ball icon */
     display: inline-block; /* Ensures the icon is treated as inline element */
 }
 
@@ -55,6 +65,6 @@
     height: 58px; /* Height of the ball icon */
     background-size: cover; /* Ensures the background image covers the element */
     margin-left: 30px; /* Space between text and the first ball icon */
-    margin-right: 5px; /* Space between text and the first ball icon */
+    margin-right: 10px; /* Space between text and the first ball icon */
     display: inline-block; /* Ensures the icon is treated as inline element */
 }

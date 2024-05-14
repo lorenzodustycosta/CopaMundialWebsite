@@ -58,6 +58,8 @@ class Match(models.Model):
     stage = models.CharField(_("Stage"), max_length=50, default='Gironi')
     group = models.CharField(_("Group"), max_length=50, default='')
     validated = models.BooleanField(_('Validate'), default=False)
+    dts = models.BooleanField(default=False, verbose_name='Overtime')
+    dcr = models.BooleanField(default=False, verbose_name='Penalties')
     mvp = models.ForeignKey(
         Player,
         on_delete=models.SET_NULL,
@@ -73,8 +75,8 @@ class MatchForm(forms.ModelForm):
 
     class Meta:
         model = Match
-        fields = ['date', 'time', 'home_team', 'away_team', 'score_home_team', 'score_away_team',
-                  'pitch', 'stage', 'group', 'mvp', 'validated']
+        fields = ['date', 'time', 'pitch', 'stage', 'group', 'home_team', 'away_team', 'score_home_team', 'score_away_team',
+                  'dts', 'dcr', 'mvp', 'validated']
         labels = {
             'date': _('Date'),
             'time': _('Time'),
@@ -87,6 +89,10 @@ class MatchForm(forms.ModelForm):
             'group': _('Group'),
             'mvp': _('MVP'),
             'validated': _('Validated')
+        }
+        widgets = {
+            'dts': forms.CheckboxInput(),
+            'dcr': forms.CheckboxInput(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -111,7 +117,8 @@ class MatchForm(forms.ModelForm):
 
 
 class Goal(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True, blank=True)
+    player = models.ForeignKey(
+        Player, on_delete=models.CASCADE, null=True, blank=True)
     match = models.ForeignKey(Match, on_delete=models.CASCADE)
     number_of_goals = models.IntegerField(default=0)
 
@@ -171,6 +178,7 @@ class PlayerGoalsForm(forms.ModelForm):
                     }),
                     initial=initial_goals
                 )
+
 
 class Document(models.Model):
     title = models.CharField(max_length=255)

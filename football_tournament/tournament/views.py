@@ -481,7 +481,7 @@ def edit_match(request, match_id):
             request.POST, team=match.home_team, match=match)
         away_goals_form = PlayerGoalsForm(
             request.POST, team=match.away_team, match=match)
-
+       
         if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
 
             updated_match = match_form.save()
