@@ -1,25 +1,26 @@
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(4, 3fr);
-    gap: 300px;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Adjust these fractions as needed */
+    gap: 30px; /* Adjusted gap to a smaller value */
 }
+
 .column {
     display: flex;
     flex-direction: column;
     font-size: 28px;
+    width: 250px; /* Set a fixed width for columns */
 }
+
 .team, .group {
     margin: 5px 0;
     font-size: 28px;
     margin-top: 10px;
     font-weight: bold;
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: visible; /* Ensure the text does not get hidden */
 }
 
-.team highlight {
-    font-weight: bold;
-}
-
-.grid-container .column .group.highlight {
+.group.highlight {
     font-weight: bold;
     color: white;
 }
@@ -29,15 +30,13 @@ h2 {
 }
 
 form {
-    display: flex; /* Uses Flexbox to layout the buttons */
-    justify-content: center; /* Distributes space between buttons evenly */
-    align-items: center; /* Vertically aligns the buttons at their center */
-    margin-bottom: 20px; /* Keeps the original margin */
+    display: flex; 
+    margin-bottom: 20px;
 }
 
 .submit {
-    width: 200px; /* Keeps the original width */
-    height: 200px; /* Keeps the original height */
+    width: 200px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,23 +44,22 @@ form {
     text-align: center;
     padding: 10px;
     border: none;
-    background-color: #f0f0f0; /* Example background color */
-    color: #333; /* Example text color */
+    background-color: rgba(130, 175, 113, 0.8);
+    color: #333;
     font-size: 16px;
     cursor: pointer;
-    border: 2px;
     margin-right: 20px;
     font-size: 20px;
-    border: 2px solid #333; /* Adds a blue border */
-    border-radius: 5px; /* Optional: adds slight rounding to corners */
+    border: 2px solid #333;
+    border-radius: 5px;
 }
 
 .submit:last-child {
-    margin-right: 0; /* Removes margin from the last button */
+    margin-right: 0;
 }
 
 .submit img {
-    margin-top: 10px; /* Adds space between the text and the image */
-    width: 70px; /* Example size, adjust as needed */
-    height: 70px; /* Example size, adjust as needed */
+    margin-top: 10px;
+    width: 70px;
+    height: 70px;
 }
