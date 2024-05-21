@@ -24,13 +24,13 @@ def home(request):
 
 def match_schedule(request):
     # Fetching all matches ordered by date
-    matches = Match.objects.all().order_by('date')
+    matches = Match.objects.all().order_by('date', 'time')
     return render(request, 'tournament/match_schedule.html', {'matches': matches})
 
 
 def manage_matches(request):
     # Fetching all matches ordered by date
-    matches = Match.objects.all().order_by('date')
+    matches = Match.objects.all().order_by('date', 'time')
 
     group_matches = matches.filter(group__startswith='Gruppo')
     if group_matches.count() > 0:
