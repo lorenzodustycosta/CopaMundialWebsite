@@ -100,7 +100,7 @@
             {% for scorer in top_scorers %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ scorer.name }}</td>
+                <td>{{ scorer.surname }}</td>
                 <td>{{ scorer.team.name }}</td>
                 <td>{{ scorer.total_goals }}</td>
             </tr>
@@ -118,7 +118,7 @@
             {% for mvp in mvp_ranking %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td>{{ mvp.name }}</td>
+                <td>{{ mvp.surname }}</td>
                 <td>{{ mvp.team.name }}</td>
                 <td>{{ mvp.mvp_count }}</td>
             </tr>
