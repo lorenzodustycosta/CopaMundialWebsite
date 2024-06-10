@@ -10,7 +10,4 @@ Designed and developed a website to manage and publish the results of a football
 - **Deployment**: Deployed using Render.com and scheduled tasks with Crob-job.org, leveraging free services for cost-efficiency.
 
 ### Project Demo
-<video width="600" controls>
-  <source src="./football_tournament/tournament/static/video/CM.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[Click here to watch the demo video](./football_tournament/tournament/static/video/CM.mp4)
