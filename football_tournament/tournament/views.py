@@ -410,7 +410,7 @@ def compute_ranking(all_teams):
 
     # Sort teams within each group with additional head-to-head comparison for tiebreakers
     sorted_groups = {}
-    for group_name, team_stats in groups.items():
+    for group_name, team_stats in sorted(groups.items()):
         teams = list(team_stats.keys())
 
         # Initial sorting based on primary criteria
