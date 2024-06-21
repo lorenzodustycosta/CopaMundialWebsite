@@ -358,12 +358,13 @@ def compute_ranking(all_teams):
                 'goals_scored': 0,
                 'goals_conceded': 0,
                 'goal_difference': 0,
+                'head_to_head_points': defaultdict(int),  # For head-to-head points
+                'head_to_head_goal_difference': defaultdict(int)  # For head-to-head goal difference
             }
 
     # Fetch matches grouped by group name
     for group_name, teams_info in groups.items():
-        validated_matches = Match.objects.filter(
-            validated=True, group=group_name)
+        validated_matches = Match.objects.filter(validated=True, group=group_name)
 
         for match in validated_matches:
             home_team = match.home_team.name
@@ -391,9 +392,47 @@ def compute_ranking(all_teams):
             teams_info[away_team]['goals_conceded'] += match.score_home_team
             teams_info[away_team]['goal_difference'] += away_goal_diff
 
-    # Sort teams within each group
-    sorted_groups = {group_name: sorted(team_stats.values(), key=lambda x: (-x['points'], -x['goal_difference'], -x['goals_scored'], x['team_name']))
-                     for group_name, team_stats in sorted(groups.items())}
+            # Update head-to-head statistics
+            teams_info[home_team]['head_to_head_points'][away_team] += home_points
+            teams_info[home_team]['head_to_head_goal_difference'][away_team] += home_goal_diff
+
+            teams_info[away_team]['head_to_head_points'][home_team] += away_points
+            teams_info[away_team]['head_to_head_goal_difference'][home_team] += away_goal_diff
+
+    # Function to calculate the sorting key for a given team
+    def sort_key(team, teams_info):
+        return (
+            -teams_info[team]['points'],
+            -teams_info[team]['goal_difference'],
+            -teams_info[team]['goals_scored'],
+            team
+        )
+
+    # Sort teams within each group with additional head-to-head comparison for tiebreakers
+    sorted_groups = {}
+    for group_name, team_stats in groups.items():
+        teams = list(team_stats.keys())
+
+        # Initial sorting based on primary criteria
+        sorted_teams = sorted(teams, key=lambda team: sort_key(team, team_stats))
+
+        # Adjust sorting for teams with equal points based on head-to-head results
+        i = 0
+        while i < len(sorted_teams) - 1:
+            j = i + 1
+            while j < len(sorted_teams) and team_stats[sorted_teams[i]]['points'] == team_stats[sorted_teams[j]]['points']:
+                j += 1
+            if j > i + 1:  # More than one team with the same points
+                sorted_teams[i:j] = sorted(sorted_teams[i:j], key=lambda team: (
+                    -sum(team_stats[team]['head_to_head_points'][opponent] for opponent in sorted_teams[i:j] if opponent != team),
+                    -sum(team_stats[team]['head_to_head_goal_difference'][opponent] for opponent in sorted_teams[i:j] if opponent != team),
+                    -team_stats[team]['goal_difference'],
+                    -team_stats[team]['goals_scored'],
+                    team
+                ))
+            i = j
+
+        sorted_groups[group_name] = [team_stats[team] for team in sorted_teams]
 
     return sorted_groups
 
