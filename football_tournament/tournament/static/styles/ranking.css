@@ -1,88 +1,141 @@
 .content-grid {
     display: grid;
-    grid-template-columns: .9fr 1.2fr .9fr; /* Equal distribution of space among three columns */
-    gap: 20px;
+    grid-template-columns: 0.8fr 2.4fr 0.8fr; /* Colonna centrale più ampia */
+    gap: 60px;
     align-items: start;
     font-size: 16px;
-    margin-left: 20px;
-    margin-right: 20px;
+    max-width: 1600px; /* più larghezza massima */
+    margin: 0 auto;
+    padding: 0 60px; /* più spazio laterale */
 }
 
 .highlight {
-    background-color: #a9c191; /* Light green background for highlighting */
+    background-color: #a9c191;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 50px;
-    /* background-color: white; */
 }
 
 th, td {
     border: 1px solid #ddd;
     text-align: center;
     padding: 8px;
-    height: 30px; 
+    height: 30px;
 }
 
 th.team-name, td.team-name {
     width: 30%;
 }
 
-th, td {
-    width: 17.5%; /* This might need adjustment if it causes visual inconsistency */
+th.col-pos, td.col-pos {
+    width: 5%;
+    text-align: center;
+}
+
+th.col-player, td.col-player {
+    width: 30%;
+    text-align: left;
+}
+
+th.col-team, td.col-team {
+    width: 30%;
+    text-align: left;
+}
+
+th.col-stat, td.col-stat {
+    width: 10%;
+    text-align: center;
 }
 
 .knockout-schedule {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%; /* Ensure it's taking full width or adjust as necessary */
+    text-align: center;
+    width: 100%;
+}
+
+.knockout-schedule .stage {
+    font-size: 22px;
+    margin: 40px 0 20px;
 }
 
 .round {
     margin-bottom: 20px;
 }
 
-.stage {
-    text-align: center;
-    margin-top: 20px; /* Ensures there is a uniform gap from the top of its container */
-    margin-bottom: 20px; /* Ensures there is a uniform gap below it */
-}
-
-.matchup {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.knockout-table {
     width: 100%;
-    padding: 10px 20px; /* Increased horizontal padding for a roomier layout */
-    margin-bottom: 30px; /* Adds more vertical space between each matchup */
+    max-width: 1000px;
+    margin: 0 auto 50px;
+    border-spacing: 0;
+    table-layout: fixed;
 }
 
-.matchup span {
+.knockout-table td {
+    padding: 6px 12px;
+    font-size: 16px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.00);
+    vertical-align: middle;
+    white-space: normal; /* Consente l'andata a capo */
+    word-wrap: break-word; /* Supporta il wrapping delle parole lunghe */
+}
+
+.knockout-table .team-name-home {
+    text-align: right;
+    font-weight: 500;
+    width: 35%;
+}
+
+.knockout-table .vs {
     text-align: center;
-    margin: 0 1%; /* Reduced margin for a more compact layout */
+    font-weight: 400;
+    width: 10%;
+    color: #888;
 }
 
-/* Adjustments for different spans to better manage space */
-.matchup span:nth-child(1), /* Home team name */
-.matchup span:nth-child(3) { /* Away team name */
-    flex: 3; /* Allocates three times more space than the scores and 'vs' text */
-    padding-right: 10px; /* Adds padding to separate from scores and 'vs' */
+.knockout-table .team-name-away {
+    text-align: left;
+    font-weight: 500;
+    width: 35%;
 }
 
-.matchup span:nth-child(4) { /* Score */
-    flex: 1; /* Assigns minimal flexible space for scores */
-    min-width: 80px; /* Adjusts minimum width to ensure visibility */
-    font-weight: bold; /* Emphasizes the score */
+.knockout-table .score {
+    text-align: left;
+    font-weight: bold;
+    width: 20%;
 }
 
-.matchup span:nth-child(2) { /* 'vs' text */
-    flex: 0.5; /* Minimal flexible space to keep 'vs' compact */
-    min-width: 30px; /* Ensures 'vs' has enough space and does not get squeezed */
-    padding: 0 5px; /* Adjusts padding for spacing */
+.knockout-table.podium td {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 6px 0;
+    background: none;
+    width: 100%;
 }
 
 .next-turn {
     font-weight: bold;
+}
+
+.knockout-schedule:nth-child(2) {
+    border: none;
+    padding: 0;
+}
+
+.knockout-table.podium tr:nth-child(1) td::before {
+    content: "🥇 ";
+}
+
+.knockout-table.podium tr:nth-child(2) td::before {
+    content: "🥈 ";
+}
+
+.knockout-table.podium tr:nth-child(3) td::before {
+    content: "🥉 ";
 }

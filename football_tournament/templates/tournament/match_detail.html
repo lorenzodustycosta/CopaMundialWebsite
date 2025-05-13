@@ -8,47 +8,46 @@
 
 {% block content %}
 <h3>Risultato e Marcatori</h3>
-<div class="match-container">
-    <div class="team-name-home">
-        {{ match.home_team.name }}
-        <div class="goal-scorer-home">
-            {% for scorer in home_goals %}
-            {% if scorer.total_goals > 0 %}
-            <div class="goal-scorer">
-                {{ scorer.player.surname }} {{scorer.player.surname | make_balls}} ({{scorer.total_goals}})
-            </div>
-            {% endif %}
-            {% endfor %}
-            {% if mvp.team.name == match.home_team.name %}
-            <div class="goal-scorer">
-                {{ mvp.surname }} {{1 | make_cup}}
-            </div>
-            {% endif %}
-        </div>
-    </div>
 
-    <div class="score">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
-    {% if match.dts %}
-    <p class="score">(dts)</p>
-    {% endif %}
-    {% if match.dcr %}
-    <p class="score">(dcr)</p>
-    {% endif %}
-
-    <div class="team-name-away">
-        {{ match.away_team.name }}
-        <div class="goal-scorer-away">
-            {% for scorer in away_goals %}
-            <div class="goal-scorer">
-                {{ scorer.player.surname }} {{scorer.player.surname | make_balls}} ({{scorer.total_goals}})
-            </div>
-            {% endfor %}
-            {% if mvp.team.name == match.away_team.name %}
-            <div class="goal-scorer">
-                {{ mvp.surname }} {{ 1 | make_cup}}
-            </div>
-            {% endif %}
-        </div>
+<div class="match-wrapper">
+  <div class="match-header">
+    <div class="team-name">{{ match.home_team.name }}</div>
+    <div class="score">
+      {{ match.score_home_team }} - {{ match.score_away_team }}
+      {% if match.dts %}<div class="score-note">(dts)</div>{% endif %}
+      {% if match.dcr %}<div class="score-note">(dcr)</div>{% endif %}
     </div>
+    <div class="team-name">{{ match.away_team.name }}</div>
+  </div>
+
+  <div class="scorers-grid">
+    {% for i in max_range %}
+    <div class="scorer-cell">
+      {% with scorer=home_goals|get_list_item:i %}
+        {% if scorer %}
+          {{ scorer.player.surname }} {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
+        {% endif %}
+      {% endwith %}
+    </div>
+    <div class="scorer-cell">
+      {% with scorer=away_goals|get_list_item:i %}
+        {% if scorer %}
+          {{ scorer.player.surname }} {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
+        {% endif %}
+      {% endwith %}
+    </div>
+    {% endfor %}
+
+    <div class="scorer-cell">
+      {% if mvp.team.name == match.home_team.name %}
+        {{ mvp.surname }} {{ 1 | make_cup }}
+      {% endif %}
+    </div>
+    <div class="scorer-cell">
+      {% if mvp.team.name == match.away_team.name %}
+        {{ mvp.surname }} {{ 1 | make_cup }}
+      {% endif %}
+    </div>
+  </div>
 </div>
 {% endblock %}

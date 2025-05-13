@@ -17,6 +17,9 @@ import datetime
 from django.db import transaction
 import random
 from django.http import HttpResponse
+import os
+from pathlib import Path
+import csv
 
 def home(request):
     return render(request, 'tournament/home.html')
@@ -84,7 +87,7 @@ def end_quarterfinals(request):
         group='Semifinali',
         home_team=winners[0],
         away_team=winners[1],
-        date=date(2024, 7, 2),
+        date=date(2025, 7, 8),
         pitch='Blu',
         time='20:30',
 
@@ -95,7 +98,7 @@ def end_quarterfinals(request):
         group='Semifinali',
         home_team=winners[2],
         away_team=winners[3],
-        date=date(2024, 7, 2),
+        date=date(2025, 7, 8),
         pitch='Blu',
         time='21:30',
     )
@@ -120,7 +123,7 @@ def end_semifinals(request):
         group='Finale 3-4',
         home_team=loosers[0],
         away_team=loosers[1],
-        date=date(2024, 7, 5),
+        date=date(2025, 7, 11),
         pitch='Blu',
         time='20:30',
     )
@@ -130,7 +133,7 @@ def end_semifinals(request):
         group='Finale 1-2',
         home_team=winners[0],
         away_team=winners[1],
-        date=date(2024, 7, 5),
+        date=date(2025, 7, 11),
         pitch='Blu',
         time='21:30',
     )
@@ -148,12 +151,16 @@ def end_group(request):
 
     all_teams = Team.objects.all()
     sorted_groups = compute_ranking(all_teams)
-    first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+    # first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+    #     sorted_groups)
+    first_place_teams, second_place_teams = get_knockout_teams(
         sorted_groups)
 
-    matchups = create_quarterfinals_matchups(
-        first_place_teams, second_place_teams, qualified_third_place_teams)
+    # matchups = create_quarterfinals_matchups(
+    #     first_place_teams, second_place_teams, qualified_third_place_teams)
 
+    matchups = create_quarterfinals_matchups(first_place_teams, second_place_teams)
+    
     time = cycle(['20:30', '21:30'])
 
     for i, teams in enumerate(matchups):
@@ -162,7 +169,7 @@ def end_group(request):
             group='Quarti',
             home_team=Team.objects.get(name=teams[0]['team_name']),
             away_team=Team.objects.get(name=teams[1]['team_name']),
-            date=date(2024, 6, 25) if i <= 1 else date(2024, 6, 26),
+            date=date(2025, 7, 1) if i <= 1 else date(2025, 7, 2),
             pitch='Blu',
             time=next(time),
 
@@ -173,16 +180,28 @@ def end_group(request):
     return redirect('manage_matches')
 
 
-def create_quarterfinals_matchups(first_place_teams, second_place_teams, qualified_third_place_teams):
+# def create_quarterfinals_matchups(first_place_teams, second_place_teams, qualified_third_place_teams):
+
+#     matchups = []
+
+#     matchups.append([first_place_teams[0], qualified_third_place_teams[1]])
+#     matchups.append([second_place_teams[0], second_place_teams[1]])
+#     matchups.append([first_place_teams[2], second_place_teams[2]])
+#     matchups.append([first_place_teams[1], qualified_third_place_teams[0]])
+
+#     return matchups
+
+def create_quarterfinals_matchups(first_place_teams, second_place_teams):
 
     matchups = []
 
-    matchups.append([first_place_teams[0], qualified_third_place_teams[1]])
-    matchups.append([second_place_teams[0], second_place_teams[1]])
-    matchups.append([first_place_teams[2], second_place_teams[2]])
-    matchups.append([first_place_teams[1], qualified_third_place_teams[0]])
+    matchups.append([first_place_teams[0], second_place_teams[1]])
+    matchups.append([first_place_teams[1], second_place_teams[0]])
+    matchups.append([first_place_teams[2], second_place_teams[3]])
+    matchups.append([first_place_teams[3], second_place_teams[2]])
 
     return matchups
+
 
 
 def get_knockout_teams(sorted_groups):
@@ -196,27 +215,95 @@ def get_knockout_teams(sorted_groups):
         second_place_teams.append(teams[1])
         third_place_teams.append(teams[2])
 
-    first_place_teams = sorted(
-        first_place_teams,
-        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
-        reverse=True
-    )
+    # first_place_teams = sorted(
+    #     first_place_teams,
+    #     key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
+    #     reverse=True
+    # )
 
-    second_place_teams = sorted(
-        second_place_teams,
-        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
-        reverse=True
-    )
+    # second_place_teams = sorted(
+    #     second_place_teams,
+    #     key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
+    #     reverse=True
+    # )
 
     # Sort the third place teams based on the criteria and select the top two
-    qualified_third_place_teams = sorted(
-        third_place_teams,
-        key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
-        reverse=True
-    )[:2]
+    # qualified_third_place_teams = sorted(
+    #     third_place_teams,
+    #     key=lambda x: (x['points'], x['goal_difference'], x['goals_scored']),
+    #     reverse=True
+    # )[:2]
 
-    return first_place_teams, second_place_teams, qualified_third_place_teams
+    return first_place_teams, second_place_teams #qualified_third_place_teams
 
+
+def load_schedule_schema(path='scheduling_schema.csv'):
+    schema = []
+    with open(path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            schema.append({
+                'group': row['group'],
+                'home_pos': int(row['home_pos']),
+                'away_pos': int(row['away_pos']),
+                'round': int(row['round'])
+            })
+    return schema
+
+def create_schedule_from_schema(start_date, groups_queryset, schema):
+    # Orari fissi e giorni validi (Martedì = 1, Mercoledì = 2)
+    match_times = ['20:30', '21:30', '22:30']
+    valid_weekdays = [1, 2]
+
+    # Mapping dei gruppi → lista di squadre ordinate per nome
+    group_dict = {
+        group.name: sorted(list(group.teams.all()), key=lambda t: t.name)
+        for group in groups_queryset
+    }
+
+    # Costruzione di tutti gli slot disponibili, uno per partita
+    slots = []
+    current_date = start_date
+    total_matches = len(schema)
+
+    while len(slots) < total_matches:
+        if current_date.weekday() in valid_weekdays:
+            for t in match_times:
+                slots.append({
+                    'date': current_date,
+                    'time': t,
+                    'day_label': 'Mar' if current_date.weekday() == 1 else 'Mer'
+                })
+        current_date += timedelta(days=1)
+
+    # Assegnazione degli slot
+    schedule = []
+    slot_index = 0
+
+    for match_def in schema:
+        group_name = match_def['group']
+        round_number = int(match_def['round'])
+
+        if group_name not in group_dict:
+            continue
+
+        teams = group_dict[group_name]
+        home_team = teams[int(match_def['home_pos']) - 1]
+        away_team = teams[int(match_def['away_pos']) - 1]
+
+        slot = slots[slot_index]
+        schedule.append({
+            'group': group_name,
+            'home_team': home_team.name,
+            'away_team': away_team.name,
+            'date': slot['date'],
+            'time': slot['time'],
+            'pitch': 'Blu'
+        })
+
+        slot_index += 1
+
+    return schedule
 
 def group_draw(request):
     last_picked_team_id = None  # Initialize variable to store the ID of the last picked team
@@ -238,11 +325,17 @@ def group_draw(request):
 
     elif 'start_tournament' in request.POST:
         with transaction.atomic():
+            BASE_DIR = Path(__file__).resolve().parent.parent
+            schema_path = os.path.join(BASE_DIR, 'schedules', 'scheduling_schema.csv')
+            schema = load_schedule_schema(path=schema_path)
+
             # Assume cleanup_matches() and create_tournament_schedule() are defined elsewhere
             cleanup_matches()
-            start_date = date(2024, 6, 4)
+            start_date = date(2025, 6, 3)
             all_groups = Group.objects.all()
-            tournament_schedule = create_tournament_schedule(start_date, all_groups)
+            tournament_schedule = create_schedule_from_schema(start_date, all_groups, schema)
+
+            print(tournament_schedule)
 
             for match_info in tournament_schedule:
                 group = get_object_or_404(Group, name=match_info['group'])
@@ -467,10 +560,11 @@ def ranking(request):
         finals_matches = Match.objects.filter(
             stage='Eliminazione', group__startswith='Finale')
 
-        first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+        # first_place_teams, second_place_teams, qualified_third_place_teams = get_knockout_teams(
+        #     sorted_groups)
+        first_place_teams, second_place_teams = get_knockout_teams(
             sorted_groups)
-        qualified_teams = first_place_teams + \
-            second_place_teams + qualified_third_place_teams
+        qualified_teams = first_place_teams + second_place_teams
         qualified_team_names = [team['team_name'] for team in qualified_teams]
 
 
@@ -679,12 +773,19 @@ def match_detail(request, match_id):
     away_goals = Goal.objects.filter(match=match, player__team=match.away_team).select_related(
         'player').annotate(total_goals=Sum('number_of_goals')).order_by('-total_goals')
 
-    return render(request, 'tournament/match_detail.html', {
-        'match': match,
-        'home_goals': home_goals,
-        'away_goals': away_goals,
-        'mvp': match.mvp
-    })
+    home_goals = list(home_goals)
+    away_goals = list(away_goals)
+    max_len = max(len(home_goals), len(away_goals))
+
+    context = {
+        "match": match,
+        "home_goals": home_goals,
+        "away_goals": away_goals,
+        "mvp": match.mvp,
+        "max_range": range(max_len),
+    }
+
+    return render(request, 'tournament/match_detail.html', context)
 
 
 def document_list(request):

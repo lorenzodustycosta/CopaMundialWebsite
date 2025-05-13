@@ -8,7 +8,7 @@
 {% block content %}
 <div class="content-grid">
     <!-- Column 1: Group Rankings -->
-    <div class="knockout-schedule">
+    <div class="knockout-schedule knockout-central">
         <h2 class="stage">Classifiche</h2>
         {% if not drawing_done %}
         <div class="alert">
@@ -43,45 +43,56 @@
     {% if drawing_done %}
     <div class="knockout-schedule">
         <h2 class="stage">Fase ad Eliminazione</h2>
-        <!-- Example for one phase, repeat for others -->
+    
         <h3 class="stage">Quarti di Finale</h3>
-        {% for match in context.quarterfinals_matches %}
-        <div class="matchup">
-            <span>{{ match.home_team.name }}</span>
-            <span>vs</span>
-            <span>{{ match.away_team.name }}</span>
-            <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
-        </div>
-        {% endfor %}
+        <table class="knockout-table">
+            {% for match in context.quarterfinals_matches %}
+            <tr>
+                <td class="team-name">{{ match.home_team.name }}</td>
+                <td class="vs">vs</td>
+                <td class="team-name">{{ match.away_team.name }}</td>
+                <td class="score">{{ match.score_home_team }} - {{ match.score_away_team }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    
         <h3 class="stage">Semifinali</h3>
-        {% for match in context.semifinals_matches %}
-        <div class="matchup">
-            <span>{{ match.home_team.name }}</span>
-            <span>vs</span>
-            <span>{{ match.away_team.name }}</span>
-            <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
-        </div>
-        {% endfor %}
+        <table class="knockout-table">
+            {% for match in context.semifinals_matches %}
+            <tr>
+                <td class="team-name">{{ match.home_team.name }}</td>
+                <td class="vs">vs</td>
+                <td class="team-name">{{ match.away_team.name }}</td>
+                <td class="score">{{ match.score_home_team }} - {{ match.score_away_team }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    
         {% if context.finals_matches|length == 0 %}
-        <h3 class="stage">Finale 3-4</h3>
-        <h3 class="stage">Finale 1-2</h3>
+            <h3 class="stage">Finale 3-4</h3>
+            <h3 class="stage">Finale 1-2</h3>
         {% else %}
-        {% for match in context.finals_matches %}
-        <h3 class="stage">{{match.group}}</h3>
-        <div class="matchup">
-            <span>{{ match.home_team.name }}</span>
-            <span>vs</span>
-            <span>{{ match.away_team.name }}</span>
-            <span>{{ match.score_home_team }} - {{ match.score_away_team }}</span>
-        </div>
-        {% endfor %}
+            {% for match in context.finals_matches %}
+            <h3 class="stage">{{ match.group }}</h3>
+            <table class="knockout-table">
+                <tr>
+                    <td class="team-name">{{ match.home_team.name }}</td>
+                    <td class="vs">vs</td>
+                    <td class="team-name">{{ match.away_team.name }}</td>
+                    <td class="score">{{ match.score_home_team }} - {{ match.score_away_team }}</td>
+                </tr>
+            </table>
+            {% endfor %}
         {% endif %}
+    
         <h3 class="stage">Podio</h3>
-        {% for team in context.winners %}
-        <div class="matchup">
-            <span>{{ team.name }}</span>
-        </div>
-        {% endfor %}
+        <table class="knockout-table podium">
+          {% for team in context.winners %}
+          <tr>
+            <td colspan="4">{{ team.name }}</td>
+          </tr>
+          {% endfor %}
+        </table>
     </div>
     {% endif %}
 
@@ -92,17 +103,17 @@
         <h3>Classifica Marcatori</h2>
         <table>
             <tr>
-                <th>Posizione</th>
-                <th>Giocatore</th>
-                <th>Squadra</th>
-                <th>Goal</th>
+                <th class="col-pos">Posizione</th>
+                <th class="col-player">Giocatore</th>
+                <th class="col-team">Squadra</th>
+                <th class="col-stat">Goal</th>
             </tr>
             {% for scorer in top_scorers %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ scorer.surname }}</td>
-                <td>{{ scorer.team.name }}</td>
-                <td>{{ scorer.total_goals }}</td>
+                <td class="col-pos">{{ forloop.counter }}</td>
+                <td class="col-player">{{ scorer.surname }}</td>
+                <td class="col-team">{{ scorer.team.name }}</td>
+                <td class="col-stat">{{ scorer.total_goals }}</td>
             </tr>
             {% endfor %}
         </table>
@@ -110,17 +121,17 @@
         <h3>Classifica MVP</h2>
         <table>
             <tr>
-                <th>Posizione</th>
-                <th>Giocatore</th>
-                <th>Squadra</th>
-                <th>MVP</th>
+                <th class="col-pos">Posizione</th>
+                <th class="col-player">Giocatore</th>
+                <th class="col-team">Squadra</th>
+                <th class="col-stat">MVP</th>
             </tr>
             {% for mvp in mvp_ranking %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ mvp.surname }}</td>
-                <td>{{ mvp.team.name }}</td>
-                <td>{{ mvp.mvp_count }}</td>
+                <td class="col-pos">{{ forloop.counter }}</td>
+                <td class="col-player">{{ mvp.surname }}</td>
+                <td class="col-team">{{ mvp.team.name }}</td>
+                <td class="col-stat">{{ mvp.mvp_count }}</td>
             </tr>
             {% endfor %}
         </table>

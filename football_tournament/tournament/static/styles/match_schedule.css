@@ -17,12 +17,13 @@
 
 .match-entry {
     display: grid;
-    grid-template-columns: 0.5fr 0.1fr 0.25fr 0.25fr 1fr 0.5fr 0.5fr; /* Adjust this based on your content needs */
+    grid-template-columns: 2fr 0.75fr 1fr 1fr 4fr 1.5fr 2fr;
     align-items: center;
     width: 100%;
     padding: 10px;
     border-bottom: 1px solid #ddd; /* Adds a horizontal border between rows */
     transition: background-color 0.3s ease;
+    text-align: left;
 }
 
 .match-date, .match-time, .match-pitch, .match-teams, .match-status {

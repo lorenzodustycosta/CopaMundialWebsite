@@ -41,7 +41,7 @@ class Match(models.Model):
         ('Verde', 'Verde'),
         ('Da definire', 'Da definire')
     )
-    date = models.DateField(_("Date"), default="2024-06-05")
+    date = models.DateField(_("Date"), default="2025-06-05")
     time = models.TimeField(_("Time"), default="20:00:00")
     home_team = models.ForeignKey(
         Team, related_name='home_matches', on_delete=models.CASCADE, verbose_name=_("Home Team"))
