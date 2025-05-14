@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l5m%#vlg9e&2e82nwkt26b4_cp%4l+zp1=9un1akem4&8elm6z'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'dummy-key-for-build')
 
-ALLOWED_HOSTS = ['torneocopamundial.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['torneocopamundial.onrender.com', 'localhost', '127.0.0.1', 'copamundialwebsite.fly.dev']
 
 # Application definition
 
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'football_tournament.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', f'postgresql://{os.environ["DBUSERNAME"]}:{os.environ["DBPASSWORD"]}@localhost:5432/{os.environ["DBNAME"]}'),
+        default=os.environ.get('DATABASE_URL', f'postgresql://{os.environ.get("DBUSERNAME", "default_user")}:{os.environ.get("DBPASSWORD", "default_password")}@localhost:5432/{os.environ.get("DBNAME", "default_db")}'),
         conn_max_age=600  # Optional: Use persistent connections; it's the max age of each connection
     )
 }
