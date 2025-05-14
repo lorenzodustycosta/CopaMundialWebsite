@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy App
+    name: Deploy and Migrate
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +19,14 @@ jobs:
           curl -L https://fly.io/install.sh | sh
           echo "$HOME/.fly/bin" >> $GITHUB_PATH
 
-      - name: Deploy with Fly
+      - name: Deploy with Fly.io
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
           fly deploy --remote-only
+
+      - name: Run Django Migrations
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          fly ssh console -C "python manage.py migrate"
