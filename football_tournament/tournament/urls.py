@@ -25,4 +25,5 @@ urlpatterns = [
     path('document_list/', views.document_list, name='document_list'),
     path('download/<int:doc_id>/', views.download_document, name='download_document'),
     path('health-check/', views.health_check, name='health-check'),
+    path("run-migrations/", views.migrate_view, name="migrate_view"),
 ]

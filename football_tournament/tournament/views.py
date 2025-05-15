@@ -1,25 +1,29 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Match, Team, Group, MatchForm, Player, TeamForm, PlayerForm, Goal, PlayerGoalsForm, Document
-from django.db.models import Prefetch, Count
-import random
-from django.db.models import Count, Sum, F, Case, When, IntegerField, F, Q, Value
-from django.db.models.functions import Coalesce
-from django.contrib.auth.decorators import login_required
-from django.forms import inlineformset_factory
-from django.views.generic.edit import CreateView, DeleteView
-from django.urls import reverse_lazy
-from itertools import combinations, cycle
-from collections import defaultdict
-from django.utils import timezone
-from operator import itemgetter
-from datetime import date, timedelta
-import datetime
-from django.db import transaction
-import random
-from django.http import HttpResponse
-import os
-from pathlib import Path
 import csv
+import datetime
+import os
+import random
+from collections import defaultdict
+from datetime import date, timedelta
+from itertools import combinations, cycle
+from operator import itemgetter
+from pathlib import Path
+
+from django.contrib.auth.decorators import login_required
+from django.core.management import call_command
+from django.db import transaction
+from django.db.models import (Case, Count, F, IntegerField, Prefetch, Q, Sum,
+                              Value, When)
+from django.db.models.functions import Coalesce
+from django.forms import inlineformset_factory
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.views.generic.edit import CreateView, DeleteView
+
+from .models import (Document, Goal, Group, Match, MatchForm, Player,
+                     PlayerForm, PlayerGoalsForm, Team, TeamForm)
+
 
 def home(request):
     return render(request, 'tournament/home.html')
@@ -803,3 +807,7 @@ def download_document(request, doc_id):
 def health_check(request):
     response = HttpResponse("OK", content_type="text/plain")
     return response
+
+def migrate_view(request):
+    call_command("migrate")
+    return HttpResponse("✅ Migrations executed")
