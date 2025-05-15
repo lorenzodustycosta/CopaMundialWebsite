@@ -2,6 +2,7 @@ import csv
 import datetime
 import os
 import random
+import traceback
 from collections import defaultdict
 from datetime import date, timedelta
 from itertools import combinations, cycle
