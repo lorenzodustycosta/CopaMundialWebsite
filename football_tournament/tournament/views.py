@@ -813,4 +813,5 @@ def migrate_view(request):
         call_command("migrate")
         return HttpResponse("✅ Migrations executed.")
     except Exception as e:
-        return HttpResponseServerError(f"❌ Migration failed:\n{e}")
+        tb = traceback.format_exc()
+        return HttpResponseServerError(f"<pre>❌ Migration failed:\n\n{tb}</pre>")
