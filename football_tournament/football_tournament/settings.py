@@ -69,6 +69,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'football_tournament.wsgi.application'
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "insecure-default")
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
