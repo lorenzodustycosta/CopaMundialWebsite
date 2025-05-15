@@ -29,6 +29,7 @@ jobs:
           DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
           DEBUG: "False"
         run: |
+          cd football_tournament
           echo "from django.contrib.auth import get_user_model; \
                 User = get_user_model(); \
                 username = '${DJANGO_SUPERUSER_USERNAME}'; \
