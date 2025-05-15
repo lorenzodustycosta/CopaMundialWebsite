@@ -1,0 +1,42 @@
+name: Create Django Superuser
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-superuser:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Create Superuser
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
+          DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
+          DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+          DEBUG: "False"
+        run: |
+          echo "from django.contrib.auth import get_user_model; \
+                User = get_user_model(); \
+                username = '${DJANGO_SUPERUSER_USERNAME}'; \
+                email = '${DJANGO_SUPERUSER_EMAIL}'; \
+                password = '${DJANGO_SUPERUSER_PASSWORD}'; \
+                \
+                if not User.objects.filter(username=username).exists(): \
+                    u = User.objects.create_superuser(username=username, email=email, password=password); \
+                    print('✅ Superuser created.'); \
+                else: \
+                    print('ℹ️ Superuser already exists.');" | python manage.py shell
