@@ -809,5 +809,8 @@ def health_check(request):
     return response
 
 def migrate_view(request):
-    call_command("migrate")
-    return HttpResponse("✅ Migrations executed")
+    try:
+        call_command("migrate")
+        return HttpResponse("✅ Migrations executed.")
+    except Exception as e:
+        return HttpResponseServerError(f"❌ Migration failed:\n{e}")
