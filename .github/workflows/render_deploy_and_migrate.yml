@@ -30,5 +30,7 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: "False"
         run: |
+          echo "DATABASE_URL=${DATABASE_URL}"
+          echo "SECRET_KEY=${SECRET_KEY::5}*******"
           cd football_tournament
           python manage.py migrate
