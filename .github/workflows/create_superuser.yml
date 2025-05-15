@@ -22,22 +22,27 @@ jobs:
 
       - name: Create Superuser
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
           DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
           DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DEBUG: "False"
         run: |
           cd football_tournament
-          echo "from django.contrib.auth import get_user_model; \
-                User = get_user_model(); \
-                username = '${DJANGO_SUPERUSER_USERNAME}'; \
-                email = '${DJANGO_SUPERUSER_EMAIL}'; \
-                password = '${DJANGO_SUPERUSER_PASSWORD}'; \
-                \
-                if not User.objects.filter(username=username).exists(): \
-                    u = User.objects.create_superuser(username=username, email=email, password=password); \
-                    print('✅ Superuser created.'); \
-                else: \
-                    print('ℹ️ Superuser already exists.');" | python manage.py shell
+          cat <<EOF > create_superuser.py
+            from django.contrib.auth import get_user_model
+
+            User = get_user_model()
+            username = "${DJANGO_SUPERUSER_USERNAME}"
+            email = "${DJANGO_SUPERUSER_EMAIL}"
+            password = "${DJANGO_SUPERUSER_PASSWORD}"
+
+            if not User.objects.filter(username=username).exists():
+                User.objects.create_superuser(username=username, email=email, password=password)
+                print("✅ Superuser created")
+            else:
+                print("ℹ️ Superuser already exists")
+            EOF
+            
+            python manage.py shell < create_superuser.py
