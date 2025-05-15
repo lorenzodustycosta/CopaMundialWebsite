@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: copamundialwebsite
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn football_tournament.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: False
