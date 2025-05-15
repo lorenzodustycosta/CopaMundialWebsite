@@ -27,6 +27,8 @@ jobs:
       - name: Run Migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: "False"
         run: |
+          cd football_tournament
           python manage.py migrate
