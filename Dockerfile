@@ -20,6 +20,8 @@ WORKDIR /app/football_tournament
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
+RUN python manage.py migrate
+RUN python manage.py checksuperuser || python manage.py createsuperuser
 
 # Set environment port for Fly
 ENV PORT=8080
