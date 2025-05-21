@@ -1,12 +1,15 @@
 .content-grid {
     display: grid;
-    grid-template-columns: 0.8fr 2.4fr 0.8fr; /* Colonna centrale più ampia */
+    grid-template-columns: 0.8fr 2.4fr 0.8fr;
+    /* Colonna centrale più ampia */
     gap: 60px;
     align-items: start;
     font-size: 16px;
-    max-width: 1600px; /* più larghezza massima */
+    max-width: 1600px;
+    /* più larghezza massima */
     margin: 0 auto;
-    padding: 0 60px; /* più spazio laterale */
+    padding: 0 60px;
+    /* più spazio laterale */
 }
 
 .highlight {
@@ -19,33 +22,118 @@ table {
     margin-bottom: 50px;
 }
 
-th, td {
+.title-desktop {
+    display: inline;
+}
+
+.title-mobile {
+    display: none;
+}
+
+th,
+td {
     border: 1px solid #ddd;
     text-align: center;
     padding: 8px;
     height: 30px;
 }
 
-th.team-name, td.team-name {
+th.team-name,
+td.team-name {
     width: 30%;
 }
 
-th.col-pos, td.col-pos {
+th.col-pos,
+td.col-pos {
     width: 5%;
     text-align: center;
+
+    @media (max-width: 768px) {
+        .content-grid {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 30px;
+        }
+
+        .knockout-schedule {
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .knockout-schedule .stage {
+            font-size: 18px;
+            margin: 30px 0 10px;
+        }
+
+        table {
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 6px;
+        }
+
+        th.team-name,
+        td.team-name,
+        th.col-team,
+        td.col-team,
+        th.col-player,
+        td.col-player,
+        th.col-pos,
+        td.col-pos,
+        th.col-stat,
+        td.col-stat {
+            display: block;
+            width: 100%;
+            text-align: left;
+        }
+
+        .knockout-table {
+            table-layout: auto;
+        }
+
+        .knockout-table td {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .knockout-table td.vs,
+        .knockout-table td.score {
+            margin: 4px 0;
+            font-weight: bold;
+        }
+
+        .knockout-table.podium td {
+            font-size: 16px;
+            padding: 4px 0;
+        }
+
+        .alert p {
+            font-size: 14px;
+            padding: 8px;
+        }
+    }
+
 }
 
-th.col-player, td.col-player {
+th.col-player,
+td.col-player {
     width: 30%;
     text-align: left;
 }
 
-th.col-team, td.col-team {
+th.col-team,
+td.col-team {
     width: 30%;
     text-align: left;
 }
 
-th.col-stat, td.col-stat {
+th.col-stat,
+td.col-stat {
     width: 10%;
     text-align: center;
 }
@@ -81,8 +169,10 @@ th.col-stat, td.col-stat {
     border: none;
     background-color: rgba(255, 255, 255, 0.00);
     vertical-align: middle;
-    white-space: normal; /* Consente l'andata a capo */
-    word-wrap: break-word; /* Supporta il wrapping delle parole lunghe */
+    white-space: normal;
+    /* Consente l'andata a capo */
+    word-wrap: break-word;
+    /* Supporta il wrapping delle parole lunghe */
 }
 
 .knockout-table .team-name-home {
@@ -138,4 +228,97 @@ th.col-stat, td.col-stat {
 
 .knockout-table.podium tr:nth-child(3) td::before {
     content: "🥉 ";
+}
+
+@media (max-width: 768px) {
+    .content-grid {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        gap: 30px;
+    }
+
+    .knockout-schedule {
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+
+    .knockout-schedule .stage {
+        font-size: 18px;
+        margin: 30px 0 10px;
+    }
+
+    table {
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+        margin-bottom: 50px;
+        table-layout: fixed;
+    }
+
+    .title-desktop {
+        display: none !important;
+    }
+
+    .title-mobile {
+        display: inline !important;
+    }
+    
+    th,
+    td {
+        padding: 6px;
+        overflow-wrap: break-word;
+    }
+
+    th.team-name,
+    td.team-name {
+        width: 50%;
+        /* Squadra prende metà tabella */
+        min-width: 120px;
+        text-align: left;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    th,
+    td {
+        font-size: 13px;
+        padding: 4px 6px;
+        vertical-align: top;
+    }
+
+    th:not(.team-name),
+    td:not(.team-name) {
+        width: 12%;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+
+    .knockout-table {
+        table-layout: auto;
+    }
+
+    .knockout-table td {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .knockout-table td.vs,
+    .knockout-table td.score {
+        margin: 4px 0;
+        font-weight: bold;
+    }
+
+    .knockout-table.podium td {
+        font-size: 16px;
+        padding: 4px 0;
+    }
+
+    .alert p {
+        font-size: 14px;
+        padding: 8px;
+    }
 }

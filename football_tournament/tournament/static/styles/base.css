@@ -12,7 +12,7 @@ body {
     display: flex;
     /* Flexbox layout for the body */
     font-family: Montserrat;
-    color: #333333
+    color: #333333;
 }
 
 body::before {
@@ -91,4 +91,111 @@ body::before {
     height: auto;
     margin-top: 10px;
     justify-self: center;
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .sidebar {
+        position: relative !important;
+        width: 100vw !important;
+        max-width: 100% !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        background-color: #8CAF71 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        z-index: 1000;
+    }
+
+    .sidebar .link-section {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        padding: 4px !important;
+    }
+
+    .sidebar .link-section a {
+        font-size: 13px !important;
+        padding: 4px 8px !important;
+        white-space: nowrap;
+        border-radius: 4px;
+        color: #fff !important;
+        background-color: transparent;
+    }
+
+    .sponsor {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        width: 100%;
+        font-size: 14px;
+        padding: 2px 0 0 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+    }
+
+    .sponsor-title {
+        font-weight: bold;
+        margin: 2px 0 !important;
+        font-size: 13px;
+    }
+
+    .sponsor-logos {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin: 0 !important;
+        padding: 0 !important;
+        min-height: 50px;
+    }
+
+    .logo-box {
+        width: 70px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .logo-box img {
+        max-height: 50px;
+        max-width: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .main-content main {
+        font-size: 16px !important;
+        line-height: 1.6 !important;
+        text-align: left !important;
+    }
+
+    .footer {
+        text-align: center !important;
+        font-size: 14px !important;
+        padding: 10px !important;
+    }
 }

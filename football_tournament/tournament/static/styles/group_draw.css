@@ -1,65 +1,10 @@
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr; /* Adjust these fractions as needed */
-    gap: 30px; /* Adjusted gap to a smaller value */
-}
-
 .column {
     display: flex;
     flex-direction: column;
-    font-size: 28px;
-    width: 250px; /* Set a fixed width for columns */
+    font-size: 26px;
 }
-
 .team, .group {
     margin: 5px 0;
-    font-size: 28px;
-    margin-top: 10px;
-    font-weight: bold;
-    white-space: nowrap; /* Prevent line breaks */
-    overflow: visible; /* Ensure the text does not get hidden */
-}
-
-.group.highlight {
-    font-weight: bold;
-    color: white;
-}
-
-h2 {
-    font-size: 28px;
-}
-
-form {
-    display: flex; 
-    margin-bottom: 20px;
-}
-
-.submit {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
-    border: none;
-    background-color: rgba(130, 175, 113, 0.8);
-    color: #333;
-    font-size: 16px;
-    cursor: pointer;
-    margin-right: 20px;
     font-size: 20px;
-    border: 2px solid #333;
-    border-radius: 5px;
-}
-
-.submit:last-child {
-    margin-right: 0;
-}
-
-.submit img {
-    margin-top: 10px;
-    width: 70px;
-    height: 70px;
+    text-align: center;
 }
