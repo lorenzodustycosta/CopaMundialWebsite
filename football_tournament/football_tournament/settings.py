@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "insecure-default")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = ['copamundialwebsite-577h.onrender.com', 'localhost', '127.0.0.1','www.torneocopamundial.it', 'torneocopamundial.it']
+ALLOWED_HOSTS = ['copamundialwebsite-577h.onrender.com', 'localhost', '127.0.0.1','192.168.1.60', 'www.torneocopamundial.it', 'torneocopamundial.it']
 
 # Application definition
 
