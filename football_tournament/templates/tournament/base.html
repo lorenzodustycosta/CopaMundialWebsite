@@ -26,7 +26,8 @@
                 <a href="{% url 'manage_teams' %}">Gestione Squadre</a>
                 <a href="{% url 'manage_matches' %}">Gestione Partite</a>
                 <a href="{% url 'group_draw' %}">Sorteggio</a>
-                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                <a href="#"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
                 <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
                     {% csrf_token %}
                 </form>
@@ -34,10 +35,20 @@
             {% endif %}
         </div>
         <div class="sponsor">
-            GLI AMICI DELLA COPAMUNDIAL
-            <a href="https://www.selosdesign.com/" target="_blank"><img src="{% static 'images/selos.png' %}" alt="Selos"></a>
-            <img src="{% static 'images/il_legno_per_voi.png' %}" alt="LegnoPerVoi"></a>
-            <a href="https://www.instagram.com/dementosofficial/" target="_blank"><img src="{% static 'images/dementos.png' %}" alt="Dementos"></a>
+            <div class="sponsor-title">
+                GLI AMICI DELLA COPAMUNDIAL
+            </div>
+            <div class="sponsor-logos">
+                <a href="https://www.selosdesign.com/" target="_blank" class="logo-box">
+                    <img src="{% static 'images/selos.png' %}" alt="Selos">
+                </a>
+                <a href="#" class="logo-box">  <!-- prima era un <div> -->
+                    <img src="{% static 'images/il_legno_per_voi.png' %}" alt="Il legno per voi dal 1984" class="logo-legno">
+                </a>
+                <a href="https://www.instagram.com/dementosofficial/" target="_blank" class="logo-box">
+                    <img src="{% static 'images/dementos.png' %}" alt="Dementos">
+                </a>
+            </div>
         </div>
     </div>
 
@@ -53,7 +64,7 @@
 
         </div>
     </div>
- 
+
 </body>
 
 </html>

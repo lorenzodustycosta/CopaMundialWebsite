@@ -21,10 +21,10 @@
             <tr>
                 <th class="team-name">Squadra</th>
                 <th>Punti</th>
-                <th>Goal Fatti</th>
-                <th>Goal Subiti</th>
-                <th>Differenza Reti</th>
-            </tr>
+                <th><span class="title-desktop">Goal Fatti</span><span class="title-mobile">GF</span></th>
+                <th><span class="title-desktop">Goal Subiti</span><span class="title-mobile">GS</span></th>
+                <th><span class="title-desktop">Differenza Reti</span><span class="title-mobile">DR</span></th>
+                            </tr>
             {% for team in teams %}
             <tr class="{% if team.team_name in context.qualified_team_names %}highlight{% endif %}">
                 <td class="team-name">{{ team.team_name }}</td>
@@ -103,14 +103,12 @@
         <h3>Classifica Marcatori</h2>
         <table>
             <tr>
-                <th class="col-pos">Posizione</th>
                 <th class="col-player">Giocatore</th>
                 <th class="col-team">Squadra</th>
                 <th class="col-stat">Goal</th>
             </tr>
             {% for scorer in top_scorers %}
             <tr>
-                <td class="col-pos">{{ forloop.counter }}</td>
                 <td class="col-player">{{ scorer.surname }}</td>
                 <td class="col-team">{{ scorer.team.name }}</td>
                 <td class="col-stat">{{ scorer.total_goals }}</td>
@@ -121,14 +119,12 @@
         <h3>Classifica MVP</h2>
         <table>
             <tr>
-                <th class="col-pos">Posizione</th>
                 <th class="col-player">Giocatore</th>
                 <th class="col-team">Squadra</th>
                 <th class="col-stat">MVP</th>
             </tr>
             {% for mvp in mvp_ranking %}
             <tr>
-                <td class="col-pos">{{ forloop.counter }}</td>
                 <td class="col-player">{{ mvp.surname }}</td>
                 <td class="col-team">{{ mvp.team.name }}</td>
                 <td class="col-stat">{{ mvp.mvp_count }}</td>

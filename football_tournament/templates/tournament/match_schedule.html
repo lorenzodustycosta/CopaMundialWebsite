@@ -3,7 +3,7 @@
 {% load static%}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/match_schedule.css' %}">
+<link rel="stylesheet" href="{% static 'styles/match_schedule.css' %}?v=64">
 {% endblock %}
 
 
@@ -13,9 +13,8 @@
     {% for match in matches %}
     <a href="{% url 'match_detail' match.id %}" class="match-entry-link">
         <div class="match-entry">
-            <div class="match-date">{{ match.date|date:"l, d F Y" }}</div>
-            <div class="match-time">{{ match.time|time:"H:i" }}</div>
-            <div class="match-pitch">Campo {{ match.pitch }}</div>
+            <div class="match-date">{{ match.date|date:"l, d F Y" }} {{ match.time|time:"H:i" }}</div>
+            <!-- <div class="match-time">{{ match.time|time:"H:i" }}</div> -->
             <div class="match-group">{{ match.group }}</div>
             <div class="match-teams">
                 <span class="match-home">{{ match.home_team.name }}</span>
@@ -38,6 +37,7 @@
                 <span class="status-scheduled">In programma</span>
                 {% endif %}
             </div>
+            <div class="match-arrow"></div>
         </div>
     </a>
     {% empty %}
