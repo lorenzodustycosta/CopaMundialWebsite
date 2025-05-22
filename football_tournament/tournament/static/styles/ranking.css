@@ -238,6 +238,59 @@ td.col-stat {
         gap: 30px;
     }
 
+    .title-desktop {
+        display: none !important;
+    }
+
+    .title-mobile {
+        display: inline !important;
+    }
+
+    table {
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+        margin-bottom: 50px;
+        table-layout: fixed;
+        font-size: 14px;
+    }
+
+    th,
+    td {
+        padding: 4px 6px;
+        font-size: 13px;
+        vertical-align: middle;
+        overflow-wrap: break-word;
+    }
+
+    th.col-pos,
+    td.col-pos {
+        width: 16%;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    th.col-pos {
+        content: none;
+    }
+
+    th.col-stat,
+    td.col-stat {
+        width: 22%;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    th.col-player,
+    td.col-player,
+    th.col-team,
+    td.col-team {
+        width: auto;
+        white-space: normal;
+        word-break: break-word;
+        text-align: left;
+    }
+
     .knockout-schedule {
         width: 100%;
         padding: 0 10px;
@@ -249,67 +302,49 @@ td.col-stat {
         margin: 30px 0 10px;
     }
 
-    table {
-        width: 100%;
-        border-spacing: 0;
-        border-collapse: collapse;
-        margin-bottom: 50px;
-        table-layout: fixed;
-    }
-
-    .title-desktop {
-        display: none !important;
-    }
-
-    .title-mobile {
-        display: inline !important;
-    }
-    
-    th,
-    td {
-        padding: 6px;
-        overflow-wrap: break-word;
-    }
-
-    th.team-name,
-    td.team-name {
-        width: 50%;
-        /* Squadra prende metà tabella */
-        min-width: 120px;
-        text-align: left;
-        white-space: normal;
-        word-break: break-word;
-    }
-
-    th,
-    td {
-        font-size: 13px;
-        padding: 4px 6px;
-        vertical-align: top;
-    }
-
-    th:not(.team-name),
-    td:not(.team-name) {
-        width: 12%;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-
     .knockout-table {
         table-layout: auto;
     }
 
-    .knockout-table td {
-        display: block;
-        width: 100%;
-        text-align: center;
+    .knockout-table tr {
+        display: table-row;
+        border: none;
     }
 
-    .knockout-table td.vs,
+    .knockout-table td {
+        display: table-cell;
+        width: auto;
+        text-align: center;
+        padding: 4px 6px;
+        font-size: 14px;
+        vertical-align: middle;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .knockout-table td.team-name {
+        text-align: right;
+        width: 35%;
+        white-space: normal;
+    }
+
+    .knockout-table td.vs {
+        text-align: center;
+        color: #888;
+        font-style: italic;
+        width: 10%;
+    }
+
+    .knockout-table td.team-name + .team-name {
+        text-align: left;
+    }
+
     .knockout-table td.score {
-        margin: 4px 0;
         font-weight: bold;
+        font-size: 16px;
+        color: #222;
+        text-align: center;
+        width: 20%;
     }
 
     .knockout-table.podium td {

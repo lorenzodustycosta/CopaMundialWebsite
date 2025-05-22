@@ -1,7 +1,7 @@
 .matches-container {
     display: flex;
     flex-direction: column;
-    width: 100%;  /* Ensure the container takes full width */
+    width: 100%;
     font-size: 16px;
 }
 
@@ -17,43 +17,48 @@
 
 .match-entry {
     display: grid;
-    grid-template-columns: 2fr 0.75fr 1fr 1fr 4fr 1.5fr 2fr;
+    grid-template-columns: 2fr 1fr 4fr 1.5fr 2fr;
     align-items: center;
     width: 100%;
     padding: 10px;
-    border-bottom: 1px solid #ddd; /* Adds a horizontal border between rows */
+    border-bottom: 1px solid #ddd;
     transition: background-color 0.3s ease;
     text-align: left;
 }
 
 .match-date, .match-time, .match-pitch, .match-teams, .match-status {
-    padding: 0 10px; /* Adds padding for better spacing */
+    padding: 0 10px;
 }
 
 .match-score {
-    text-align: center;  /* Centers the score horizontally within its cell */
-    flex-grow: 1;        /* Allows the score cell to expand if needed */
-    display: flex;       /* Use flexbox within the cell for vertical centering */
-    align-items: center; /* Vertically centers the content within the cell */
-    justify-content: center; /* Horizontally centers the flex items */
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .match-home, .match-vs, .match-away {
-    margin: 0 5px; /* Adds margin within the teams container */
+    margin: 0 5px;
 }
 
 .match-teams {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Ensures team names are aligned to the left */
+    justify-content: flex-start;
+    flex-wrap: wrap;
 }
 
 .match-status {
-    text-align: right; /* Aligns the status to the right */
+    text-align: right;
+}
+
+.match-arrow {
+    display: none;
 }
 
 .status-concluded {
-    color: #6d955e;
+    color: #7ddb5b;
     font-weight: bold;
 }
 
@@ -73,5 +78,129 @@
 
 .scorer-goals .goal-ball {
     height: 20px;
-    margin-right: 5px; /* Space between each ball icon */
+    margin-right: 5px;
 }
+
+@media (max-width: 768px) {
+    .match-entry {
+        display: grid;
+        grid-template-columns: 4fr 1fr 5fr 2fr 1fr 1fr;
+        grid-template-areas: 
+            "info group teams score status arrow";
+        align-items: center;
+        padding: 10px 0 10px 10px;
+        font-size: 13px;
+        border-bottom: 1px solid #000000;
+        column-gap: 8px;
+        min-height: 100px;
+    }
+
+    .match-date, .match-time, .match-pitch {
+        display: block;
+        font-size: 11px;
+        line-height: 1.4;
+        padding: 0;
+        margin: 0;
+    }
+
+    .match-info {
+        grid-area: info;
+        display: flex;
+        flex-direction: column;
+        white-space: normal;
+    }
+
+    .match-group {
+        grid-area: group;
+        font-size: 11px;
+        text-align: center;
+    }
+
+    .match-teams {
+        grid-area: teams;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 12px;
+        line-height: 1.2;
+        text-align: center;
+    }
+
+    .match-home,
+    .match-away {
+        display: block;
+    }
+
+    .match-vs {
+        font-style: italic;
+        font-size: 11px;
+        margin: 2px 0;
+        color: #666;
+    }
+
+    .match-score {
+        grid-area: score;
+        text-align: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .match-status {
+        grid-area: status;
+        text-align: right;
+        font-size: 11px;
+        color: #6d955e;
+        white-space: nowrap;
+    }
+    .match-teams-line {
+        grid-area: teams;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        white-space: normal;
+        font-weight: bold;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .match-home, .match-away, .match-vs {
+        margin: 0;
+    }
+
+    .match-arrow {
+        grid-area: arrow;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: #ffffff;
+    }
+
+    .match-arrow::before {
+        content: '\276F'; /* Unicode freccia singola “❯” */
+        font-weight: bold;
+    }
+
+    .status-concluded {
+        background-color: #eef6ec; /* verde chiaro compatibile con #6d955e */
+        color: #6d955e;
+        padding: 2px 2px;
+        border-radius: 2px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .status-scheduled {
+        background-color: #afafaf; /* verde chiaro compatibile con #6d955e */
+        color: #000000;
+        padding: 2px 2px;
+        border-radius: 2px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+}
+
