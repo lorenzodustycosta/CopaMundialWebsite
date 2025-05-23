@@ -60,16 +60,16 @@ def simulate_matches(matches, max_goals_per_player=4):
 
 matches = Match.objects.all()
 simulate_matches(matches)
-end_group(request=None)
+# end_group(request=None)
 
 matches = Match.objects.filter(group='Quarti')
 simulate_matches(matches)
-end_quarterfinals(request=None)
+# end_quarterfinals(request=None)
 
 matches = Match.objects.filter(group='Semifinali')
 simulate_matches(matches)
-end_semifinals(request=None)
+# end_semifinals(request=None)
 
 matches = Match.objects.filter(group__startswith='Finale')
 simulate_matches(matches)
-end_finals(request=None)
+# end_finals(request=None)

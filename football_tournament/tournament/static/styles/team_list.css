@@ -1,0 +1,57 @@
+.team-management {
+    padding: 20px;
+}
+
+.team-management h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+}
+
+.team-management a.btn {
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.team-management table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.team-management th,
+.team-management td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    word-wrap: break-word;
+    font-size: 16px;
+}
+
+.team-management th:nth-child(1),
+.team-management td:nth-child(1) {
+    width: 60%;
+}
+
+.team-management th:nth-child(2),
+.team-management td:nth-child(2) {
+    width: 40%;
+}
+
+/* ✅ Responsive senza cambiare struttura */
+@media (max-width: 768px) {
+    .team-management h1 {
+        font-size: 22px;
+    }
+
+    .team-management th,
+    .team-management td {
+        padding: 8px 6px;
+        font-size: 14px;
+    }
+
+    .team-management a.btn {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+}
