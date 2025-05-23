@@ -1,24 +1,71 @@
-.matches-table th,
-.matches-table td {
-    text-align: center;
-    /* Centers text in table headers and cells */
-    padding: 8px;
-    /* Adjust padding as needed for aesthetics */
-}
-
 .matches-table {
     width: 100%;
-    /* Makes the table use the full width of its container */
     border-collapse: collapse;
-    /* Optional: for styling */
+    margin-top: 20px;
+    table-layout: fixed;
 }
 
-/* Additional styles for borders or aesthetics as desired */
 .matches-table th,
 .matches-table td {
     border: 1px solid #ddd;
-    /* Example border style */
+    text-align: center;
+    padding: 8px;
+    font-size: 16px;
+    word-break: break-word;
 }
+
+/* Responsive - migliora leggibilità generale su mobile */
+@media (max-width: 768px) {
+    .matches-table th,
+    .matches-table td {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .matches-table th:nth-child(1),
+    .matches-table td:nth-child(1) { min-width: 100px; } /* Data */
+    .matches-table th:nth-child(2),
+    .matches-table td:nth-child(2) { min-width: 60px; }  /* Ora */
+    .matches-table th:nth-child(6),
+    .matches-table td:nth-child(6),
+    .matches-table th:nth-child(7),
+    .matches-table td:nth-child(7) { min-width: 100px; } /* Casa/Trasferta */
+    .matches-table th:nth-child(8),
+    .matches-table td:nth-child(8) { min-width: 80px; }
+    .matches-table th:nth-child(10),
+    .matches-table td:nth-child(10) { min-width: 60px; } /* Edit */
+
+    /* Nascondi: Campo, Gruppo, Fase (colonne 3, 4, 5) */
+    .matches-table th:nth-child(3),
+    .matches-table td:nth-child(3),
+    .matches-table th:nth-child(4),
+    .matches-table td:nth-child(4),
+    .matches-table th:nth-child(5),
+    .matches-table td:nth-child(5),
+    .matches-table th:nth-child(8),
+    .matches-table td:nth-child(8),
+    .matches-table th:nth-child(9),
+    .matches-table td:nth-child(9) { 
+        min-width: 90px; 
+        display: none;
+    }
+}
+
+/* Pulsanti "Termina fase" */
 .end-group-button {
     margin-top: 10px;
+    display: inline-block;
+}
+
+.end-group-button button {
+    padding: 8px 14px;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .end-group-button button {
+        width: 100%;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
 }

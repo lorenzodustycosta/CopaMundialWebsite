@@ -4,27 +4,13 @@
     Gestione Squadre - CopaMundial 2025
 {% endblock title %}
 
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/team_list.css' %}?v=2">
+{% endblock %}
+
 {% block content %}
-<style>
-    .team-management h1 {
-        margin-bottom: 30px; /* More space below the header */
-    }
-    .team-management table {
-        margin-top: 10px; /* Space between the button and the table */
-        width: 100%; /* Full width of the container */
-        table-layout: fixed; /* Ensures consistent column sizing */
-    }
-    .team-management th, .team-management td {
-        padding: 15px; /* Adds more space inside each cell */
-        text-align: left; /* Aligns text to the left within the cell */
-    }
-    .team-management th:nth-child(1), .team-management td:nth-child(1) {
-        width: 5%; /* Width of the team name column */
-    }
-    .team-management th:nth-child(2), .team-management td:nth-child(2) {
-        width: 30%; /* Width of the actions column */
-    }
-</style>
+
 <div class="team-management">
     <h1>Gestione delle Squadre</h1>
     <a href="{% url 'create_team' %}" class="btn btn-primary">Crea Nuova Squadra</a>

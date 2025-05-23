@@ -76,3 +76,51 @@
   justify-content: center; /* Colonna destra: allinea a sinistra */
   text-align: left;
 }
+
+@media (max-width: 768px) {
+  .match-wrapper {
+    padding: 0 16px;
+    margin: 20px auto;
+  }
+
+  .team-name {
+    font-size: 20px;
+  }
+
+  .score {
+    font-size: 24px;
+  }
+
+  .score-note {
+    font-size: 14px;
+  }
+
+  .match-header {
+    gap: 12px;
+  }
+
+  .scorers-grid {
+    gap: 8px 20px;
+  }
+
+  .scorer-cell {
+    font-size: 16px;
+    min-height: 28px;
+    padding: 4px 0;
+  }
+
+  .goal-ball
+  {
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    margin-right: 4px;
+  }
+
+    .mvp {
+    width: 15px;
+    height: 18px;
+    margin-left: 6px;
+    margin-right: 4px;
+  }
+}
