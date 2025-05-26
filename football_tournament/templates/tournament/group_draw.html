@@ -3,7 +3,7 @@
 {% block content %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}?v=3">
 <h2>Sorteggio</h2>
 
 <form method="post" style="margin-bottom: 20px;">
@@ -24,31 +24,9 @@
     {% endif %}
 </form>
 
-<style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat({{ groups|length|add:"1" }}, 1fr);
-        gap: 30px;
-        justify-content: center;
-        padding: 20px;
-        text-align: center;
-    }
-    .column {
-        display: flex;
-        flex-direction: column;
-        font-size: 26px;
-        align-items: center;  
-    }
-    .team, .group {
-        margin: 5px 0;
-        font-size: 20px;
-        text-align: center;
-    }
-</style>
-
 <div class="grid-container">
     <div class="column">
-        <h3>Squadre da Sorteggiare</h3>
+        <h3>Squadre </h3>
         {% for team in unassigned_teams %}
         <div class="team">{{ team.name }}</div>
         {% endfor %}
