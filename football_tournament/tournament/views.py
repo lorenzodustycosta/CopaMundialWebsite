@@ -25,9 +25,6 @@ from django.views.generic.edit import CreateView, DeleteView
 from .models import (Document, Goal, Group, Match, MatchForm, Player,
                      PlayerForm, PlayerGoalsForm, Team, TeamForm)
 
-
-SPECIAL_TEAM_NAME = 'Sottomarini Gialli'
-TARGET_GROUP_NAME = 'Gruppo B'
 def home(request):
     return render(request, 'tournament/home.html')
 
@@ -317,31 +314,15 @@ def group_draw(request):
 
     if 'draw' in request.POST:
         unassigned_teams = Team.objects.filter(group__isnull=True)
-
         if unassigned_teams:
             team = random.choice(list(unassigned_teams))
-
-            if team.name == SPECIAL_TEAM_NAME:
-                # Force assignment of special team to target group
-                try:
-                    target_group = Group.objects.get(name=TARGET_GROUP_NAME)
-                    team.group = target_group
-                    team.save()
-                    last_picked_team_id = team.id
-                except Group.DoesNotExist:
-                    pass  # Handle gracefully if needed
-            else:
-                # Filter out groups that are full (4 teams) *or* target group with 3 teams (reserved)
-                groups = Group.objects.annotate(num_teams=Count('teams')).filter(
-                    Q(num_teams__lt=4) & ~Q(name=TARGET_GROUP_NAME) |
-                    Q(name=TARGET_GROUP_NAME, num_teams__lt=3)  # Reserve 1 slot for special team
-                )
-
-                if groups:
-                    group = random.choice(list(groups))
-                    team.group = group
-                    team.save()
-                    last_picked_team_id = team.id
+            groups = Group.objects.annotate(
+                num_teams=Count('teams')).filter(num_teams__lt=4)
+            if groups:
+                group = random.choice(list(groups))
+                team.group = group
+                team.save()
+                last_picked_team_id = team.id  # Store the last picked team's ID
 
     elif 'reset' in request.POST:
         Team.objects.all().update(group=None)

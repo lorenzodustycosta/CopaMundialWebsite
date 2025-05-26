@@ -3,14 +3,13 @@
 {% block content %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}">
+<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}?v=2">
 <h2>Sorteggio</h2>
-
 
 <form method="post" style="margin-bottom: 20px;">
     {% csrf_token %}
     {% if user.is_authenticated %}
-    <button type="submit" name="draw" class="submit">
+    <button type="button" name="draw" class="submit" onclick="startDrawAnimation(this)">
         <img src="{% static 'images/draw_team_icon.png' %}" alt="Draw Team">
         <p>Sorteggia una squadra</p>
     </button>
@@ -49,7 +48,7 @@
 
 <div class="grid-container">
     <div class="column">
-        <h3>Squadre</h3>
+        <h3>Squadre da Sorteggiare</h3>
         {% for team in unassigned_teams %}
         <div class="team">{{ team.name }}</div>
         {% endfor %}
@@ -63,5 +62,113 @@
     </div>
     {% endfor %}
 </div>
+
+
+<script>
+function startDrawAnimation(button) {
+    button.disabled = true;
+
+    fetch("{% url 'draw_team_ajax' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "X-Requested-With": "XMLHttpRequest",
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Errore di rete");
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'ok') {
+            animateTeamSelection(data.team_name, data.group_name);
+        } else {
+            alert('Nessuna squadra da sorteggiare!');
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error("Errore durante il sorteggio:", error);
+        alert("Errore tecnico.");
+        button.disabled = false;
+    });
+}
+
+function animateTeamSelection(teamName, groupName) {
+    const allTeams = Array.from(document.querySelectorAll('.team'));
+    const allGroups = Array.from(document.querySelectorAll('.column:not(:first-child)'));
+
+    // 🔄 Pulizia da sorteggi precedenti
+    document.querySelectorAll('.highlighted-orange, .highlight-final, .blink')
+        .forEach(el => el.classList.remove('highlighted-orange', 'highlight-final', 'blink'));
+
+    const selectedTeam = allTeams.find(t => t.textContent.trim() === teamName);
+    const selectedGroup = allGroups.find(g => g.querySelector('h3').textContent.trim() === groupName);
+
+    if (!selectedTeam || !selectedGroup) {
+        alert("Errore: squadra o gruppo non trovati nel DOM");
+        document.querySelector('button[name="draw"]').disabled = false;
+        return;
+    }
+
+    // ⏱️ Parametri configurabili
+    const teamLoopDuration = 2000;
+    const teamHighlightInterval = 100;
+    const groupLoopDuration = 4000;
+    const groupHighlightInterval = 250;
+
+    // 🔶 Animazione squadre
+    let teamIndex = 0;
+    const teamLoop = setInterval(() => {
+        allTeams.forEach(t => t.classList.remove('highlighted-orange'));
+        allTeams[teamIndex % allTeams.length].classList.add('highlighted-orange');
+        teamIndex++;
+    }, teamHighlightInterval);
+
+    setTimeout(() => {
+        clearInterval(teamLoop);
+        allTeams.forEach(t => t.classList.remove('highlighted-orange'));
+
+        // ✨ Squadra selezionata inizia a lampeggiare
+        selectedTeam.classList.add('blink');
+
+        // 🔶 Animazione gruppi
+        let groupIndex = 0;
+        const groupLoop = setInterval(() => {
+            allGroups.forEach(g => g.classList.remove('highlighted-orange'));
+            allGroups[groupIndex % allGroups.length].classList.add('highlighted-orange');
+            groupIndex++;
+        }, groupHighlightInterval);
+
+        setTimeout(() => {
+            clearInterval(groupLoop);
+            allGroups.forEach(g => g.classList.remove('highlighted-orange'));
+
+            // ✅ Evidenzia gruppo scelto
+            selectedGroup.classList.add('highlight-final');
+
+            // ✅ Ferma blink sulla squadra
+            selectedTeam.classList.remove('blink');
+
+            // ➕ Inserisci squadra nel gruppo
+            const newDiv = document.createElement('div');
+            newDiv.className = 'group';
+            newDiv.textContent = teamName;
+            selectedGroup.appendChild(newDiv);
+
+            // ➖ Rimuovi squadra dalla colonna iniziale
+            selectedTeam.remove();
+
+            // 🔓 Riattiva bottone
+            document.querySelector('button[name="draw"]').disabled = false;
+
+        }, groupLoopDuration);
+
+    }, teamLoopDuration);
+}
+
+
+
+</script>
 
 {% endblock content %}
