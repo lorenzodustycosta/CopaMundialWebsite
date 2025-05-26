@@ -22,6 +22,13 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic.edit import CreateView, DeleteView
 
+from django.http import JsonResponse
+import random
+import json
+
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
+
 from .models import (Document, Goal, Group, Match, MatchForm, Player,
                      PlayerForm, PlayerGoalsForm, Team, TeamForm)
 
@@ -308,6 +315,33 @@ def create_schedule_from_schema(start_date, groups_queryset, schema):
         slot_index += 1
 
     return schedule
+
+
+@require_POST
+@csrf_protect
+def draw_team_ajax(request):
+    
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        unassigned_teams = list(Team.objects.filter(group__isnull=True))
+        groups = list(Group.objects.annotate(num_teams=Count('teams')).filter(num_teams__lt=4))
+
+        if not unassigned_teams or not groups:
+            return JsonResponse({'status': 'no_teams_or_groups'})
+
+        team = random.choice(unassigned_teams)
+        group = random.choice(groups)
+        team.group = group
+        team.save()
+
+        return JsonResponse({
+            'status': 'ok',
+            'team_id': team.id,
+            'team_name': team.name,
+            'group_id': group.id,
+            'group_name': group.name
+        })
+
+    return JsonResponse({'status': 'invalid'}, status=400)
 
 def group_draw(request):
     last_picked_team_id = None  # Initialize variable to store the ID of the last picked team

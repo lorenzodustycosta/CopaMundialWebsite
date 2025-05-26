@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('matches/', views.match_schedule, name='match_schedule'),  # New URL for matches
     path('sorteggio/', views.group_draw, name='group_draw'),
+    path('ajax/draw_team/', views.draw_team_ajax, name='draw_team_ajax'),
     path('ranking/', views.ranking, name='ranking'),
     path('matches/edit/<int:match_id>/', views.edit_match, name='edit_match'),
     path('matches/end_group/', views.end_group, name='end_group'),
