@@ -6,31 +6,34 @@
 <link rel="stylesheet" href="{% static 'styles/group_draw.css' %}?v=3">
 <h2>Sorteggio</h2>
 
-<form method="post" style="margin-bottom: 20px;">
-    {% csrf_token %}
-    {% if user.is_authenticated %}
-    <button type="button" name="draw" class="submit" onclick="startDrawAnimation(this)">
-        <img src="{% static 'images/draw_team_icon.png' %}" alt="Draw Team">
-        <p>Sorteggia una squadra</p>
-    </button>
-    <button type="submit" name="reset" class="submit">
-        <img src="{% static 'images/reset.png' %}" alt="Reset">
-        <p>Reset</p>
-    </button>
-    <button type="submit" name="start_tournament" class="submit">
-        <img src="{% static 'images/kick-off.png' %}" alt="Inizia Torneo">
-        <p>Inizia Torneo</p>
-    </button>
-    {% endif %}
-</form>
-
 <div class="grid-container">
+    <!-- Colonna Pulsanti -->
+    <div class="button-column">
+        <form method="post">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+            <button type="button" name="draw" class="submit" onclick="startDrawAnimation(this)">
+                <img src="{% static 'images/draw_team_icon.png' %}" alt="Draw Team">
+            </button>
+            <button type="submit" name="reset" class="submit">
+                <img src="{% static 'images/reset.png' %}" alt="Reset">
+            </button>
+            <button type="submit" name="start_tournament" class="submit">
+                <img src="{% static 'images/kick-off.png' %}" alt="Inizia Torneo">
+            </button>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Colonna Squadre -->
     <div class="column">
-        <h3>Squadre </h3>
+        <h3>Squadre</h3>
         {% for team in unassigned_teams %}
         <div class="team">{{ team.name }}</div>
         {% endfor %}
     </div>
+
+    <!-- Colonne Gruppi -->
     {% for group in groups %}
     <div class="column">
         <h3>{{ group.name }}</h3>
@@ -74,7 +77,10 @@ function startDrawAnimation(button) {
 
 function animateTeamSelection(teamName, groupName) {
     const allTeams = Array.from(document.querySelectorAll('.team'));
-    const allGroups = Array.from(document.querySelectorAll('.column:not(:first-child)'));
+    const allGroups = Array.from(document.querySelectorAll('.column')).filter(col => {
+        const h3 = col.querySelector('h3');
+        return h3 && !h3.textContent.toLowerCase().includes('squadre');
+    });
 
     // 🔄 Pulizia da sorteggi precedenti
     document.querySelectorAll('.highlighted-orange, .highlight-final, .blink')
