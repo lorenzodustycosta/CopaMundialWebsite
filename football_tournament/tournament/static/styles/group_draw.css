@@ -3,6 +3,7 @@ body {
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 h2 {
@@ -47,16 +48,20 @@ form {
     font-weight: bold;
     font-size: 16px;
 }
-
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: 1fr repeat(4, 1fr);
     gap: 40px;
-    padding: 20px 10%;
-    justify-items: center;
+    padding: 30px 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+    align-items: start;
 }
 
 .column {
+    flex: 1 1 250px;
+    max-width: 300px;
+    min-height: 350px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -65,21 +70,19 @@ form {
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.06);
     transition: transform 0.3s ease;
-    width: 250px;
 }
 
 /* Altezza fissa per il box delle squadre */
 .grid-container > .column:first-child {
-    height: 1200px;
-    width: 300px;
-    overflow-y: auto;
+    height: 1100px;
+    width: 210px;
     background-color: transparent;
 }
 
 /* Altezza fissa per i gironi (4 squadre previste) */
 .grid-container > .column:not(:first-child) {
     height: 350px;
-    width: 300px;
+    width: 280px;
 }
 
 .column:hover {
