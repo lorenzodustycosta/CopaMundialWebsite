@@ -1,4 +1,4 @@
-
+/* Stili desktop */
 .title {
     font-size: 64px;
     text-align: left;
@@ -16,5 +16,30 @@
 }
 
 a {
-    color: white
+    color: #007bff; /* colore visibile anche su sfondo chiaro */
+    text-decoration: underline;
+}
+
+/* Stili per mobile */
+@media (max-width: 768px) {
+    .title {
+        font-size: 36px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .text {
+        font-size: 18px;
+        text-align: left;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    ul.text {
+        padding-left: 20px;
+    }
+
+    li.text {
+        margin-bottom: 16px;
+    }
 }
