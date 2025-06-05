@@ -7,18 +7,17 @@
 }
 
 .team-card {
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: transparent;
     box-sizing: border-box;
 }
 
 .team-card h3 {
-    word-break: break-word;
     height: 50px;
     padding: 0 5px;
     display: flex;
@@ -30,26 +29,30 @@
     margin-top: 5px;
     margin-bottom: 10px;
     white-space: normal;
+    width: 100%;
+    word-break: break-word;
 }
 
-/* Nuovo blocco per contenuto team */
 .team-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center; /* centra tutto */
-    gap: 10px;
+    justify-content: space-between; /* spinge lista in alto e immagine in basso */
+    align-items: center;
+    width: 100%;
 }
 
 .team-players {
     list-style-type: none;
-    padding: 5px;
+    padding: 0;
     margin: 0;
     width: 100%;
     text-align: center;
+    flex-grow: 0;
 }
 
 .team-players li {
-    padding: 5px 0;
+    padding: 3px 0;
 }
 
 .team-players li:last-child {
@@ -60,14 +63,16 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    max-width: 250px; /* dimensione massima immagine */
+    max-width: 200px;
+    align-self: center;
+    margin-top: 10px;
 }
 
 .team-photo {
     width: 100%;
     height: auto;
-    border-radius: 4px;
     object-fit: contain;
+    border-radius: 4px;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
 }
@@ -76,23 +81,10 @@
     transform: scale(1.03);
 }
 
-/* Mobile: stack contenuto verticale */
+/* Mobile */
 @media (max-width: 768px) {
     .teams-container {
         grid-template-columns: 1fr;
-    }
-
-    .team-content {
-        flex-direction: column;
-    }
-
-    .team-image-link {
-        max-width: 100%;
-        margin-top: 10px;
-    }
-
-    .team-photo {
-        max-height: 200px;
     }
 }
 
