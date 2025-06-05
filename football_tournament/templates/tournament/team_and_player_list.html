@@ -23,12 +23,35 @@
                 {% endfor %}
             </ul>
             {% if team.image_url %}
-            <a href="{{ team.image_url }}" target="_blank" class="team-image-link">
-                <img src="{{ team.image_url }}" alt="Foto {{ team.name }}" class="team-photo">
-            </a>
+            <img src="{{ team.image_url }}?f_auto,q_auto" 
+                 alt="Foto {{ team.name }}" 
+                 class="team-photo" 
+                 onclick="openLightbox(this)">
             {% endif %}
         </div>
     </div>
     {% endfor %}
 </div>
+
+<!-- Lightbox popup -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Zoom">
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openLightbox(imgElement) {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    lightboxImg.src = imgElement.src.replace('q_auto', 'q_auto:eco');
+    lightbox.style.display = 'flex';
+}
+
+function closeLightbox(event) {
+    if (event) event.stopPropagation();
+    document.getElementById('lightbox').style.display = 'none';
+}
+</script>
 {% endblock %}
