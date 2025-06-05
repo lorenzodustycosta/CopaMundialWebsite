@@ -12,15 +12,22 @@
     {% for team in teams %}
     <div class="team-card">
         <h3>{{ team.name }}</h3>
-        <ul>
-            {% for player in sorted_players|get_item:team.id %}
-            {% if player.is_fake == False%}
-            <li>{{ player.surname }} {{ player.name }}</li>
+        <div class="team-content">
+            <ul class="team-players">
+                {% for player in sorted_players|get_item:team.id %}
+                {% if not player.is_fake %}
+                <li>{{ player.surname }} {{ player.name }}</li>
+                {% endif %}
+                {% empty %}
+                <li>No players listed.</li>
+                {% endfor %}
+            </ul>
+            {% if team.image_url %}
+            <a href="{{ team.image_url }}" target="_blank" class="team-image-link">
+                <img src="{{ team.image_url }}" alt="Foto {{ team.name }}" class="team-photo">
+            </a>
             {% endif %}
-            {% empty %}
-            <li>No players listed.</li>
-            {% endfor %}
-        </ul>
+        </div>
     </div>
     {% endfor %}
 </div>

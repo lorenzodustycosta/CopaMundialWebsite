@@ -1,24 +1,24 @@
 .teams-container {
     display: grid;
-    gap: 10px; /* Space between grid items */
-    padding: 5px; /* Padding around the entire grid container */
-    grid-template-columns: repeat(4, 1fr); /* Creates six columns */
-    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+    padding: 5px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
 }
 
 .team-card {
     background: transparent;
     border: 1px solid #ccc;
     padding: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column; /* Ensures content flows vertically */
+    flex-direction: column;
     width: 100%;
     box-sizing: border-box;
 }
 
 .team-card h3 {
-    word-break: break-word; /* Evita overflow */
+    word-break: break-word;
     height: 50px;
     padding: 0 5px;
     display: flex;
@@ -29,31 +29,76 @@
     color: #333333;
     margin-top: 5px;
     margin-bottom: 10px;
-    white-space: normal
+    white-space: normal;
 }
 
-.team-card ul {
+/* Nuovo blocco per contenuto team */
+.team-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centra tutto */
+    gap: 10px;
+}
+
+.team-players {
     list-style-type: none;
-    padding: 5px 5px;
-    margin: 0; /* Aligns the start of the list with the team name */
+    padding: 5px;
+    margin: 0;
+    width: 100%;
+    text-align: center;
 }
 
-.team-card li {
-    padding: 5px 0; /* Vertical padding for each list item */
+.team-players li {
+    padding: 5px 0;
 }
 
-.team-card li:last-child {
-    border-bottom: none; /* Removes the border from the last item for cleanliness */
+.team-players li:last-child {
+    border-bottom: none;
 }
 
+.team-image-link {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 250px; /* dimensione massima immagine */
+}
+
+.team-photo {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.team-photo:hover {
+    transform: scale(1.03);
+}
+
+/* Mobile: stack contenuto verticale */
 @media (max-width: 768px) {
     .teams-container {
-        grid-template-columns: repeat(2, 1fr); /* Una sola colonna su mobile */
+        grid-template-columns: 1fr;
+    }
+
+    .team-content {
+        flex-direction: column;
+    }
+
+    .team-image-link {
+        max-width: 100%;
+        margin-top: 10px;
+    }
+
+    .team-photo {
+        max-height: 200px;
     }
 }
 
+/* Tablet */
 @media (max-width: 1024px) and (min-width: 769px) {
     .teams-container {
-        grid-template-columns: repeat(2, 1fr); /* Due colonne su tablet */
+        grid-template-columns: repeat(2, 1fr);
     }
 }

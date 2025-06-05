@@ -19,6 +19,7 @@ class Team(models.Model):
     name = models.CharField(max_length=100)
     group = models.ForeignKey(
         Group, related_name='teams', on_delete=models.SET_NULL, null=True, blank=True)
+    image_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name
