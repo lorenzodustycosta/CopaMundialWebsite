@@ -25,14 +25,14 @@
     <div class="scorer-cell">
       {% with scorer=home_goals|get_list_item:i %}
         {% if scorer %}
-          {{ scorer.player.surname }} {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
+          {{ scorer.player.surname }} {{ scorer.player.name|slice:":1" }}. {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
         {% endif %}
       {% endwith %}
     </div>
     <div class="scorer-cell">
       {% with scorer=away_goals|get_list_item:i %}
         {% if scorer %}
-          {{ scorer.player.surname }} {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
+          {{ scorer.player.surname }} {{ scorer.player.name|slice:":1" }}. {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
         {% endif %}
       {% endwith %}
     </div>
@@ -40,12 +40,12 @@
 
     <div class="scorer-cell">
       {% if mvp.team.name == match.home_team.name %}
-        {{ mvp.surname }} {{ 1 | make_cup }}
+        {{ mvp.surname }} {{ mvp.name|slice:":1" }}. {{ 1 | make_cup }}
       {% endif %}
     </div>
     <div class="scorer-cell">
       {% if mvp.team.name == match.away_team.name %}
-        {{ mvp.surname }} {{ 1 | make_cup }}
+        {{ mvp.surname }} {{ mvp.name|slice:":1" }}. {{ 1 | make_cup }}
       {% endif %}
     </div>
   </div>

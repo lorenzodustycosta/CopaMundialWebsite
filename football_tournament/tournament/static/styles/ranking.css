@@ -1,11 +1,11 @@
 .content-grid {
     display: grid;
-    grid-template-columns: 0.8fr 2.4fr 0.8fr;
+    grid-template-columns: 1fr 2.4fr 1fr;
     /* Colonna centrale più ampia */
     gap: 60px;
     align-items: start;
     font-size: 16px;
-    max-width: 1600px;
+    max-width: 2000px;
     /* più larghezza massima */
     margin: 0 auto;
     padding: 0 60px;

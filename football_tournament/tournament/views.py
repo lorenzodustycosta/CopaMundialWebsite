@@ -581,15 +581,27 @@ def ranking(request):
     if drawing_done:
         sorted_groups = compute_ranking(all_teams)
 
-        top_scorers = Player.objects.annotate(
+        scorers = Player.objects.annotate(
             total_goals=Coalesce(Sum('goal__number_of_goals'), 0)
         ).filter(
             total_goals__gt=0, is_fake=False # This filters out players with 0 goals
-        ).order_by('-total_goals')[:10]
+        )
+        top_scorers_count = list(scorers.values_list('total_goals', flat=True).distinct().order_by('-total_goals')[:3])
 
-        mvp_ranking = Player.objects.annotate(
-            mvp_count=Count('mvp_matches')).filter(
-            mvp_count__gt=0).order_by('-mvp_count')[:5]
+        if top_scorers_count:
+            min_top_scorers_count = top_scorers_count[-1]
+            
+            top_scorers = scorers.filter(total_goals__gte=min_top_scorers_count).order_by('-total_goals')
+        else:
+            top_scorers = scorers.none()
+
+        mvp_players = Player.objects.annotate(mvp_count=Count('mvp_matches')).filter(mvp_count__gt=0)
+        top_counts = list(mvp_players.values_list('mvp_count', flat=True).distinct().order_by('-mvp_count')[:5])
+        if top_counts:
+            min_top_count = top_counts[-1]
+            mvp_ranking = mvp_players.filter(mvp_count__gte=min_top_count).order_by('-mvp_count')
+        else:
+            mvp_ranking = mvp_players.none()
 
         quarterfinals_matches = Match.objects.filter(
             stage='Eliminazione', group='Quarti')
