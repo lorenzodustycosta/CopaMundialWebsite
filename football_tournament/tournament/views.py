@@ -530,40 +530,35 @@ def compute_ranking(all_teams):
             teams_info[away_team]['head_to_head_points'][home_team] += away_points
             teams_info[away_team]['head_to_head_goal_difference'][home_team] += away_goal_diff
 
-    # Function to calculate the sorting key for a given team
-    def sort_key(team, teams_info):
-        return (
-            -teams_info[team]['points'],
-            -teams_info[team]['goal_difference'],
-            -teams_info[team]['goals_scored'],
-            team
-        )
 
-    # Sort teams within each group with additional head-to-head comparison for tiebreakers
     sorted_groups = {}
     for group_name, team_stats in sorted(groups.items()):
         teams = list(team_stats.keys())
 
-        # Initial sorting based on primary criteria
-        sorted_teams = sorted(teams, key=lambda team: sort_key(team, team_stats))
+        # Ordina inizialmente solo per punti
+        teams.sort(key=lambda t: -team_stats[t]['points'])
 
-        # Adjust sorting for teams with equal points based on head-to-head results
         i = 0
-        while i < len(sorted_teams) - 1:
+        while i < len(teams):
             j = i + 1
-            while j < len(sorted_teams) and team_stats[sorted_teams[i]]['points'] == team_stats[sorted_teams[j]]['points']:
+            # Trova sottogruppo con stessi punti
+            while j < len(teams) and team_stats[teams[j]]['points'] == team_stats[teams[i]]['points']:
                 j += 1
-            if j > i + 1:  # More than one team with the same points
-                sorted_teams[i:j] = sorted(sorted_teams[i:j], key=lambda team: (
-                    -sum(team_stats[team]['head_to_head_points'][opponent] for opponent in sorted_teams[i:j] if opponent != team),
-                    -sum(team_stats[team]['head_to_head_goal_difference'][opponent] for opponent in sorted_teams[i:j] if opponent != team),
-                    -team_stats[team]['goal_difference'],
-                    -team_stats[team]['goals_scored'],
+
+            tied_group = teams[i:j]
+
+            if len(tied_group) > 1:
+                # Ordina in base ai 3 criteri
+                teams[i:j] = sorted(tied_group, key=lambda team: (
+                    -sum(team_stats[team]['head_to_head_points'][opponent] for opponent in tied_group if opponent != team),  # 1. scontri diretti punti
+                    -team_stats[team]['goal_difference'],  # 2. differenza reti generale
+                    -sum(team_stats[team]['head_to_head_goal_difference'][opponent] for opponent in tied_group if opponent != team),  # 3. scontri diretti diff reti
                     team
                 ))
+
             i = j
 
-        sorted_groups[group_name] = [team_stats[team] for team in sorted_teams]
+        sorted_groups[group_name] = [team_stats[team] for team in teams]
 
     return sorted_groups
 
