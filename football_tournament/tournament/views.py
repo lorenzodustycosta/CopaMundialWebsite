@@ -222,9 +222,9 @@ def get_knockout_teams(sorted_groups):
 
     # Iterate over each group and their teams, already sorted by standings
     for group_name, teams in sorted_groups.items():
-        first_place_teams.append(teams[0])
-        second_place_teams.append(teams[1])
-        third_place_teams.append(teams[2])
+        first_place_teams.append(teams['stats'][0])
+        second_place_teams.append(teams['stats'][1])
+        third_place_teams.append(teams['stats'][2])
 
     # first_place_teams = sorted(
     #     first_place_teams,
@@ -373,8 +373,6 @@ def group_draw(request):
             all_groups = Group.objects.all()
             tournament_schedule = create_schedule_from_schema(start_date, all_groups, schema)
 
-            print(tournament_schedule)
-
             for match_info in tournament_schedule:
                 group = get_object_or_404(Group, name=match_info['group'])
                 Match.objects.create(
@@ -438,7 +436,7 @@ def create_tournament_schedule(start_date, groups_queryset):
             if i % 6 == 3:  # Move to Wednesday after the first four matches
                 current_date += timedelta(days=1)
         
-        print(f"{i} {current_date} {match['home_team']} - {match['away_team']}")
+        # print(f"{i} {current_date} {match['home_team']} - {match['away_team']}")
 
         match_time = next(match_times)
         sorted_schedule.append({
@@ -479,7 +477,7 @@ def round_robin(teams):
 def compute_ranking(all_teams):
     # Initialize groups with a dictionary to hold team data by team name.
     groups = defaultdict(dict)
-
+   
     # Initialize team data structure.
     for team in all_teams:
         if team.group:  # Make sure the team is assigned to a group
@@ -558,7 +556,13 @@ def compute_ranking(all_teams):
 
             i = j
 
-        sorted_groups[group_name] = [team_stats[team] for team in teams]
+        group_obj = Group.objects.filter(name=group_name).first()
+        note = group_obj.note if group_obj else ""
+    
+        sorted_groups[group_name] = {
+            'stats': [team_stats[team] for team in teams],
+            "note": note, 
+        }
 
     return sorted_groups
 
@@ -679,7 +683,6 @@ def edit_match(request, match_id):
 
 
 def save_goals(form, match, team):
-    print(form)
     for field_name, value in form.cleaned_data.items():
         if value and value > 0:  # Make sure there is a value to save
             if field_name.startswith('goals'):
@@ -688,7 +691,6 @@ def save_goals(form, match, team):
             else:
                 # Use the dummy player for own goals
                 player = Player.objects.get(id=-1, team=team)
-                print(player)
             # Handle saving/updating the goal
             g, created = Goal.objects.update_or_create(
                 match=match,
@@ -751,7 +753,6 @@ def create_or_update_team(request, pk=None):
         return handle_initial_form(request, team, TeamFormSet)
 
 def handle_post(request, team, TeamFormSet):
-    print("Handle post")
     # Initialize forms with POST data
     team_form = TeamForm(request.POST, instance=team)
     formset = TeamFormSet(request.POST, instance=team)
@@ -778,7 +779,6 @@ def handle_post(request, team, TeamFormSet):
     })
 
 def handle_initial_form(request, team, TeamFormSet):
-    print("Handle Initial Form")
     # Prepare an empty form or preload data for editing
     team_form = TeamForm(instance=team)
     if team is None:

@@ -16,6 +16,8 @@
       {{ match.score_home_team }} - {{ match.score_away_team }}
       {% if match.dts %}<div class="score-note">(dts)</div>{% endif %}
       {% if match.dcr %}<div class="score-note">(dcr)</div>{% endif %}
+      {% if match.note %}<div class="score-note">{{ match.note }}</div>{% endif %}
+
     </div>
     <div class="team-name">{{ match.away_team.name }}</div>
   </div>

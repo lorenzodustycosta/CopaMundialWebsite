@@ -10,7 +10,7 @@ from django.db.models import Sum
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
-
+    note = models.CharField(_("Note"), max_length=500, default='', blank=True)
     def __str__(self):
         return self.name
 
@@ -61,6 +61,7 @@ class Match(models.Model):
     validated = models.BooleanField(_('Validate'), default=False)
     dts = models.BooleanField(default=False, verbose_name='Overtime')
     dcr = models.BooleanField(default=False, verbose_name='Penalties')
+    note = models.CharField(_("Note"), max_length=500, default='', blank=True)
     mvp = models.ForeignKey(
         Player,
         on_delete=models.SET_NULL,

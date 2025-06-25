@@ -29,6 +29,9 @@
                 {% if match.dcr %}
                 (dcr)
                 {% endif %}
+                {% if match.note %}
+                ({{match.note}})
+                {% endif %}
             </div>
             <div class="match-status">
                 {% if match.validated %}
