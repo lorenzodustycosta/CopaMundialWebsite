@@ -6,8 +6,6 @@ Designed and developed a website to manage and publish the results of a football
 ### Technologies Used
 - **Backend**: Implemented using Python and the Django framework.
 - **Frontend**: Built with HTML and CSS for a responsive user interface.
-- **Database**: Utilized PostgreSQL for robust data management.
-- **Deployment**: Deployed using Render.com and scheduled tasks with Crob-job.org, leveraging free services for cost-efficiency.
-
-### Project Demo
-[Click here to watch the demo video](./football_tournament/tournament/static/video/CM.mp4)
+- **Database**: Utilized PostgreSQL on Neon.com for robust data management
+- **Deployment**: Deployed using Render.com and kept alive with scheduled tasks on Crob-job.org, leveraging free services for cost-efficiency.
+- **Images**: Using cloudinary for team photos storage
