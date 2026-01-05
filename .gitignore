@@ -8,3 +8,6 @@ football_tournament/tournament/migrations/__pycache__/
 football_tournament/db.sqlite3
 football_tournament/tournament/management/commands/__pycache__/
 football_tournament/tournament/management/__pycache__/
+football_tournament/tournament/__pycache__
+football_tournament/tournament/config/__pycache__
+football_tournament/tournament/service/__pycache__
