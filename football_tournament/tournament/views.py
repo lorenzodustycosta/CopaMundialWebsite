@@ -60,7 +60,8 @@ def ranking(request):
             "winners": outcome.winners,
             "quarterfinals_matches": outcome.quarterfinals_matches,
             "semifinals_matches": outcome.semifinals_matches,
-            "finals_matches": outcome.finals_matches,
+            "final_3_4_match": outcome.final_3_4_match,
+            "final_1_2_match": outcome.final_1_2_match,
         },
     )
 

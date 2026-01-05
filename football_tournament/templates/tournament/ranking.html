@@ -49,54 +49,23 @@
         <h2 class="stage">Fase ad Eliminazione</h2>
 
         <h3 class="stage">Quarti di Finale</h3>
-        <table class="knockout-table">
-
-            {% for match in quarterfinals_matches %}
-            <tr>
-                <td class="team-name">{{ match.home_team.name }}</td>
-                <td class="vs">vs</td>
-                <td class="team-name">{{ match.away_team.name }}</td>
-                <td class="score">
-                    {{ match.score_home_team }} - {{ match.score_away_team }}
-                    {% if match.dts %}<span class="suffix">(DTS)</span>{% elif match.dcr %}<span class="suffix">(DCR)</span>{% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% include "tournament/_knockout_table.html" with matches=quarterfinals_matches %}
 
         <h3 class="stage">Semifinali</h3>
-        <table class="knockout-table">
-            {% for match in semifinals_matches %}
-            <tr>
-                <td class="team-name">{{ match.home_team.name }}</td>
-                <td class="vs">vs</td>
-                <td class="team-name">{{ match.away_team.name }}</td>
-                <td class="score">
-                    {{ match.score_home_team }} - {{ match.score_away_team }}
-                    {% if match.dts %}<span class="suffix">(DTS)</span>{% elif match.dcr %}<span class="suffix">(DCR)</span>{% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% include "tournament/_knockout_table.html" with matches=semifinals_matches %}
 
-        {% if finals_matches|length == 0 %}
-            <h3 class="stage">Finale 3-4</h3>
-            <h3 class="stage">Finale 1-2</h3>
+        <h3 class="stage">Finale 3-4</h3>
+        {% if final_3_4_match %}
+        {% include "tournament/_knockout_table.html" with matches=final_3_4_match %}
         {% else %}
-            {% for match in finals_matches %}
-            <h3 class="stage">{{ match.group }}</h3>
-            <table class="knockout-table">
-                <tr>
-                    <td class="team-name">{{ match.home_team.name }}</td>
-                    <td class="vs">vs</td>
-                    <td class="team-name">{{ match.away_team.name }}</td>
-                    <td class="score">
-                        {{ match.score_home_team }} - {{ match.score_away_team }}
-                        {% if match.dts %}<span class="suffix">(DTS)</span>{% elif match.dcr %}<span class="suffix">(DCR)</span>{% endif %}
-                    </td>
-                </tr>
-            </table>
-            {% endfor %}
+        <p class="empty">Non ancora disponibile</p>
+        {% endif %}
+
+        <h3 class="stage">Finale 1-2</h3>
+        {% if final_1_2_match %}
+        {% include "tournament/_knockout_table.html" with matches=final_1_2_match %}
+        {% else %}
+        <p class="empty">Non ancora disponibile</p>
         {% endif %}
 
         <h3 class="stage">Podio</h3>

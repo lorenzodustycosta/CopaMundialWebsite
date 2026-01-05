@@ -61,7 +61,6 @@ def sort_group_table(*, group_name: str, table: Dict[str, TeamStats], group_resu
     stats = list(table.values())
     
     stats.sort(key=lambda s: (s.points, s.goal_difference, s.goals_scored, s.team_name), reverse=True)
-    print(stats)
 
     return _apply_head_to_head_tiebreak(stats, group_results)
 

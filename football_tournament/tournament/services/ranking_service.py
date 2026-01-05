@@ -14,6 +14,7 @@ from tournament.models import Match, Player, Team
 from .group_stage_service import compute_group_stage_outcome
 from .knockout_view_service import get_knockout_matches
 from tournament.domain.match_outcome import get_winner_loser_ids
+from tournament.viewmodels import build_match_row_vm, MatchRowVM
 
 @dataclass(frozen=True)
 class RankingPageData:
@@ -25,9 +26,10 @@ class RankingPageData:
     qualified_team_names: List[str]
     group_notes: str
     winners: List = field(default_factory=list)
-    quarterfinals_matches: List[Match] = field(default_factory=list)
-    semifinals_matches: List[Match] = field(default_factory=list)
-    finals_matches: List[Match] = field(default_factory=list)
+    quarterfinals_matches: List[MatchRowVM] = field(default_factory=list)
+    semifinals_matches: List[MatchRowVM] = field(default_factory=list)
+    final_3_4_match: List[MatchRowVM] = field(default_factory=list)
+    final_1_2_match: List[MatchRowVM] = field(default_factory=list)
 
 def build_ranking_page_data() -> RankingPageData:
     """Build all data needed to render the ranking page."""
@@ -47,9 +49,10 @@ def build_ranking_page_data() -> RankingPageData:
         top_scorers=_get_top_scorers(),
         mvp_ranking=_get_mvp_ranking(),
         winners=_get_winners(knockout.finals),
-        quarterfinals_matches=knockout.quarterfinals,
-        semifinals_matches=knockout.semifinals,
-        finals_matches=knockout.finals,
+        quarterfinals_matches=[build_match_row_vm(m) for m in knockout.quarterfinals],
+        semifinals_matches=[build_match_row_vm(m) for m in knockout.semifinals],
+        final_3_4_match=[build_match_row_vm(m) for m in knockout.finals if m.group == "Finale 3-4"],
+        final_1_2_match=[build_match_row_vm(m) for m in knockout.finals if m.group == "Finale 1-2"]
     )    
     
 def _get_top_scorers():

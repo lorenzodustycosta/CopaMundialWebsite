@@ -1,0 +1,15 @@
+<table class="knockout-table">
+  {% for m in matches %}
+  <tr>
+    <td class="team-name">{{ m.home }}</td>
+    <td class="vs">vs</td>
+    <td class="team-name">{{ m.away }}</td>
+    <td class="score">
+      {{ m.score }}
+      {% if m.suffix %}<span class="suffix">({{ m.suffix }})</span>{% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="4" class="empty">Nessuna partita</td></tr>
+  {% endfor %}
+</table>
