@@ -50,10 +50,6 @@ msgstr "Squadra di Casa"
 msgid "Away Team"
 msgstr "Squadra in Trasferta"
 
-#: tournament/models.py:36 tournament/models.py:56
-msgid "Pitch"
-msgstr "Campo"
-
 #: tournament/models.py:37 tournament/models.py:54
 msgid "Home Score"
 msgstr "Goal Casa"

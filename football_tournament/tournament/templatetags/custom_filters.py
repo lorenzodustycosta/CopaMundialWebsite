@@ -22,7 +22,7 @@ def is_in_knockout(team, knockout_teams):
     return team in knockout_teams
 
 @register.filter(name='get_item')
-def get_item(dictionary, key):
+def get_item(dictionary: dict, key: str):
     return dictionary.get(key)
 
 @register.filter
@@ -31,3 +31,4 @@ def get_list_item(lst, index):
         return lst[index]
     except:
         return None
+    

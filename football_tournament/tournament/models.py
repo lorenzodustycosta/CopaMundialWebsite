@@ -37,23 +37,12 @@ class Player(models.Model):
 
 
 class Match(models.Model):
-    PITCH_CHOICES = (
-        ('Blu', 'Blu'),
-        ('Verde', 'Verde'),
-        ('Da definire', 'Da definire')
-    )
     date = models.DateField(_("Date"), default="2025-06-05")
     time = models.TimeField(_("Time"), default="20:00:00")
     home_team = models.ForeignKey(
         Team, related_name='home_matches', on_delete=models.CASCADE, verbose_name=_("Home Team"))
     away_team = models.ForeignKey(
         Team, related_name='away_matches', on_delete=models.CASCADE, verbose_name=_("Away Team"))
-    pitch = models.CharField(
-        _("Pitch"),
-        max_length=50,
-        choices=PITCH_CHOICES,
-        default='Da definire'
-    )
     score_home_team = models.IntegerField(_("Home Score"), default=0)
     score_away_team = models.IntegerField(_("Away Score"), default=0)
     stage = models.CharField(_("Stage"), max_length=50, default='Gironi')
@@ -77,7 +66,7 @@ class MatchForm(forms.ModelForm):
 
     class Meta:
         model = Match
-        fields = ['date', 'time', 'pitch', 'stage', 'group', 'home_team', 'away_team', 'score_home_team', 'score_away_team',
+        fields = ['date', 'time', 'stage', 'group', 'home_team', 'away_team', 'score_home_team', 'score_away_team',
                   'dts', 'dcr', 'mvp', 'validated']
         labels = {
             'date': _('Date'),
@@ -86,7 +75,6 @@ class MatchForm(forms.ModelForm):
             'away_team': _('Away Team'),
             'score_home_team': _('Home Score'),
             'score_away_team': _('Away Score'),
-            'pitch': _('Pitch'),
             'stage': _('Stage'),
             'group': _('Group'),
             'mvp': _('MVP'),

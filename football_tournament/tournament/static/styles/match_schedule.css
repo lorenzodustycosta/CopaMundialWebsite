@@ -26,7 +26,7 @@
     text-align: left;
 }
 
-.match-date, .match-time, .match-pitch, .match-teams, .match-status {
+.match-date, .match-time.match-teams, .match-status {
     padding: 0 10px;
 }
 
@@ -95,7 +95,7 @@
         min-height: 100px;
     }
 
-    .match-date, .match-time, .match-pitch {
+    .match-date, .match-time {
         display: block;
         font-size: 11px;
         line-height: 1.4;

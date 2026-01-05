@@ -33,7 +33,6 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(default='2024-06-05', verbose_name='Date')),
                 ('time', models.TimeField(default='20:00:00', verbose_name='Time')),
-                ('pitch', models.CharField(choices=[('Blu', 'Blu'), ('Verde', 'Verde'), ('Da definire', 'Da definire')], default='Da definire', max_length=50, verbose_name='Pitch')),
                 ('score_home_team', models.IntegerField(default=0, verbose_name='Home Score')),
                 ('score_away_team', models.IntegerField(default=0, verbose_name='Away Score')),
                 ('stage', models.CharField(default='Gironi', max_length=50, verbose_name='Stage')),
