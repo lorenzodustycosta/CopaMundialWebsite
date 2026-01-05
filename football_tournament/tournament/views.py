@@ -65,72 +65,43 @@ def ranking(request):
         },
     )
 
+@login_required
+@require_POST
+@csrf_protect
 def end_group(request):
     """Close group stage and generate quarterfinals."""
     end_group_stage_and_create_quarterfinals(dates=KNOCKOUT_DATES)
-    return redirect("manage_matches")
+    return redirect("manage_tournament")
 
+@login_required
+@require_POST
+@csrf_protect
 def end_quarterfinals(request):
     """Close quarterfinals and generate semifinals."""
     end_quarterfinals_and_create_semifinals(dates=KNOCKOUT_DATES)
-    return redirect("manage_matches")
+    return redirect("manage_tournament")
 
+@login_required
+@require_POST
+@csrf_protect
 def end_semifinals(request):
     """Close semifinals and generate finals."""
     end_semifinals_and_create_finals(dates=KNOCKOUT_DATES)
-    return redirect("manage_matches")
+    return redirect("manage_tournament")
 
+@login_required
+@require_POST
+@csrf_protect
 def end_finals(request):      
-    return redirect("manage_matches")
-
-#############################################################
-
+    return redirect("manage_tournament")
 
 def match_schedule(request):
     # Fetching all matches ordered by date
     matches = Match.objects.all().order_by('date', 'time')
     return render(request, 'tournament/match_schedule.html', {'matches': matches})
 
-def manage_matches(request):
-    # Fetching all matches ordered by date
-    matches = Match.objects.all().order_by('date', 'time')
-
-    group_matches = matches.filter(group__startswith='Gruppo')
-    if group_matches.count() > 0:
-        group_all_validated = group_matches.filter(
-            validated=False).count() == 0
-    else:
-        group_all_validated = False
-
-    quarterfinals_matches = matches.filter(group='Quarti')
-    if quarterfinals_matches.count() > 0:
-        quarterfinals_all_validated = quarterfinals_matches.filter(
-            validated=False).count() == 0
-    else:
-        quarterfinals_all_validated = False
-
-    semifinals_matches = matches.filter(group='Semifinali')
-    if semifinals_matches.count() > 0:
-        semifinals_all_validated = semifinals_matches.filter(
-            validated=False).count() == 0
-    else:
-        semifinals_all_validated = False
-
-    finals_matches = matches.filter(group__startswith='Finale')
-    if finals_matches.count() > 0:
-        finals_all_validated = finals_matches.filter(
-            validated=False).count() == 0
-    else:
-        finals_all_validated = False
-
-    context = {
-        'group_all_validated': group_all_validated,
-        'quarterfinals_all_validated': quarterfinals_all_validated,
-        'semifinals_all_validated': semifinals_all_validated,
-        'finals_all_validated': finals_all_validated
-    }
-
-    return render(request, 'tournament/manage_matches.html', {'matches': matches, 'context': context})
+def manage_tournament(request):
+    return render(request, 'tournament/manage_tournament.html')
 
 
 @require_POST
@@ -202,49 +173,6 @@ def group_draw(request):
         'last_picked_team_id': last_picked_team_id,  # Pass the last picked team's ID to the template
         "error": error})
 
-@login_required
-def edit_match(request, match_id):
-    match = get_object_or_404(Match, pk=match_id)
-    if request.method == 'POST':
-        match_form = MatchForm(request.POST, instance=match)
-        home_goals_form = PlayerGoalsForm(
-            request.POST, team=match.home_team, match=match)
-        away_goals_form = PlayerGoalsForm(
-            request.POST, team=match.away_team, match=match)
-       
-        if match_form.is_valid() and home_goals_form.is_valid() and away_goals_form.is_valid():
-
-            updated_match = match_form.save()
-            save_goals(home_goals_form, match, match.home_team)
-            save_goals(away_goals_form, match, match.away_team)
-            return redirect('manage_matches')
-
-    else:
-        match_form = MatchForm(instance=match)
-        home_goals_form = PlayerGoalsForm(team=match.home_team, match=match)
-        away_goals_form = PlayerGoalsForm(team=match.away_team, match=match)
-
-    return render(request, 'tournament/edit_match.html', {
-        'match_form': match_form,
-        'home_goals_form': home_goals_form,
-        'away_goals_form': away_goals_form,
-    })
-
-def save_goals(form, match, team):
-    for field_name, value in form.cleaned_data.items():
-        if value and value > 0:  # Make sure there is a value to save
-            if field_name.startswith('goals'):
-                player_id = int(field_name.split('_')[1])
-                player = Player.objects.get(id=player_id)
-            else:
-                # Use the dummy player for own goals
-                player = Player.objects.get(id=-1, team=team)
-            # Handle saving/updating the goal
-            g, created = Goal.objects.update_or_create(
-                match=match,
-                player=player,
-                defaults={'number_of_goals': value}
-            )
 
 def team_and_player_list(request):
     # Fetch all teams, ordered by name
@@ -276,81 +204,6 @@ def team_and_player_list(request):
         'player_rows': player_rows,
         'sorted_players': sorted_players
     })
-
-@login_required
-def team_list(request):
-    teams = Team.objects.order_by('name')
-    return render(request, 'tournament/team_list.html', {'teams': teams})
-
-@login_required
-def create_or_update_team(request, pk=None):
-    # Fetch the team instance by pk or set to None for creation
-    team = get_object_or_404(Team, pk=pk) if pk else None
-
-    # Define the formset with deletion enabled
-    TeamFormSet = inlineformset_factory(
-        Team, Player, form=PlayerForm, extra=12 if not pk else 0, can_delete=True)
-
-    if request.method == 'POST':
-        # Handle form submission
-        return handle_post(request, team, TeamFormSet)
-    else:
-        # Handle initial form loading
-        return handle_initial_form(request, team, TeamFormSet)
-
-def handle_post(request, team, TeamFormSet):
-    # Initialize forms with POST data
-    team_form = TeamForm(request.POST, instance=team)
-    formset = TeamFormSet(request.POST, instance=team)
-
-    if team_form.is_valid() and formset.is_valid():
-        # Save the team and update the formset instance
-        created_team = team_form.save()
-        formset.instance = created_team
-        formset.save()
-        
-        Player.objects.update_or_create(
-            team=created_team,
-            is_fake=True,
-            defaults={'name': 'autogoal', 'surname': 'autogoal', 'is_fake': True}
-        )
-                
-        return redirect('manage_teams')
-    
-    # If forms are not valid, re-render the page with error messages
-    return render(request, 'tournament/create_or_update_team.html', {
-        'team_form': team_form,
-        'formset': formset,
-        'team': team
-    })
-
-def handle_initial_form(request, team, TeamFormSet):
-    # Prepare an empty form or preload data for editing
-    team_form = TeamForm(instance=team)
-    if team is None:
-        initial_players = [{
-            'name': f'name_{i}',
-            'surname': f'surname_{i}'
-        } for i in range(1, 13)] 
-    else:
-        initial_players = []
-    formset = TeamFormSet(instance=team, initial=initial_players)
-    return render(request, 'tournament/create_or_update_team.html', {
-        'team_form': team_form,
-        'formset': formset,
-        'team': team
-    })
-
-class DeleteTeamView(DeleteView):
-    model = Team
-    # Name of the confirmation template
-    template_name = 'tournament/delete_team.html'
-    success_url = reverse_lazy('manage_teams')  # Redirect URL after deletion
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['cancel_url'] = reverse_lazy('manage_teams')
-        return context
 
 # Assuming you have models named Match, Goal, and Team
 def match_detail(request, match_id):
@@ -389,11 +242,3 @@ def download_document(request, doc_id):
 def health_check(request):
     response = HttpResponse("OK", content_type="text/plain")
     return response
-
-def migrate_view(request):
-    try:
-        call_command("migrate")
-        return HttpResponse("✅ Migrations executed.")
-    except Exception as e:
-        tb = traceback.format_exc()
-        return HttpResponseServerError(f"<pre>❌ Migration failed:\n\n{tb}</pre>")
