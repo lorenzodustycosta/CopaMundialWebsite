@@ -1,42 +1,26 @@
-import csv
-import datetime
+import json
 import os
 import random
-import traceback
-from collections import defaultdict
-from datetime import date, timedelta
-from itertools import combinations, cycle
-from operator import itemgetter
+
+from datetime import date
 from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
-from django.core.management import call_command
-from django.db import transaction
-from django.db.models import (Case, Count, F, IntegerField, Prefetch, Q, Sum,
-                              Value, When)
-from django.db.models.functions import Coalesce
-from django.forms import inlineformset_factory
-from django.http import HttpResponse, HttpResponseServerError
+from django.db.models import Count, Sum
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
-from django.utils import timezone
-from django.views.generic.edit import CreateView, DeleteView
-
-from django.http import JsonResponse
-import random
-import json
-
-from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
-
-from .models import (Document, Goal, Group, Match, MatchForm, Player,
-                     PlayerForm, PlayerGoalsForm, Team, TeamForm)
-
-from .services.schedule_service import TournamentConfig, create_group_stage_schedule_from_csv, cleanup_matches
-from .services.knockout_service import KnockoutDates, end_group_stage_and_create_quarterfinals, end_quarterfinals_and_create_semifinals, end_semifinals_and_create_finals
-from .services.group_stage_service import compute_group_stage_outcome
-from .services.ranking_service import build_ranking_page_data
+from django.views.decorators.http import require_POST
 from tournament.config.tournament_schedule import KNOCKOUT_DATES
+
+from .models import Document, Goal, Group, Match, Team
+from .services.knockout_service import (
+    end_group_stage_and_create_quarterfinals,
+    end_quarterfinals_and_create_semifinals, end_semifinals_and_create_finals)
+from .services.ranking_service import build_ranking_page_data
+from .services.schedule_service import (TournamentConfig, cleanup_matches,
+                                        create_group_stage_schedule_from_csv)
+
 
 def home(request):
     return render(request, 'tournament/home.html')
@@ -103,7 +87,7 @@ def match_schedule(request):
 def manage_tournament(request):
     return render(request, 'tournament/manage_tournament.html')
 
-
+@login_required
 @require_POST
 @csrf_protect
 def draw_team_ajax(request):
@@ -130,6 +114,9 @@ def draw_team_ajax(request):
 
     return JsonResponse({'status': 'invalid'}, status=400)
 
+@login_required
+@require_POST
+@csrf_protect
 def group_draw(request):
     last_picked_team_id = None  # Initialize variable to store the ID of the last picked team
     error = None
@@ -173,7 +160,6 @@ def group_draw(request):
         'last_picked_team_id': last_picked_team_id,  # Pass the last picked team's ID to the template
         "error": error})
 
-
 def team_and_player_list(request):
     # Fetch all teams, ordered by name
     teams = Team.objects.prefetch_related('players').order_by('name')
@@ -205,7 +191,6 @@ def team_and_player_list(request):
         'sorted_players': sorted_players
     })
 
-# Assuming you have models named Match, Goal, and Team
 def match_detail(request, match_id):
     match = get_object_or_404(Match, id=match_id)
     # Assuming that Goal has a 'player' ForeignKey and 'team' ForeignKey

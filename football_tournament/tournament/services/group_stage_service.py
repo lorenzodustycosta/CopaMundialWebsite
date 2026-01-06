@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from tournament.domain.ranking import MatchResult, TeamStats, compute_group_tables, sort_group_table, pick_top_2_per_group
 from tournament.models import Match, Group
