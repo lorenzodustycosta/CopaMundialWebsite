@@ -16,6 +16,9 @@ def get_winner_team_id(
 ) -> int:
     """
     Determine the winner team id from match scores.
+    Returns 0 for home, 1 for away.
+    Raises if the score is tied (not a valid knockout result).
     """
-    if score_home != score_away:
-        return 0 if score_home > score_away else 1
+    if score_home == score_away:
+        raise ValueError("Knockout match cannot be tied; set final score including DTS/DCR.")
+    return 0 if score_home > score_away else 1

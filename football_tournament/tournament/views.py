@@ -1,8 +1,6 @@
 import json
 import os
 import random
-
-from datetime import date
 from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
@@ -11,7 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
-from tournament.config.tournament_schedule import KNOCKOUT_DATES
+from tournament.config.tournament_schedule import GROUP_STAGE_START_DATE, KNOCKOUT_DATES
 
 from .models import Document, Goal, Group, Match, Team
 from .services.knockout_service import (
@@ -84,6 +82,7 @@ def match_schedule(request):
     matches = Match.objects.all().order_by('date', 'time')
     return render(request, 'tournament/match_schedule.html', {'matches': matches})
 
+@login_required
 def manage_tournament(request):
     return render(request, 'tournament/manage_tournament.html')
 
@@ -114,9 +113,7 @@ def draw_team_ajax(request):
 
     return JsonResponse({'status': 'invalid'}, status=400)
 
-@login_required
-@require_POST
-@csrf_protect
+@login_required 
 def group_draw(request):
     last_picked_team_id = None  # Initialize variable to store the ID of the last picked team
     error = None
@@ -140,7 +137,7 @@ def group_draw(request):
         schema_path = os.path.join(BASE_DIR, 'schedules', 'scheduling_schema.csv')
         try:
             cleanup_matches()
-            config = TournamentConfig(start_date=date(2025, 6, 3))
+            config = TournamentConfig(start_date=GROUP_STAGE_START_DATE)
             created = create_group_stage_schedule_from_csv(csv_path=schema_path, config=config)
         except ValueError as e:
             print(e)

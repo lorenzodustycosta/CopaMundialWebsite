@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django import forms
 
-from .models import Group, Team, Player, Match, Goal, Document, MatchForm
+from .forms import MatchForm
+from .models import Group, Team, Player, Match, Goal, Document
 
 
 @admin.register(Group)

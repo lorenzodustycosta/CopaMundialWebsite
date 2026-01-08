@@ -44,6 +44,8 @@ def end_group_stage_and_create_quarterfinals(*, dates: KnockoutDates, times: Tup
 
     created = 0
     with transaction.atomic():
+        # Prevent duplicate quarterfinals if called twice
+        Match.objects.filter(group="Quarti").delete()
         for i, (home_name, away_name) in enumerate(matchups):
             Match.objects.create(
                 stage="Eliminazione",
@@ -176,11 +178,16 @@ def _extract_winners(matches: List[Match]) -> List[int]:
     """Extract winners (Team IDs) from validated matches."""
     winners: List[int] = []
     for m in matches:
+        if m.score_home_team == m.score_away_team:
+            raise ValueError(f"Knockout match {m.id} is tied; set final score including DTS/DCR.")
+
         idx = get_winner_team_id(
             score_home=m.score_home_team,
             score_away=m.score_away_team,
         )
+
         winners.append(m.home_team_id if idx == 0 else m.away_team_id)
+
     return winners
 
 
@@ -188,6 +195,9 @@ def _extract_losers(matches: List[Match]) -> List[int]:
     """Extract losers (Team IDs) from validated matches."""
     losers: List[int] = []
     for m in matches:
+        if m.score_home_team == m.score_away_team:
+            raise ValueError(f"Knockout match {m.id} is tied; set final score including DTS/DCR.")
+        
         idx = get_winner_team_id(
             score_home=m.score_home_team,
             score_away=m.score_away_team,

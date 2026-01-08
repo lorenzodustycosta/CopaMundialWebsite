@@ -11,3 +11,5 @@ KNOCKOUT_DATES = KnockoutDates(
     semi_day=date(2025, 7, 5),
     final_day=date(2025, 7, 7),
 )
+
+GROUP_STAGE_START_DATE = date(2025, 6, 3)

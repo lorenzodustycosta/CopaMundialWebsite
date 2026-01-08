@@ -1,11 +1,5 @@
 from django.db import models
-from datetime import datetime
-from django import forms
-from django.db import models
-from django import forms
-from django.forms.models import BaseInlineFormSet
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum
 
 
 class Group(models.Model):
@@ -16,7 +10,7 @@ class Group(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     group = models.ForeignKey(
         Group, related_name='teams', on_delete=models.SET_NULL, null=True, blank=True)
     image_url = models.URLField(blank=True, null=True)
@@ -62,50 +56,6 @@ class Match(models.Model):
         return f"{self.home_team} vs {self.away_team}"
 
 
-class MatchForm(forms.ModelForm):
-
-    class Meta:
-        model = Match
-        fields = ['date', 'time', 'stage', 'group', 'home_team', 'away_team', 'score_home_team', 'score_away_team',
-                  'dts', 'dcr', 'mvp', 'validated']
-        labels = {
-            'date': _('Date'),
-            'time': _('Time'),
-            'home_team': _('Home Team'),
-            'away_team': _('Away Team'),
-            'score_home_team': _('Home Score'),
-            'score_away_team': _('Away Score'),
-            'stage': _('Stage'),
-            'group': _('Group'),
-            'mvp': _('MVP'),
-            'validated': _('Validated')
-        }
-        widgets = {
-            'dts': forms.CheckboxInput(),
-            'dcr': forms.CheckboxInput(),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(MatchForm, self).__init__(*args, **kwargs)
-        instance = kwargs.get('instance')
-
-        if instance:
-            valid_teams = [instance.home_team_id, instance.away_team_id]
-            self.fields['mvp'].queryset = Player.objects.filter(
-                team_id__in=valid_teams,  is_fake=False)
-        elif self.is_bound:
-            home_team_id = self.data.get('home_team')
-            away_team_id = self.data.get('away_team')
-            if home_team_id and away_team_id:
-                valid_teams = [home_team_id, away_team_id]
-                self.fields['mvp'].queryset = Player.objects.filter(
-                    team_id__in=valid_teams, is_fake=False)
-            else:
-                self.fields['mvp'].queryset = Player.objects.none()
-        else:
-            self.fields['mvp'].queryset = Player.objects.none()
-
-
 class Goal(models.Model):
     player = models.ForeignKey(
         Player, on_delete=models.CASCADE, null=True, blank=True)
@@ -117,57 +67,8 @@ class Goal(models.Model):
         return range(self.number_of_goals)
 
     def __str__(self):
-        return f"{self.player.name} scored {self.number_of_goals} goals in {self.match}"
-
-
-class TeamForm(forms.ModelForm):
-    class Meta:
-        model = Team
-        fields = ['name']
-        labels = {
-            'name': _('Team Name'),
-        }
-
-
-class PlayerForm(forms.ModelForm):
-    class Meta:
-        model = Player
-        fields = ['name', 'surname']
-        widgets = {
-            'name': forms.TextInput(attrs={'placeholder': '', 'class': 'player-name'}),
-            'surname': forms.TextInput(attrs={'placeholder': '', 'class': 'player-surname'}),
-        }
-        labels = {
-            'name': _('Name'),
-            'surname': _('Surname'),
-        }
-
-
-class PlayerGoalsForm(forms.ModelForm):
-    class Meta:
-        model = Goal
-        fields = []  # No fields defined since we're adding them dynamically
-
-    def __init__(self, *args, **kwargs):
-        team = kwargs.pop('team', None)
-        match = kwargs.pop('match', None)
-        super(PlayerGoalsForm, self).__init__(*args, **kwargs)
-
-        if team and match:
-            # Add fields for real players
-            for player in Player.objects.filter(team=team):
-                field_name = f'goals_{player.id}'
-                initial_goals = Goal.objects.filter(player=player, match=match).aggregate(
-                    Sum('number_of_goals'))['number_of_goals__sum'] or 0
-                self.fields[field_name] = forms.IntegerField(
-                    required=False,
-                    label=f'{player.name} {player.surname}',
-                    widget=forms.NumberInput(attrs={
-                        'placeholder': 'Goals',
-                        'style': 'width: 60px; margin-left: 10px;',
-                    }),
-                    initial=initial_goals
-                )
+        player_name = self.player.name if self.player else "Unknown"
+        return f"{player_name} scored {self.number_of_goals} goals in {self.match}"
 
 
 class Document(models.Model):
