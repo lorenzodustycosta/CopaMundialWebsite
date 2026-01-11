@@ -145,13 +145,18 @@ def _apply_head_to_head_tiebreak(
 
     out: List[TeamStats] = []
     i = 0
-    # Iterate over the sorted list and process contiguous blocks of equal points
+    # Iterate over the sorted list and process contiguous blocks of equal points/GD/GS
     while i < len(sorted_stats):
         j = i + 1
-        while j < len(sorted_stats) and sorted_stats[j].points == sorted_stats[i].points:  # <-- retrieve teams with same points
+        while (
+            j < len(sorted_stats)
+            and sorted_stats[j].points == sorted_stats[i].points
+            and sorted_stats[j].goal_difference == sorted_stats[i].goal_difference
+            and sorted_stats[j].goals_scored == sorted_stats[i].goals_scored
+        ):
             j += 1
 
-        # Teams from index i to j-1 have the same number of points
+        # Teams from index i to j-1 have the same points/GD/GS
         block = sorted_stats[i:j]
 
         # No tie to resolve if the block has a single team
@@ -196,4 +201,3 @@ def _compute_head_to_head_table(
         results=list(group_results),
         teams=tied_teams,
     ) 
-

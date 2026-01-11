@@ -65,7 +65,7 @@ def _get_top_scorers():
     top_counts = list(
             scorers.values_list("total_goals", flat=True)
             .distinct()
-            .order_by("-total_goals")[:3]
+            .order_by("-total_goals")[:10]
         )
 
     if not top_counts:
@@ -73,7 +73,14 @@ def _get_top_scorers():
 
     cutoff = top_counts[-1]
 
-    return scorers.filter(total_goals__gte=cutoff).order_by("-total_goals")
+    scorers_to_display = scorers.filter(total_goals__gte=cutoff).order_by("-total_goals")
+    
+    if len(scorers_to_display)>20:
+        scorers_to_display = scorers.order_by("-total_goals")[:20]
+
+
+
+    return scorers_to_display
 
 def _get_mvp_ranking():
     """Return a queryset of MVP ranking (including ties at the cutoff)."""
@@ -88,8 +95,7 @@ def _get_mvp_ranking():
     if not top_counts:
         return mvp_players.none()
 
-    cutoff = top_counts[-1]
-    return mvp_players.filter(mvp_count__gte=cutoff).order_by("-mvp_count")
+    return mvp_players.order_by("-mvp_count")[:20]
 
 def _get_winners(finals: List[Match]) -> List[Team]:
     """

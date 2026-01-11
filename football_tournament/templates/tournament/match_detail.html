@@ -3,53 +3,77 @@
 {% load custom_filters %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/match_detail.css' %}">
+<link rel="stylesheet" href="{% static 'styles/match_detail.css' %}?v=10">
 {% endblock %}
 
 {% block content %}
-<h3>Risultato e Marcatori</h3>
+<section class="match-detail">
+  <header class="match-hero">
+    <div class="match-meta">
+      <div class="meta-item">
+        <span class="meta-label">Data</span>
+        <span class="meta-value">{{ match.date|date:"d/m/Y" }} - {{ match.time|time:"H:i" }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Fase</span>
+        <span class="meta-value">{{ match.stage }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Gruppo</span>
+        <span class="meta-value">{{ match.group }}</span>
+      </div>
+    </div>
 
-<div class="match-wrapper">
-  <div class="match-header">
-    <div class="team-name">{{ match.home_team.name }}</div>
-    <div class="score">
-      {{ match.score_home_team }} - {{ match.score_away_team }}
-      {% if match.dts %}<div class="score-note">(dts)</div>{% endif %}
-      {% if match.dcr %}<div class="score-note">(dcr)</div>{% endif %}
-      {% if match.note %}<div class="score-note">{{ match.note }}</div>{% endif %}
+    <div class="match-table">
+      <div class="match-row header-row">
+        <div class="match-cell team-name">{{ match.home_team.name }}</div>
+        <div class="match-cell score-block">
+          <div class="score-main">{{ match.score_home_team }} - {{ match.score_away_team }}</div>
+          <div class="score-notes">
+            {% if match.dts %}<span class="score-tag">DTS</span>{% endif %}
+            {% if match.dcr %}<span class="score-tag">DCR</span>{% endif %}
+            {% if match.note %}<span class="score-tag">{{ match.note }}</span>{% endif %}
+          </div>
+        </div>
+        <div class="match-cell team-name">{{ match.away_team.name }}</div>
+      </div>
 
-    </div>
-    <div class="team-name">{{ match.away_team.name }}</div>
-  </div>
+      {% for i in max_range %}
+      <div class="match-row">
+        <div class="match-cell">
+          {% with scorer=home_goals|get_list_item:i %}
+            {% if scorer %}
+              {{ scorer.player.surname }} {{ scorer.player.name|slice:":1" }}.
+              {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
+            {% endif %}
+          {% endwith %}
+        </div>
+        <div class="match-cell"></div>
+        <div class="match-cell">
+          {% with scorer=away_goals|get_list_item:i %}
+            {% if scorer %}
+              {{ scorer.player.surname }} {{ scorer.player.name|slice:":1" }}.
+              {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+      {% endfor %}
 
-  <div class="scorers-grid">
-    {% for i in max_range %}
-    <div class="scorer-cell">
-      {% with scorer=home_goals|get_list_item:i %}
-        {% if scorer %}
-          {{ scorer.player.surname }} {{ scorer.player.name|slice:":1" }}. {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
-        {% endif %}
-      {% endwith %}
+      <div class="match-row mvp-row">
+        <div class="match-cell">
+          {% if mvp and mvp.team_id == match.home_team_id %}
+            MVP: {{ mvp.surname }} {{ mvp.name|slice:":1" }}. {{ 1 | make_cup }}
+          {% endif %}
+        </div>
+        <div class="match-cell"></div>
+        <div class="match-cell">
+          {% if mvp and mvp.team_id == match.away_team_id %}
+            MVP: {{ mvp.surname }} {{ mvp.name|slice:":1" }}. {{ 1 | make_cup }}
+          {% endif %}
+        </div>
+      </div>
     </div>
-    <div class="scorer-cell">
-      {% with scorer=away_goals|get_list_item:i %}
-        {% if scorer %}
-          {{ scorer.player.surname }} {{ scorer.player.name|slice:":1" }}. {{ scorer.player.surname|make_balls }} ({{ scorer.total_goals }})
-        {% endif %}
-      {% endwith %}
-    </div>
-    {% endfor %}
-
-    <div class="scorer-cell">
-      {% if mvp.team.name == match.home_team.name %}
-        {{ mvp.surname }} {{ mvp.name|slice:":1" }}. {{ 1 | make_cup }}
-      {% endif %}
-    </div>
-    <div class="scorer-cell">
-      {% if mvp.team.name == match.away_team.name %}
-        {{ mvp.surname }} {{ mvp.name|slice:":1" }}. {{ 1 | make_cup }}
-      {% endif %}
-    </div>
-  </div>
-</div>
+  </header>
+</section>
 {% endblock %}

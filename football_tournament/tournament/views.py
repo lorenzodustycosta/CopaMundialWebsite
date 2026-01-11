@@ -24,26 +24,51 @@ def home(request):
     return render(request, 'tournament/home.html')
 
 def ranking(request):
-    """Render the ranking page using precomputed service data."""
-    outcome = build_ranking_page_data()
+    return redirect("ranking_groups")
 
-    drawing_done = any(t.group_id for t in Team.objects.all())
+def ranking_groups(request):
+    """Render the group-stage rankings page."""
+    outcome = build_ranking_page_data()
 
     return render(
         request,
-        "tournament/ranking.html",
+        "tournament/ranking_groups.html",
         {
-            "drawing_done": drawing_done,
+            "drawing_done": outcome.drawing_done,
             "rankings": outcome.rankings,
             "group_notes": outcome.group_notes,
             "qualified_team_names": [t for t in outcome.qualified_team_names],
-            "top_scorers": outcome.top_scorers,
-            "mvp_ranking": outcome.mvp_ranking,
+        },
+    )
+
+def ranking_knockout(request):
+    """Render the knockout bracket page."""
+    outcome = build_ranking_page_data()
+
+    return render(
+        request,
+        "tournament/ranking_knockout.html",
+        {
+            "drawing_done": outcome.drawing_done,
             "winners": outcome.winners,
             "quarterfinals_matches": outcome.quarterfinals_matches,
             "semifinals_matches": outcome.semifinals_matches,
             "final_3_4_match": outcome.final_3_4_match,
             "final_1_2_match": outcome.final_1_2_match,
+        },
+    )
+
+def ranking_players(request):
+    """Render the player rankings page."""
+    outcome = build_ranking_page_data()
+
+    return render(
+        request,
+        "tournament/ranking_players.html",
+        {
+            "drawing_done": outcome.drawing_done,
+            "top_scorers": outcome.top_scorers,
+            "mvp_ranking": outcome.mvp_ranking,
         },
     )
 
@@ -84,7 +109,45 @@ def match_schedule(request):
 
 @login_required
 def manage_tournament(request):
-    return render(request, 'tournament/manage_tournament.html')
+    group_total = Match.objects.filter(group__startswith="Gruppo").count()
+    group_valid = Match.objects.filter(group__startswith="Gruppo", validated=True).count()
+    quarter_total = Match.objects.filter(group="Quarti").count()
+    quarter_valid = Match.objects.filter(group="Quarti", validated=True).count()
+    semi_total = Match.objects.filter(group="Semifinali").count()
+    semi_valid = Match.objects.filter(group="Semifinali", validated=True).count()
+    finals_total = Match.objects.filter(group__in=["Finale 1-2", "Finale 3-4"]).count()
+    finals_valid = Match.objects.filter(group__in=["Finale 1-2", "Finale 3-4"], validated=True).count()
+
+    if finals_total and finals_valid == finals_total:
+        current_phase = "Torneo concluso"
+    elif finals_total:
+        current_phase = "Finali"
+    elif semi_total:
+        current_phase = "Semifinali"
+    elif quarter_total:
+        current_phase = "Quarti"
+    elif group_total:
+        current_phase = "Gironi"
+    else:
+        current_phase = "Non iniziato"
+
+    context = {
+        "group_total": group_total,
+        "group_valid": group_valid,
+        "quarter_total": quarter_total,
+        "quarter_valid": quarter_valid,
+        "semi_total": semi_total,
+        "semi_valid": semi_valid,
+        "finals_total": finals_total,
+        "finals_valid": finals_valid,
+        "group_all_validated": group_total > 0 and group_valid == group_total,
+        "quarter_all_validated": quarter_total > 0 and quarter_valid == quarter_total,
+        "semi_all_validated": semi_total > 0 and semi_valid == semi_total,
+        "finals_all_validated": finals_total > 0 and finals_valid == finals_total,
+        "current_phase": current_phase,
+    }
+
+    return render(request, "tournament/manage_tournament.html", context)
 
 @login_required
 @require_POST
@@ -131,6 +194,7 @@ def group_draw(request):
 
     elif 'reset' in request.POST:
         Team.objects.all().update(group=None)
+        cleanup_matches()
 
     elif 'start_tournament' in request.POST:
         BASE_DIR = Path(__file__).resolve().parent.parent

@@ -1,0 +1,138 @@
+{% extends 'tournament/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/ranking_knockout.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+<section class="knockout-page">
+    <header class="page-header">
+        <h1>Tabellone Eliminazione</h1>
+    </header>
+
+    {% if not drawing_done %}
+    <div class="alert">
+        <p>Il sorteggio dei gruppi non è ancora stato fatto. Ritorna più tardi.</p>
+    </div>
+    {% else %}
+    <div class="bracket-wrapper">
+        <div class="bracket-grid">
+            <section class="round round-quarter">
+                <h2>Quarti di finale</h2>
+                {% if quarterfinals_matches %}
+                    {% for match in quarterfinals_matches %}
+                    <a class="match-card qf-{{ forloop.counter }}" href="{% url 'match_detail' match.match_id %}">
+                        {% if match.kickoff %}
+                        <div class="kickoff">{{ match.kickoff }}</div>
+                        {% endif %}
+                        <div class="match-row">
+                            <span class="team">{{ match.home }}</span>
+                        </div>
+                        <div class="match-row score-row">
+                            <span class="score">{{ match.score }}</span>
+                            {% if match.suffix %}<span class="suffix">({{ match.suffix }})</span>{% endif %}
+                        </div>
+                        <div class="match-row">
+                            <span class="team">{{ match.away }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                <div class="empty">Nessuna partita</div>
+                {% endif %}
+            </section>
+
+            <section class="round round-semi">
+                <h2>Semifinali</h2>
+                {% if semifinals_matches %}
+                    {% for match in semifinals_matches %}
+                    <a class="match-card sf-{{ forloop.counter }}" href="{% url 'match_detail' match.match_id %}">
+                        {% if match.kickoff %}
+                        <div class="kickoff">{{ match.kickoff }}</div>
+                        {% endif %}
+                        <div class="match-row">
+                            <span class="team">{{ match.home }}</span>
+                        </div>
+                        <div class="match-row score-row">
+                            <span class="score">{{ match.score }}</span>
+                            {% if match.suffix %}<span class="suffix">({{ match.suffix }})</span>{% endif %}
+                        </div>
+                        <div class="match-row">
+                            <span class="team">{{ match.away }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                <div class="empty">Nessuna partita</div>
+                {% endif %}
+            </section>
+
+            <section class="round round-final">
+                <h2>Finali</h2>
+                {% if final_1_2_match %}
+                    {% for match in final_1_2_match %}
+                    <a class="match-card highlight-final final-1" href="{% url 'match_detail' match.match_id %}">
+                        <h3>Finale 1-2</h3>
+                        {% if match.kickoff %}
+                        <div class="kickoff">{{ match.kickoff }}</div>
+                        {% endif %}
+                        <div class="match-row">
+                            <span class="team">{{ match.home }}</span>
+                        </div>
+                        <div class="match-row score-row">
+                            <span class="score">{{ match.score }}</span>
+                            {% if match.suffix %}<span class="suffix">({{ match.suffix }})</span>{% endif %}
+                        </div>
+                        <div class="match-row">
+                            <span class="team">{{ match.away }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                <div class="empty">Non ancora disponibile</div>
+                {% endif %}
+
+                <div class="third-place">
+                    {% if final_3_4_match %}
+                        {% for match in final_3_4_match %}
+                        <a class="match-card highlight-final third-1" href="{% url 'match_detail' match.match_id %}">
+                            <h3>Finale 3-4</h3>
+                            {% if match.kickoff %}
+                            <div class="kickoff">{{ match.kickoff }}</div>
+                            {% endif %}
+                            <div class="match-row">
+                                <span class="team">{{ match.home }}</span>
+                            </div>
+                            <div class="match-row score-row">
+                                <span class="score">{{ match.score }}</span>
+                                {% if match.suffix %}<span class="suffix">({{ match.suffix }})</span>{% endif %}
+                            </div>
+                            <div class="match-row">
+                                <span class="team">{{ match.away }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <div class="podium-block">
+            <div class="podium-row">
+                {% for team in winners %}
+                <div class="podium-card">
+                    <div class="podium-medal">
+                        {% if forloop.counter == 1 %}🥇{% endif %}
+                        {% if forloop.counter == 2 %}🥈{% endif %}
+                        {% if forloop.counter == 3 %}🥉{% endif %}
+                    </div>
+                    <div class="podium-team">{{ team.name }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

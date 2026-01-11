@@ -3,49 +3,122 @@
 {% block content %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}?v=3">
-<h2>Sorteggio</h2>
+<link rel="stylesheet" href="{% static 'styles/group_draw.css' %}?v=5">
+<section class="draw-page">
+    <header class="draw-header">
+        <h2>Sorteggio</h2>
+    </header>
 
-<div class="grid-container">
-    <!-- Colonna Pulsanti -->
-    <div class="button-column">
-        <form method="post">
-            {% csrf_token %}
-            {% if user.is_authenticated %}
-            <button type="button" name="draw" class="submit" onclick="startDrawAnimation(this)">
-                <img src="{% static 'images/draw_team_icon.png' %}" alt="Draw Team">
-            </button>
-            <button type="submit" name="reset" class="submit">
-                <img src="{% static 'images/reset.png' %}" alt="Reset">
-            </button>
-            <button type="submit" name="start_tournament" class="submit">
-                <img src="{% static 'images/kick-off.png' %}" alt="Inizia Torneo">
-            </button>
-            {% endif %}
-        </form>
-    </div>
+    <div class="grid-container">
+        <div class="button-column">
+            <form method="post">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                <button type="button" name="draw" class="action-btn primary" onclick="startDrawAnimation(this)">
+                    <span class="icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img" focusable="false">
+                            <path d="M4 7h10a4 4 0 1 1 0 8H9" />
+                            <path d="M7 3 3 7l4 4" />
+                            <path d="M20 17H10a4 4 0 1 1 0-8h5" />
+                            <path d="m17 13 4 4-4 4" />
+                        </svg>
+                    </span>
+                    <span class="label">Sorteggia</span>
+                </button>
+                <button type="submit" name="reset" class="action-btn ghost">
+                    <span class="icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img" focusable="false">
+                            <path d="M4 4v6h6" />
+                            <path d="M20 20v-6h-6" />
+                            <path d="M6 10a7 7 0 0 1 12-2" />
+                            <path d="M18 14a7 7 0 0 1-12 2" />
+                        </svg>
+                    </span>
+                    <span class="label">Reset</span>
+                </button>
+                <button type="submit" name="start_tournament" class="action-btn accent">
+                    <span class="icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img" focusable="false">
+                            <path d="M5 3v18l15-9z" />
+                        </svg>
+                    </span>
+                    <span class="label">Kick Off</span>
+                </button>
+                {% endif %}
+            </form>
+            <div class="controls-panel">
+                <div class="control">
+                    <label for="team-interval">Intervallo squadre</label>
+                    <input type="range" id="team-interval" min="20" max="200" step="10" value="100">
+                    <span class="control-value" id="team-interval-value">100 ms</span>
+                </div>
+                <div class="control">
+                    <label for="team-duration">Durata squadre</label>
+                    <input type="range" id="team-duration" min="500" max="4000" step="250" value="2000">
+                    <span class="control-value" id="team-duration-value">2000 ms</span>
+                </div>
+                <div class="control">
+                    <label for="group-interval">Intervallo gruppi</label>
+                    <input type="range" id="group-interval" min="50" max="400" step="25" value="250">
+                    <span class="control-value" id="group-interval-value">250 ms</span>
+                </div>
+                <div class="control">
+                    <label for="group-duration">Durata gruppi</label>
+                    <input type="range" id="group-duration" min="500" max="5000" step="250" value="4000">
+                    <span class="control-value" id="group-duration-value">4000 ms</span>
+                </div>
+            </div>
+        </div>
 
-    <!-- Colonna Squadre -->
-    <div class="column">
-        <h3>Squadre</h3>
-        {% for team in unassigned_teams %}
-        <div class="team">{{ team.name }}</div>
-        {% endfor %}
-    </div>
+        <div class="column teams-column">
+            <h3>Squadre</h3>
+            {% for team in unassigned_teams %}
+            <div class="team">{{ team.name }}</div>
+            {% endfor %}
+        </div>
 
-    <!-- Colonne Gruppi -->
-    {% for group in groups %}
-    <div class="column">
-        <h3>{{ group.name }}</h3>
-        {% for team in group.teams.all %}
-        <div class="group {% if team.id == last_picked_team_id %}highlight{% endif %}">{{ team.name }}</div>
-        {% endfor %}
+        <div class="groups-grid">
+            {% for group in groups %}
+            <div class="column">
+                <h3>{{ group.name }}</h3>
+                {% for team in group.teams.all %}
+                <div class="group {% if team.id == last_picked_team_id %}highlight{% endif %}">{{ team.name }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
-</div>
+</section>
 
 
 <script>
+const controls = {
+    teamInterval: document.getElementById('team-interval'),
+    teamDuration: document.getElementById('team-duration'),
+    groupInterval: document.getElementById('group-interval'),
+    groupDuration: document.getElementById('group-duration'),
+};
+
+const controlValues = {
+    teamInterval: document.getElementById('team-interval-value'),
+    teamDuration: document.getElementById('team-duration-value'),
+    groupInterval: document.getElementById('group-interval-value'),
+    groupDuration: document.getElementById('group-duration-value'),
+};
+
+function updateControlLabels() {
+    controlValues.teamInterval.textContent = `${controls.teamInterval.value} ms`;
+    controlValues.teamDuration.textContent = `${controls.teamDuration.value} ms`;
+    controlValues.groupInterval.textContent = `${controls.groupInterval.value} ms`;
+    controlValues.groupDuration.textContent = `${controls.groupDuration.value} ms`;
+}
+
+Object.values(controls).forEach(input => {
+    input.addEventListener('input', updateControlLabels);
+});
+
+updateControlLabels();
+
 function startDrawAnimation(button) {
     button.disabled = true;
 
@@ -96,10 +169,10 @@ function animateTeamSelection(teamName, groupName) {
     }
 
     // ⏱️ Parametri configurabili
-    const teamLoopDuration = 2000 / 100;
-    const teamHighlightInterval = 100 / 100;
-    const groupLoopDuration = 4000 / 100;
-    const groupHighlightInterval = 250 / 100;
+    const teamLoopDuration = Number(controls.teamDuration.value);
+    const teamHighlightInterval = Number(controls.teamInterval.value);
+    const groupLoopDuration = Number(controls.groupDuration.value);
+    const groupHighlightInterval = Number(controls.groupInterval.value);
 
     // 🔶 Animazione squadre
     let teamIndex = 0;

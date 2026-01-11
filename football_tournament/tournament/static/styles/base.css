@@ -11,7 +11,7 @@ body {
     /* Prevent horizontal scroll */
     display: flex;
     /* Flexbox layout for the body */
-    font-family: Montserrat;
+    font-family: "Sora", "Manrope", "Avenir Next", "Trebuchet MS", sans-serif;
     color: #333333;
 }
 

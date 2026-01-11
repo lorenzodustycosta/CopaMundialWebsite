@@ -1,0 +1,58 @@
+{% extends 'tournament/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/ranking_players.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<section class="players-page">
+    <header class="page-header">
+        <h1>Classifiche Giocatori</h1>
+    </header>
+
+    {% if not drawing_done %}
+    <div class="alert">
+        <p>Il sorteggio dei gruppi non è ancora stato fatto. Ritorna più tardi.</p>
+    </div>
+    {% else %}
+    <div class="players-grid">
+        <article class="players-card">
+            <h2>Classifica Marcatori</h2>
+            <table>
+                <tr>
+                    <th class="col-player">Giocatore</th>
+                    <th class="col-team">Squadra</th>
+                    <th class="col-stat">Goal</th>
+                </tr>
+                {% for scorer in top_scorers %}
+                <tr>
+                    <td class="col-player">{{ scorer.surname }} {{ scorer.name|slice:":1" }}.</td>
+                    <td class="col-team">{{ scorer.team.name }}</td>
+                    <td class="col-stat">{{ scorer.total_goals }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </article>
+
+        <article class="players-card">
+            <h2>Classifica MVP</h2>
+            <table>
+                <tr>
+                    <th class="col-player">Giocatore</th>
+                    <th class="col-team">Squadra</th>
+                    <th class="col-stat">MVP</th>
+                </tr>
+                {% for mvp in mvp_ranking %}
+                <tr>
+                    <td class="col-player">{{ mvp.surname }} {{ mvp.name|slice:":1" }}.</td>
+                    <td class="col-team">{{ mvp.team.name }}</td>
+                    <td class="col-stat">{{ mvp.mvp_count }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </article>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

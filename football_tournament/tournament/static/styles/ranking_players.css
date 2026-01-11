@@ -1,0 +1,97 @@
+.players-page {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 40px 50px 60px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+.players-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    gap: 26px;
+}
+
+.players-card {
+    padding: 20px 18px 24px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.players-card h2 {
+    text-align: center;
+    font-size: 22px;
+    margin: 10px 0 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+    height: 30px;
+    font-size: 14px;
+}
+
+th.col-stat,
+td.col-stat {
+    text-align: center;
+    width: 12%;
+}
+
+.alert {
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+.alert p {
+    margin: 0;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .players-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .players-page {
+        padding: 20px 16px 40px;
+    }
+
+    .page-header h1 {
+        font-size: 24px;
+    }
+
+    th,
+    td {
+        font-size: 13px;
+        padding: 6px;
+    }
+}

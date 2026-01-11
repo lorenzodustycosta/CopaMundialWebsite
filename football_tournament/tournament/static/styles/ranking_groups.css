@@ -1,0 +1,132 @@
+.groups-page {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 40px 50px 60px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
+    gap: 28px;
+}
+
+.group-card {
+    padding: 20px 18px 24px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.group-card h2 {
+    font-size: 22px;
+    margin: 10px 0 16px;
+}
+
+.group-note {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 8px;
+    height: 30px;
+    font-size: 14px;
+}
+
+th.team-name,
+td.team-name {
+    text-align: left;
+    width: 32%;
+}
+
+.group-card table {
+    table-layout: fixed;
+}
+
+th:not(.team-name),
+td:not(.team-name) {
+    width: 17%;
+}
+
+.highlight {
+    background-color: #a9c191;
+}
+
+.title-desktop {
+    display: inline;
+}
+
+.title-mobile {
+    display: none;
+}
+
+.alert {
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+.alert p {
+    margin: 0;
+    font-size: 14px;
+}
+
+@media (max-width: 1000px) {
+    .groups-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .groups-page {
+        padding: 20px 16px 40px;
+    }
+
+    .page-header h1 {
+        font-size: 24px;
+    }
+
+    .title-desktop {
+        display: none !important;
+    }
+
+    .title-mobile {
+        display: inline !important;
+    }
+
+    th,
+    td {
+        padding: 6px;
+        font-size: 13px;
+    }
+}

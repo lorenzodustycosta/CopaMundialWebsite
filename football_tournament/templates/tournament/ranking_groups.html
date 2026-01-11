@@ -1,0 +1,50 @@
+{% extends 'tournament/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/ranking_groups.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<section class="groups-page">
+    <header class="page-header">
+        <h1>Classifiche Gironi</h1>
+    </header>
+
+    {% if not drawing_done %}
+    <div class="alert">
+        <p>Il sorteggio dei gruppi non è ancora stato fatto. Ritorna più tardi.</p>
+    </div>
+    {% else %}
+    <div class="groups-grid">
+        {% for group_name, table in rankings.items %}
+        <article class="group-card">
+            <h2>{{ group_name }}</h2>
+            <table>
+                <tr>
+                    <th class="team-name">Squadra</th>
+                    <th>Punti</th>
+                    <th><span class="title-desktop">GF</span><span class="title-mobile">GF</span></th>
+                    <th><span class="title-desktop">GS</span><span class="title-mobile">GS</span></th>
+                    <th><span class="title-desktop">DR</span><span class="title-mobile">DR</span></th>
+                </tr>
+                {% for team in table %}
+                <tr class="{% if team.team_name in qualified_team_names %}highlight{% endif %}">
+                    <td class="team-name">{{ team.team_name }}</td>
+                    <td>{{ team.points }}</td>
+                    <td>{{ team.goals_scored }}</td>
+                    <td>{{ team.goals_conceded }}</td>
+                    <td>{{ team.goal_difference }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% if group_notes|get_item:group_name %}
+            <p class="group-note">{{ group_notes|get_item:group_name }}</p>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

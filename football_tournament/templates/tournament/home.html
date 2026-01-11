@@ -5,52 +5,69 @@
 
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'styles/home.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'styles/home.css' %}?v=4">
 {% endblock %}
 
 {% block content %}
-<div class="title">Benvenuti alla CopaMundial 2025</div>
-<div class="text">Qui potete rimanere aggiornati sulle prossime sfide, risultati e marcatori.</div>
-<div class="text"><b>Quando</b>: 3 Giugno - 11 Luglio </div>
-<div class="text"><b>Dove</b>:
-    <a
-        href="https://www.google.com/maps/place/Sport+Live,+Via+Giuseppe+Verdi,+20010+Santo+Stefano+Ticino+MI,+Italia/@45.4806187,8.9111423,17z/data=!3m1!4b1!4m6!3m5!1s0x4786edfe0a9ab43f:0x761b621acb79cb5a!8m2!3d45.4806097!4d8.9160114!16s%2Fg%2F11c0vbv2w_?entry=ttu">Sport
-        Live - Viale Della Stazione, 17, 20010, Santo Stefano Ticino </a>
-</div>
-<div class="text"><b>Cosa ci sarà:</b>
-    <ul class="text" style="list-style-type: none; margin-left: 5px;">
-        <li class="text" style="margin-bottom: 20px;">
-            16 squadre
-        </li>
-        <li class="text" style="margin-bottom: 20px;">
-            32 partite
-        </li>
-        <li class="text" style="margin-bottom: 20px;">
-            Sorteggio Live con diretta Instagram
-        </li>
-        <li class="text" style="margin-bottom: 20px;">
-            Serata di apertura il 3 Giugno
-            <!--con Concerto Live dei <ahref="https://www.instagram.com/p/C6jYZCNNuO6/">Dementos</a> (Cover Band dei GemBoy) + Aperitivo -->
-        </li>
-        <li class="text" style="margin-bottom: 20px;">
-            Serata di chiusura 11 Luglio con le Finalissime 1° - 2° posto e 3° - 4° posto, premiazioni, paninaro, dj set
-            con
-            vocalist
-        </li>
-    </ul>
-</div>
-<div class="text"><b>Social</b>:
+<section class="home-hero">
+    <div class="hero-badge">CopaMundial 2025</div>
+    <h1>Benvenuti alla CopaMundial 2025</h1>
+    <p class="hero-subtitle">Risultati, classifiche e serate speciali: tutto in un’unica casa.</p>
+    <div class="hero-actions">
+        <a class="hero-cta" href="{% url 'match_schedule' %}">Calendario Partite</a>
+        <a class="hero-ghost" href="{% url 'ranking_groups' %}">Classifiche Gironi</a>
+    </div>
+</section>
 
+<section class="home-grid">
+    <div class="info-card">
+        <h2>Quando</h2>
+        <p>3 Giugno - 11 Luglio</p>
+    </div>
+    <div class="info-card">
+        <h2>Dove</h2>
+        <p>
+            <a href="https://www.google.com/maps/place/Sport+Live,+Via+Giuseppe+Verdi,+20010+Santo+Stefano+Ticino+MI,+Italia/@45.4806187,8.9111423,17z/data=!3m1!4b1!4m6!3m5!1s0x4786edfe0a9ab43f:0x761b621acb79cb5a!8m2!3d45.4806097!4d8.9160114!16s%2Fg%2F11c0vbv2w_?entry=ttu">
+                Sport Live - Viale Della Stazione, 17, 20010, Santo Stefano Ticino
+            </a>
+        </p>
+    </div>
+    <div class="info-card highlight-card">
+        <h2>Numeri</h2>
+        <div class="stats">
+            <div>
+                <span class="stat-value">16</span>
+                <span class="stat-label">Squadre</span>
+            </div>
+            <div>
+                <span class="stat-value">32</span>
+                <span class="stat-label">Partite</span>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <ul class="text" style="list-style-type: none; margin-left: 5px;">
-        <li class="text" style="margin-bottom: 20px;">
-            Potete seguirci anche sulla nostra pagina Instagram: <a
-                href="https://www.instagram.com/torneo_copamundial/">torneo_copamundial</a>
-        </li>
-        <li class="text" style="margin-bottom: 20px;">
-            Per tutte le foto, iscriviti al nostro canale <a href="https://t.me/+DalZ4G80baJhODE82">Telegram</a>
-        </li>
-    </ul>
-</div>
+<section class="home-schedule">
+    <h2>Cosa ci sarà</h2>
+    <div class="schedule-list">
+        <div class="schedule-item">Sorteggio live con diretta Instagram</div>
+        <div class="schedule-item">Serata di apertura il 3 Giugno</div>
+        <div class="schedule-item">Finalissime 11 Luglio + premiazioni e dj set</div>
+    </div>
+</section>
+
+<section class="home-social">
+    <h2>Social</h2>
+    <div class="social-links">
+        <a class="social-card" href="https://www.instagram.com/torneo_copamundial/">
+            <span>Instagram</span>
+            <strong>@torneo_copamundial</strong>
+        </a>
+        <a class="social-card" href="https://t.me/+DalZ4G80baJhODE82">
+            <span>Telegram</span>
+            <strong>Canale Foto</strong>
+        </a>
+    </div>
+</section>
 
 {% endblock %}
