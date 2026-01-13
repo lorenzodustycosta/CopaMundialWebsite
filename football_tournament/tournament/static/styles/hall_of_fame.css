@@ -1,0 +1,80 @@
+.hall-of-fame {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 0;
+}
+
+.hall-of-fame-row {
+    display: grid;
+    grid-template-columns: 90px repeat(6, minmax(120px, 1fr));
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.hall-of-fame-row span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hall-of-fame-header {
+    background: var(--color-primary-deep);
+    color: var(--color-panel);
+    border-color: var(--color-primary-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.hall-of-fame-empty {
+    margin-top: 12px;
+    color: var(--color-text);
+    font-style: italic;
+}
+
+@media (max-width: 1100px) {
+    .hall-of-fame-row {
+        grid-template-columns: 70px repeat(6, minmax(110px, 1fr));
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 900px) {
+    .hall-of-fame-row {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 8px;
+    }
+
+    .hall-of-fame-row span {
+        white-space: normal;
+    }
+
+    .hall-of-fame-header {
+        display: none;
+    }
+
+    .hall-of-fame-row span::before {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--color-primary);
+        margin-bottom: 2px;
+    }
+
+    .hall-of-fame-row span:nth-child(1)::before { content: "Anno"; }
+    .hall-of-fame-row span:nth-child(2)::before { content: "1° posto"; }
+    .hall-of-fame-row span:nth-child(3)::before { content: "2° posto"; }
+    .hall-of-fame-row span:nth-child(4)::before { content: "3° posto"; }
+    .hall-of-fame-row span:nth-child(5)::before { content: "MVP"; }
+    .hall-of-fame-row span:nth-child(6)::before { content: "Capocannoniere"; }
+    .hall-of-fame-row span:nth-child(7)::before { content: "Miglior portiere"; }
+}

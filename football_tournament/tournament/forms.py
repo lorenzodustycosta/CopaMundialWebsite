@@ -3,7 +3,7 @@ from __future__ import annotations
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import Match, Player
+from .models import HallOfFame, Match, Player
 
 
 class MatchForm(forms.ModelForm):
@@ -61,3 +61,24 @@ class MatchForm(forms.ModelForm):
                 self.fields["mvp"].queryset = Player.objects.none()
         else:
             self.fields["mvp"].queryset = Player.objects.none()
+
+
+class HallOfFameForm(forms.ModelForm):
+    class Meta:
+        model = HallOfFame
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = self.instance
+
+        if instance and instance.team_id:
+            self.fields["player"].queryset = Player.objects.filter(team_id=instance.team_id)
+        elif self.is_bound:
+            team_id = self.data.get("team")
+            if team_id:
+                self.fields["player"].queryset = Player.objects.filter(team_id=team_id)
+            else:
+                self.fields["player"].queryset = Player.objects.none()
+        else:
+            self.fields["player"].queryset = Player.objects.none()

@@ -21,6 +21,7 @@
             <a href="{% url 'ranking_groups' %}">CLASSIFICHE GIRONI</a>
             <a href="{% url 'ranking_knockout' %}">TABELLONE</a>
             <a href="{% url 'ranking_players' %}">CLASSIFICHE GIOCATORI</a>
+            <a href="{% url 'hall_of_fame' %}">ALBO D'ORO</a>
             <a href="{% url 'document_list' %}">DOWNLOADS</a>
             <a href="{% url 'login' %}?next={{ request.path }}">AREA RISERVATA</a>
             {% if user.is_authenticated %}

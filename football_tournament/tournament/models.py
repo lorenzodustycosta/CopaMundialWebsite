@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 
 class Group(models.Model):
@@ -27,7 +28,7 @@ class Player(models.Model):
     is_fake = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.surname} {self.name} {self.team.name}"
+        return f"{self.surname} {self.name}"
 
 
 class Match(models.Model):
@@ -77,3 +78,51 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+class HallOfFame(models.Model):
+    class TitleChoices(models.TextChoices):
+        FIRST_PLACE = "first_place", _("1° Posto")
+        SECOND_PLACE = "second_place", _("2° Posto")
+        THIRD_PLACE = "third_place", _("3° Posto")
+        MVP = "mvp", _("MVP")
+        TOP_SCORER = "top_scorer", _("Capocannoniere")
+        BEST_GK = "best_gk", _("Miglior Portiere")
+
+    title = models.CharField(
+        max_length=50,
+        choices=TitleChoices.choices,
+        default=TitleChoices.FIRST_PLACE,
+    )
+    player = models.ForeignKey(
+        Player,
+        related_name="player",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    player_name = models.CharField(max_length=100, default="", blank=True)
+    team = models.ForeignKey(
+        Team,
+        related_name="team",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    team_name = models.CharField(max_length=100, default="", blank=True)
+    year = models.IntegerField(default=datetime.today().year)
+
+    def display_team(self):
+        return self.team.name if self.team_id else self.team_name
+
+    def display_player(self):
+        return self.player.__str__() if self.player_id else self.player_name
+
+    def save(self, *args, **kwargs):
+        if self.team_id and not self.team_name:
+            self.team_name = self.team.name
+        if self.player_id and not self.player_name:
+            self.player_name = str(self.player)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.year} - {self.title} - {self.display_team()} - {self.display_player()}"

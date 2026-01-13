@@ -15,6 +15,7 @@ urlpatterns = [
     path('matches/end_quarterfinals/', views.end_quarterfinals, name='end_quarterfinals'),
     path('matches/end_semifinals/', views.end_semifinals, name='end_semifinals'),
     path('matches/end_finals/', views.end_finals, name='end_finals'),
+    path('hall_of_fame/', views.hall_of_fame, name='hall_of_fame'),
     path('login/', LoginView.as_view(template_name='../templates/tournament/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
     path('team_and_player_list/', views.team_and_player_list, name='team_and_player_list'),

@@ -10,12 +10,12 @@
 }
 
 .page-header h1 {
-    font-size: 30px;
+    font-size: var(--fs-h1);
     margin-bottom: 8px;
 }
 
 .page-header p {
-    font-size: 15px;
+    font-size: var(--fs-body);
     opacity: 0.8;
 }
 
@@ -35,7 +35,7 @@
 
 .players-card h2 {
     text-align: center;
-    font-size: 22px;
+    font-size: var(--fs-h3);
     margin: 10px 0 16px;
 }
 
@@ -50,7 +50,7 @@ td {
     text-align: left;
     padding: 8px;
     height: 30px;
-    font-size: 14px;
+    font-size: var(--fs-body);
 }
 
 th.col-stat,
@@ -71,7 +71,7 @@ td.col-stat {
 
 .alert p {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--fs-small);
 }
 
 @media (max-width: 900px) {
@@ -86,12 +86,12 @@ td.col-stat {
     }
 
     .page-header h1 {
-        font-size: 24px;
+        font-size: var(--fs-h2);
     }
 
     th,
     td {
-        font-size: 13px;
+        font-size: var(--fs-small);
         padding: 6px;
     }
 }

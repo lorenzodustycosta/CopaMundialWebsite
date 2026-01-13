@@ -19,6 +19,7 @@ from .services.ranking_service import build_ranking_page_data
 from .services.schedule_service import (TournamentConfig, cleanup_matches,
                                         create_group_stage_schedule_from_csv)
 
+from .services.hall_of_fame_service import build_all_of_fame_data
 
 def home(request):
     return render(request, 'tournament/home.html')
@@ -71,6 +72,18 @@ def ranking_players(request):
             "mvp_ranking": outcome.mvp_ranking,
         },
     )
+
+def hall_of_fame(request):
+    """Render the hall of fame"""
+    outcome = build_all_of_fame_data()
+    return render(
+        request,
+        "tournament/hall_of_fame.html",
+        {
+            "entries": outcome.entries,
+        },
+    )
+
 
 @login_required
 @require_POST

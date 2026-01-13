@@ -1,0 +1,33 @@
+{% extends 'tournament/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'styles/hall_of_fame.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+    <section class="hall-of-fame">
+        <div class="hall-of-fame-row hall-of-fame-header">
+            <span>Anno</span>
+            <span>1° posto</span>
+            <span>2° posto</span>
+            <span>3° posto</span>
+            <span>MVP</span>
+            <span>Capocannoniere</span>
+            <span>Miglior portiere</span>
+        </div>
+        {% for entry in entries %}
+            <div class="hall-of-fame-row">
+                <span>{{ entry.year }}</span>
+                <span>{{ entry.first|default:"-" }}</span>
+                <span>{{ entry.second|default:"-" }}</span>
+                <span>{{ entry.third|default:"-" }}</span>
+                <span>{{ entry.mvp|default:"-" }}</span>
+                <span>{{ entry.top_scorer|default:"-" }}</span>
+                <span>{{ entry.best_gk|default:"-" }}</span>
+            </div>
+        {% empty %}
+            <p class="hall-of-fame-empty">No hall of fame data yet.</p>
+        {% endfor %}
+    </section>
+{% endblock %}

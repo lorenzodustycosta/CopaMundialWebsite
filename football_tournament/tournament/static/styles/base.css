@@ -1,4 +1,23 @@
 /* Add your CSS styling here */
+:root {
+    --fs-hero: clamp(32px, 4vw, 56px);
+    --fs-h1: clamp(26px, 3vw, 40px);
+    --fs-h2: clamp(20px, 2.2vw, 30px);
+    --fs-h3: clamp(16px, 1.6vw, 22px);
+    --fs-body-lg: clamp(16px, 1.6vw, 20px);
+    --fs-body: 16px;
+    --fs-small: 13px;
+    --fs-xs: 12px;
+    --color-text: #1E2732;
+    --color-primary: #2C7AD7;
+    --color-primary-deep: #0B2C4F;
+    --color-accent-ice: #7ED5FF;
+    --color-accent-warm: #F2B661;
+    --color-field: #5C8A3F;
+    --color-panel: #F3F6FB;
+    --color-border: #B8C7DA;
+}
+
 body {
     position: relative;
     /* Ensure the relative positioning for absolute children */
@@ -12,22 +31,37 @@ body {
     display: flex;
     /* Flexbox layout for the body */
     font-family: "Sora", "Manrope", "Avenir Next", "Trebuchet MS", sans-serif;
-    color: #333333;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    color: var(--color-text);
+}
+
+h1 {
+    font-size: var(--fs-h1);
+    line-height: 1.15;
+}
+
+h2 {
+    font-size: var(--fs-h2);
+    line-height: 1.2;
+}
+
+h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.25;
+}
+
+p {
+    font-size: var(--fs-body);
 }
 
 body::before {
     content: "";
-    position: absolute;
-    /* Positioned absolutely relative to the body */
-    top: 0;
-    left: 0;
-    width: 100%;
-    /* Cover the entire width of the body */
-    height: 100%;
-    /* Cover the entire height of the body */
-    background: url('/static/images/background.png') center/cover no-repeat scroll;
-    background-size: cover;
-    /* Your background image */
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: url('/static/images/background_2.png?v=2') center/cover no-repeat;
     opacity: 0.4;
     /* Apply opacity to the pseudo-element only */
     z-index: -1;
@@ -50,10 +84,10 @@ body::before {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #8CAF71;
+    background-color: var(--color-primary-deep);
     overflow-x: hidden;
     padding: 20px 0; /* Vertical padding */
-    border-right: 2px solid #ccc;
+    border-right: 2px solid var(--color-border);
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -61,19 +95,19 @@ body::before {
     padding: 10px 15px;
     text-decoration: none;
     font-size: 20px;
-    color: #333333;
+    color: var(--color-panel);
     display: block;
 }
 
 .sidebar .link-section a:hover {
-    color: white;
+    color: var(--color-accent-ice);
 }
 
 .sponsor {
     padding: 10px 15px;
     margin-top: auto; /* Pushes to the bottom */
     text-decoration: none; /* Prevents underlining */
-    color:  #333333; /* Set a fixed color */
+    color: var(--color-panel); /* Set a fixed color */
     font-size: 20px;
     margin-bottom: 20px;
 }
@@ -110,7 +144,7 @@ body::before {
         flex-direction: column !important;
         align-items: center !important;
         justify-content: flex-start !important;
-        background-color: #8CAF71 !important;
+        background-color: var(--color-primary-deep) !important;
         padding: 0 !important;
         margin: 0 !important;
         box-sizing: border-box !important;
@@ -130,7 +164,7 @@ body::before {
         padding: 4px 8px !important;
         white-space: nowrap;
         border-radius: 4px;
-        color: #fff !important;
+        color: var(--color-panel) !important;
         background-color: transparent;
     }
 

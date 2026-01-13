@@ -17,12 +17,12 @@ body::before {
 }
 
 .draw-header h2 {
-    font-size: 36px;
+    font-size: var(--fs-h1);
     margin-bottom: 8px;
 }
 
 .draw-header p {
-    font-size: 16px;
+    font-size: var(--fs-body);
     opacity: 0.75;
 }
 
@@ -101,7 +101,7 @@ body::before {
 }
 
 .action-btn .label {
-    font-size: 11px;
+    font-size: var(--fs-xs);
 }
 
 .teams-column {
@@ -127,7 +127,7 @@ body::before {
 
 .column h3 {
     margin: 4px 0 14px;
-    font-size: 20px;
+    font-size: var(--fs-h3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #2b2b2b;
@@ -136,7 +136,7 @@ body::before {
 .team,
 .group {
     margin: 6px 0;
-    font-size: 18px;
+    font-size: var(--fs-body);
     padding: 8px 12px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.7);
@@ -204,7 +204,7 @@ body::before {
 .control {
     display: grid;
     gap: 6px;
-    font-size: 12px;
+    font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #243126;
@@ -215,7 +215,7 @@ body::before {
 }
 
 .control-value {
-    font-size: 12px;
+    font-size: var(--fs-xs);
     text-transform: none;
     letter-spacing: 0;
     opacity: 0.8;

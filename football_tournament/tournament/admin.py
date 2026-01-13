@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django import forms
+from django.http import JsonResponse
+from django.urls import path
 
-from .forms import MatchForm
-from .models import Group, Team, Player, Match, Goal, Document
+from .forms import HallOfFameForm, MatchForm
+from .models import Group, Team, Player, Match, Goal, Document, HallOfFame
 
 
 @admin.register(Group)
@@ -63,49 +65,80 @@ class GoalInlineForm(forms.ModelForm):
         fields = ("player", "number_of_goals")
 
 
-class GoalInline(admin.TabularInline):
-    """Inline goals inside Match admin."""
+class BaseGoalInline(admin.TabularInline):
+    """Base inline for goals with per-team filtering."""
     model = Goal
     form = GoalInlineForm
     extra = 0
     fields = ("player", "number_of_goals")
-    autocomplete_fields = ("player",)
+    autocomplete_fields = ()
+    team_side = None  # "home" or "away"
+
+    def _get_match_id(self, request):
+        try:
+            return request.resolver_match.kwargs.get("object_id")
+        except Exception:
+            return None
+
+    def _get_team_id(self, match):
+        if self.team_side == "home":
+            return match.home_team_id
+        if self.team_side == "away":
+            return match.away_team_id
+        return None
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        match_id = self._get_match_id(request)
+        if not match_id:
+            return queryset.none()
+        try:
+            match = Match.objects.only("home_team_id", "away_team_id").get(pk=match_id)
+        except Match.DoesNotExist:
+            return queryset.none()
+        team_id = self._get_team_id(match)
+        return queryset.filter(player__team_id=team_id) if team_id else queryset.none()
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        """
-        Filter player choices to home/away team players (including fake autogoal).
-        """
         field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name != "player":
+            return field
 
-        if db_field.name == "player":
-            # Match ID is in the URL for change view: /admin/app/match/<id>/change/
-            # We can try to parse it safely.
-            match_id = None
-            try:
-                # request.resolver_match.kwargs often includes 'object_id' in admin
-                match_id = request.resolver_match.kwargs.get("object_id")
-            except Exception:
-                match_id = None
+        match_id = self._get_match_id(request)
+        if not match_id:
+            field.queryset = Player.objects.none()
+            return field
 
-            if match_id:
-                try:
-                    match = Match.objects.select_related("home_team", "away_team").get(pk=match_id)
-                    valid_team_ids = [match.home_team_id, match.away_team_id]
-                    field.queryset = Player.objects.filter(team_id__in=valid_team_ids)
-                except Match.DoesNotExist:
-                    field.queryset = Player.objects.none()
-            else:
-                # On "add match" page, teams aren't chosen yet -> keep empty to avoid wrong selections.
-                field.queryset = Player.objects.none()
+        try:
+            match = Match.objects.select_related("home_team", "away_team").get(pk=match_id)
+        except Match.DoesNotExist:
+            field.queryset = Player.objects.none()
+            return field
 
+        team_id = self._get_team_id(match)
+        field.queryset = Player.objects.filter(team_id=team_id) if team_id else Player.objects.none()
         return field
+
+
+class HomeGoalInline(BaseGoalInline):
+    """Inline goals for the home team."""
+    verbose_name = "Home goal"
+    verbose_name_plural = "Home goals"
+    team_side = "home"
+
+
+class AwayGoalInline(BaseGoalInline):
+    """Inline goals for the away team."""
+    verbose_name = "Away goal"
+    verbose_name_plural = "Away goals"
+    team_side = "away"
 
 
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
     """Admin configuration for matches, with inline goals and MVP filtering via MatchForm."""
     form = MatchForm
-    inlines = [GoalInline]
+    inlines = [HomeGoalInline, AwayGoalInline]
 
     list_display = (
         "date",
@@ -124,7 +157,7 @@ class MatchAdmin(admin.ModelAdmin):
     search_fields = ("home_team__name", "away_team__name", "group", "stage", "note")
     ordering = ("date", "time")
     list_select_related = ("home_team", "away_team", "mvp")
-    autocomplete_fields = ("home_team", "away_team", "mvp")
+    autocomplete_fields = ("home_team", "away_team")
 
     fieldsets = (
         (None, {
@@ -156,3 +189,33 @@ class DocumentAdmin(admin.ModelAdmin):
     """Admin configuration for uploaded documents."""
     list_display = ("title", "file")
     search_fields = ("title",)
+
+@admin.register(HallOfFame)
+class HallOfFameAdmin(admin.ModelAdmin):
+    """Admin configuration for the hall of fame"""
+    form = HallOfFameForm
+    list_display = ("year", "title", "display_team", "display_player")
+    fields = ("year", "title", "team", "team_name", "player", "player_name")
+
+    class Media:
+        js = ("admin/hall_of_fame.js",)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "player-options/",
+                self.admin_site.admin_view(self.player_options),
+                name="halloffame-player-options",
+            ),
+        ]
+        return custom_urls + urls
+
+    def player_options(self, request):
+        team_id = request.GET.get("team_id")
+        if not team_id:
+            return JsonResponse({"players": []})
+
+        players = Player.objects.filter(team_id=team_id).order_by("surname", "name")
+        payload = [{"id": player.id, "label": str(player)} for player in players]
+        return JsonResponse({"players": payload})
