@@ -10,7 +10,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 10px;
+    padding: 0px 0px 0px 0px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     background: transparent;
@@ -19,14 +19,13 @@
 
 .team-card h3 {
     height: 50px;
-    padding: 0 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #8CAF71;
-    color: #333333;
-    margin-top: 5px;
+    background-color: var(--color-accent-ice);
+    color: var(--color-text-secondary);
+    margin-top: 0px;
     margin-bottom: 10px;
     white-space: normal;
     width: 100%;
@@ -66,6 +65,7 @@
     max-width: 200px;
     align-self: center;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .team-photo {
@@ -76,6 +76,7 @@
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .team-photo:hover {

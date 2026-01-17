@@ -9,6 +9,7 @@
     --fs-small: 13px;
     --fs-xs: 12px;
     --color-text: #1E2732;
+    --color-text-secondary: #F3F6FB;
     --color-primary: #2C7AD7;
     --color-primary-deep: #0B2C4F;
     --color-accent-ice: #7ED5FF;
@@ -84,7 +85,6 @@ body::before {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: var(--color-primary-deep);
     overflow-x: hidden;
     padding: 20px 0; /* Vertical padding */
     border-right: 2px solid var(--color-border);
@@ -95,7 +95,7 @@ body::before {
     padding: 10px 15px;
     text-decoration: none;
     font-size: 20px;
-    color: var(--color-panel);
+    color: var(--color-primary-deep);
     display: block;
 }
 
@@ -108,6 +108,7 @@ body::before {
     margin-top: auto; /* Pushes to the bottom */
     text-decoration: none; /* Prevents underlining */
     color: var(--color-panel); /* Set a fixed color */
+    opacity: 0.9;
     font-size: 20px;
     margin-bottom: 20px;
 }
