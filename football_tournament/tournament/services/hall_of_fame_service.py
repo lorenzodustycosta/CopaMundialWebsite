@@ -44,8 +44,10 @@ def build_all_of_fame_data() -> HallOfFameData:
             return record.display_team() if record else None
 
         def player_value(title: str) -> Optional[str]:
+            print(title)
+            print(by_title)
             record = by_title.get(title)
-            return record.display_player() if record else None
+            return record.display_player() + " (" + record.display_team() + ")" if record else None
 
         entries.append(
             HallOfFameYear(
