@@ -243,6 +243,26 @@
 
     .bracket-grid {
         grid-template-columns: 1fr;
+        gap: 24px;
+        min-height: auto;
+    }
+
+    .round {
+        min-height: auto;
+        grid-template-rows: auto;
+        grid-auto-rows: auto;
+        row-gap: 12px;
+    }
+
+    .round-quarter .qf-1,
+    .round-quarter .qf-2,
+    .round-quarter .qf-3,
+    .round-quarter .qf-4,
+    .round-semi .sf-1,
+    .round-semi .sf-2,
+    .round-final .final-1,
+    .round-final .third-place {
+        grid-row: auto;
     }
 
     .podium-row {
