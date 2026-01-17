@@ -11,61 +11,67 @@
 
     <div class="grid-container">
         <div class="button-column">
-            <form method="post">
-                {% csrf_token %}
-                {% if user.is_authenticated %}
-                <button type="button" name="draw" class="action-btn primary" onclick="startDrawAnimation(this)">
-                    <span class="icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" role="img" focusable="false">
-                            <path d="M4 7h10a4 4 0 1 1 0 8H9" />
-                            <path d="M7 3 3 7l4 4" />
-                            <path d="M20 17H10a4 4 0 1 1 0-8h5" />
-                            <path d="m17 13 4 4-4 4" />
-                        </svg>
-                    </span>
-                    <span class="label">Sorteggia</span>
-                </button>
-                <button type="submit" name="reset" class="action-btn ghost">
-                    <span class="icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" role="img" focusable="false">
-                            <path d="M4 4v6h6" />
-                            <path d="M20 20v-6h-6" />
-                            <path d="M6 10a7 7 0 0 1 12-2" />
-                            <path d="M18 14a7 7 0 0 1-12 2" />
-                        </svg>
-                    </span>
-                    <span class="label">Reset</span>
-                </button>
-                <button type="submit" name="start_tournament" class="action-btn accent">
-                    <span class="icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" role="img" focusable="false">
-                            <path d="M5 3v18l15-9z" />
-                        </svg>
-                    </span>
-                    <span class="label">Kick Off</span>
-                </button>
-                {% endif %}
-            </form>
-            <div class="controls-panel">
-                <div class="control">
-                    <label for="team-interval">Intervallo squadre</label>
-                    <input type="range" id="team-interval" min="20" max="200" step="10" value="100">
-                    <span class="control-value" id="team-interval-value">100 ms</span>
-                </div>
-                <div class="control">
-                    <label for="team-duration">Durata squadre</label>
-                    <input type="range" id="team-duration" min="500" max="4000" step="250" value="2000">
-                    <span class="control-value" id="team-duration-value">2000 ms</span>
-                </div>
-                <div class="control">
-                    <label for="group-interval">Intervallo gruppi</label>
-                    <input type="range" id="group-interval" min="50" max="400" step="25" value="250">
-                    <span class="control-value" id="group-interval-value">250 ms</span>
-                </div>
-                <div class="control">
-                    <label for="group-duration">Durata gruppi</label>
-                    <input type="range" id="group-duration" min="500" max="5000" step="250" value="4000">
-                    <span class="control-value" id="group-duration-value">4000 ms</span>
+            <div class="sticky-controls">
+                <form method="post">
+                    {% csrf_token %}
+                    {% if user.is_authenticated %}
+                    <button type="button" name="draw" class="action-btn primary" onclick="startDrawAnimation(this)">
+                        <span class="icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                                <path d="M4 7h10a4 4 0 1 1 0 8H9" />
+                                <path d="M7 3 3 7l4 4" />
+                                <path d="M20 17H10a4 4 0 1 1 0-8h5" />
+                                <path d="m17 13 4 4-4 4" />
+                            </svg>
+                        </span>
+                        <span class="label">Sorteggia</span>
+                    </button>
+                    <button type="submit" name="reset" class="action-btn ghost">
+                        <span class="icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                                <path d="M4 4v6h6" />
+                                <path d="M20 20v-6h-6" />
+                                <path d="M6 10a7 7 0 0 1 12-2" />
+                                <path d="M18 14a7 7 0 0 1-12 2" />
+                            </svg>
+                        </span>
+                        <span class="label">Reset</span>
+                    </button>
+                    <button type="submit" name="start_tournament" class="action-btn accent">
+                        <span class="icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" role="img" focusable="false">
+                                <path d="M5 3v18l15-9z" />
+                            </svg>
+                        </span>
+                        <span class="label">Kick Off</span>
+                    </button>
+                    {% endif %}
+                    <button type="button" class="theme-toggle" id="draw-theme-toggle" aria-pressed="false">
+                        <span class="toggle-indicator" aria-hidden="true"></span>
+                        <span class="toggle-label">Modalita sera</span>
+                    </button>
+                </form>
+                <div class="controls-panel">
+                    <div class="control">
+                        <label for="team-interval">Intervallo squadre</label>
+                        <input type="range" id="team-interval" min="20" max="200" step="10" value="100">
+                        <span class="control-value" id="team-interval-value">100 ms</span>
+                    </div>
+                    <div class="control">
+                        <label for="team-duration">Durata squadre</label>
+                        <input type="range" id="team-duration" min="500" max="4000" step="250" value="2000">
+                        <span class="control-value" id="team-duration-value">2000 ms</span>
+                    </div>
+                    <div class="control">
+                        <label for="group-interval">Intervallo gruppi</label>
+                        <input type="range" id="group-interval" min="50" max="400" step="25" value="250">
+                        <span class="control-value" id="group-interval-value">250 ms</span>
+                    </div>
+                    <div class="control">
+                        <label for="group-duration">Durata gruppi</label>
+                        <input type="range" id="group-duration" min="500" max="5000" step="250" value="4000">
+                        <span class="control-value" id="group-duration-value">4000 ms</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,6 +111,40 @@ const controlValues = {
     groupInterval: document.getElementById('group-interval-value'),
     groupDuration: document.getElementById('group-duration-value'),
 };
+
+const themeToggle = document.getElementById('draw-theme-toggle');
+const themeStorageKey = 'drawTheme';
+const themeLabel = themeToggle ? themeToggle.querySelector('.toggle-label') : null;
+
+function setDrawTheme(theme) {
+    document.body.setAttribute('data-draw-theme', theme);
+    if (themeToggle) {
+        themeToggle.setAttribute('aria-pressed', theme === 'dusk');
+    }
+    if (themeLabel) {
+        themeLabel.textContent = theme === 'dusk' ? 'Modalita giorno' : 'Modalita sera';
+    }
+}
+
+let savedTheme = null;
+try {
+    savedTheme = localStorage.getItem(themeStorageKey);
+} catch (error) {
+    savedTheme = null;
+}
+setDrawTheme(savedTheme === 'dusk' ? 'dusk' : 'day');
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const nextTheme = document.body.getAttribute('data-draw-theme') === 'dusk' ? 'day' : 'dusk';
+        setDrawTheme(nextTheme);
+        try {
+            localStorage.setItem(themeStorageKey, nextTheme);
+        } catch (error) {
+            // Ignore storage failures (private mode or blocked storage).
+        }
+    });
+}
 
 function updateControlLabels() {
     controlValues.teamInterval.textContent = `${controls.teamInterval.value} ms`;

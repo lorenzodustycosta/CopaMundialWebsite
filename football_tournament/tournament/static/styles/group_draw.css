@@ -2,6 +2,38 @@
     max-width: 1700px;
     margin: 0 auto;
     padding: 40px 50px 60px;
+    color: var(--draw-text);
+    --draw-text: #1f2a21;
+    --draw-muted: rgba(31, 42, 33, 0.72);
+    --draw-panel-bg: rgba(255, 255, 255, 0.2);
+    --draw-panel-border: rgba(255, 255, 255, 0.35);
+    --draw-panel-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    --draw-btn-bg: rgba(255, 255, 255, 0.2);
+    --draw-btn-border: rgba(255, 255, 255, 0.4);
+    --draw-btn-text: #1f2a21;
+    --draw-icon-bg: rgba(255, 255, 255, 0.7);
+    --draw-btn-primary-bg: linear-gradient(135deg, rgba(140, 175, 113, 0.55), rgba(201, 221, 186, 0.7));
+    --draw-btn-primary-border: rgba(140, 175, 113, 0.6);
+    --draw-btn-primary-text: #1f2a21;
+    --draw-btn-accent-bg: linear-gradient(135deg, rgba(253, 210, 93, 0.7), rgba(244, 190, 72, 0.7));
+    --draw-btn-accent-border: rgba(244, 190, 72, 0.8);
+    --draw-btn-ghost-bg: rgba(255, 255, 255, 0.15);
+    --draw-chip-bg: rgba(255, 255, 255, 0.7);
+    --draw-chip-text: #1f2a21;
+    --draw-heading: #2b2b2b;
+    --draw-control: #243126;
+    --draw-highlight: #ffb347;
+    --draw-highlight-text: #1f1f1f;
+    --draw-highlight-final: rgba(208, 255, 208, 0.9);
+    --draw-highlight-final-outline: rgba(46, 134, 68, 0.8);
+    --draw-group-highlight: rgba(255, 244, 188, 0.85);
+    --draw-blink-strong: rgba(255, 214, 140, 0.9);
+    --draw-blink-soft: rgba(255, 244, 204, 0.9);
+    --draw-blink-text: #1f1f1f;
+    --draw-toggle-bg: rgba(255, 255, 255, 0.55);
+    --draw-toggle-border: rgba(255, 255, 255, 0.7);
+    --draw-toggle-indicator: #1f2a21;
+    --draw-toggle-text: #1f2a21;
 }
 
 body::before {
@@ -9,6 +41,46 @@ body::before {
     width: 100vw;
     height: 100vh;
     background-attachment: fixed;
+}
+
+body[data-draw-theme="dusk"]::before {
+    background: linear-gradient(140deg, rgba(5, 10, 12, 0.95), rgba(9, 18, 16, 0.6)),
+        url('/static/images/background_2.png?v=2') center/cover no-repeat;
+    opacity: 0.9;
+}
+
+body[data-draw-theme="dusk"] .draw-page {
+    --draw-text: #e8f0ea;
+    --draw-muted: rgba(232, 240, 234, 0.72);
+    --draw-panel-bg: rgba(10, 18, 17, 0.72);
+    --draw-panel-border: rgba(140, 200, 170, 0.25);
+    --draw-panel-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    --draw-btn-bg: rgba(16, 24, 23, 0.7);
+    --draw-btn-border: rgba(170, 220, 200, 0.35);
+    --draw-btn-text: #ecf7f0;
+    --draw-icon-bg: rgba(236, 247, 240, 0.12);
+    --draw-btn-primary-bg: linear-gradient(135deg, #1e5a3e, #2f8f5c);
+    --draw-btn-primary-border: rgba(95, 200, 140, 0.85);
+    --draw-btn-primary-text: #f3fff8;
+    --draw-btn-accent-bg: linear-gradient(135deg, #c07a22, #f0b343);
+    --draw-btn-accent-border: rgba(240, 179, 67, 0.95);
+    --draw-btn-ghost-bg: rgba(255, 255, 255, 0.06);
+    --draw-chip-bg: rgba(15, 22, 26, 0.9);
+    --draw-chip-text: #eef5f1;
+    --draw-heading: #f3f8f5;
+    --draw-control: rgba(236, 247, 240, 0.78);
+    --draw-highlight: #ffb84d;
+    --draw-highlight-text: #24180a;
+    --draw-highlight-final: rgba(37, 95, 68, 0.9);
+    --draw-highlight-final-outline: rgba(140, 220, 170, 0.8);
+    --draw-group-highlight: rgba(233, 196, 106, 0.3);
+    --draw-blink-strong: rgba(255, 189, 92, 0.9);
+    --draw-blink-soft: rgba(255, 224, 168, 0.85);
+    --draw-blink-text: #2a1a08;
+    --draw-toggle-bg: rgba(14, 22, 21, 0.7);
+    --draw-toggle-border: rgba(170, 220, 200, 0.35);
+    --draw-toggle-indicator: #f3f8f5;
+    --draw-toggle-text: #eef5f1;
 }
 
 .draw-header {
@@ -19,11 +91,12 @@ body::before {
 .draw-header h2 {
     font-size: var(--fs-h1);
     margin-bottom: 8px;
+    color: var(--draw-heading);
 }
 
 .draw-header p {
     font-size: var(--fs-body);
-    opacity: 0.75;
+    color: var(--draw-muted);
 }
 
 .grid-container {
@@ -33,12 +106,24 @@ body::before {
     align-items: start;
 }
 
-.button-column form {
+.button-column .sticky-controls {
     position: sticky;
     top: 24px;
     display: flex;
     flex-direction: column;
     gap: 18px;
+}
+
+.button-column form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.button-column .theme-toggle {
+    margin-top: 16px;
+    width: 100%;
+    justify-content: center;
 }
 
 .action-btn {
@@ -47,11 +132,11 @@ body::before {
     gap: 8px;
     padding: 14px 12px;
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--draw-btn-border);
+    background: var(--draw-btn-bg);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #1f2a21;
+    color: var(--draw-btn-text);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
@@ -61,7 +146,7 @@ body::before {
     width: 44px;
     height: 44px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--draw-icon-bg);
     display: grid;
     place-items: center;
 }
@@ -75,17 +160,18 @@ body::before {
 }
 
 .action-btn.primary {
-    background: linear-gradient(135deg, rgba(140, 175, 113, 0.55), rgba(201, 221, 186, 0.7));
-    border-color: rgba(140, 175, 113, 0.6);
+    background: var(--draw-btn-primary-bg);
+    border-color: var(--draw-btn-primary-border);
+    color: var(--draw-btn-primary-text);
 }
 
 .action-btn.accent {
-    background: linear-gradient(135deg, rgba(253, 210, 93, 0.7), rgba(244, 190, 72, 0.7));
-    border-color: rgba(244, 190, 72, 0.8);
+    background: var(--draw-btn-accent-bg);
+    border-color: var(--draw-btn-accent-border);
 }
 
 .action-btn.ghost {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--draw-btn-ghost-bg);
 }
 
 .action-btn:hover {
@@ -118,11 +204,11 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--draw-panel-bg);
     padding: 16px 14px 20px;
     border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--draw-panel-border);
+    box-shadow: var(--draw-panel-shadow);
 }
 
 .column h3 {
@@ -130,7 +216,7 @@ body::before {
     font-size: var(--fs-h3);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #2b2b2b;
+    color: var(--draw-heading);
 }
 
 .team,
@@ -139,7 +225,7 @@ body::before {
     font-size: var(--fs-body);
     padding: 8px 12px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--draw-chip-bg);
     width: 100%;
     max-width: 220px;
     word-break: break-word;
@@ -149,6 +235,7 @@ body::before {
     justify-content: center;
     text-align: center;
     transform: none !important;
+    color: var(--draw-chip-text);
 }
 
 .column {
@@ -156,7 +243,7 @@ body::before {
 }
 
 .group.highlight {
-    background: rgba(255, 244, 188, 0.85);
+    background: var(--draw-group-highlight);
     font-weight: 600;
     animation: highlightAnim 0.6s ease-in-out;
 }
@@ -167,23 +254,23 @@ body::before {
 }
 
 .highlighted-orange {
-    background-color: #ffb347 !important;
-    color: #1f1f1f;
+    background-color: var(--draw-highlight) !important;
+    color: var(--draw-highlight-text);
     font-weight: 600;
     transition: background-color 0.2s;
     transform: none !important;
 }
 
 .highlight-final {
-    outline: 3px solid rgba(46, 134, 68, 0.8);
-    background-color: rgba(208, 255, 208, 0.9) !important;
+    outline: 3px solid var(--draw-highlight-final-outline);
+    background-color: var(--draw-highlight-final) !important;
     font-weight: 700;
     transform: none !important;
 }
 
 @keyframes blink {
-    0%, 100% { background-color: rgba(255, 214, 140, 0.9); font-weight: 700; }
-    50% { background-color: rgba(255, 244, 204, 0.9); }
+    0%, 100% { background-color: var(--draw-blink-strong); font-weight: 700; color: var(--draw-blink-text); }
+    50% { background-color: var(--draw-blink-soft); }
 }
 
 .blink {
@@ -192,11 +279,11 @@ body::before {
 }
 
 .controls-panel {
-    margin-top: 24px;
+    margin-top: 0;
     padding: 16px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: var(--draw-panel-bg);
+    border: 1px solid var(--draw-panel-border);
     display: grid;
     gap: 14px;
 }
@@ -207,7 +294,7 @@ body::before {
     font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #243126;
+    color: var(--draw-control);
 }
 
 .control input[type="range"] {
@@ -219,6 +306,62 @@ body::before {
     text-transform: none;
     letter-spacing: 0;
     opacity: 0.8;
+}
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--draw-toggle-border);
+    background: var(--draw-toggle-bg);
+    color: var(--draw-toggle-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle .toggle-indicator {
+    width: 36px;
+    height: 18px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.18);
+    position: relative;
+}
+
+.theme-toggle .toggle-indicator::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--draw-toggle-indicator);
+    transition: transform 0.2s ease;
+}
+
+body[data-draw-theme="dusk"] .theme-toggle .toggle-indicator::after {
+    transform: translateX(18px);
+}
+
+.theme-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+body[data-draw-theme="dusk"] .sidebar .link-section a,
+body[data-draw-theme="dusk"] .sidebar .authenticated-links a {
+    color: #ffffff;
+}
+
+body[data-draw-theme="dusk"] .sidebar .link-section a:hover,
+body[data-draw-theme="dusk"] .sidebar .authenticated-links a:hover {
+    color: #f1f5f2;
 }
 
 @media (max-width: 1200px) {
