@@ -28,6 +28,7 @@
             {% if user.is_authenticated %}
             <div class="authenticated-links">
                 <a href="{% url 'manage_tournament' %}">Gestione Torneo</a>
+                <a href="{% url 'parse_input' %}">Inserimento AI</a>
                 <a href="{% url 'group_draw' %}">Sorteggio</a>
                 <a href="#"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>

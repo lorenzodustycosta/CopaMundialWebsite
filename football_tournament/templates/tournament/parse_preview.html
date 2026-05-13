@@ -1,0 +1,71 @@
+{% extends "tournament/base.html" %}
+{% load static %}
+
+{% block title %}Conferma dati – CopaMundial{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/parse.css' %}?v=1">
+
+<section class="parse-page">
+    <h1>
+        {% if parse_type == "roster" %}Anteprima rosa{% else %}Anteprima risultato{% endif %}
+    </h1>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for msg in messages %}
+        <li class="{{ msg.tags }}">{{ msg }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <p class="parse-hint">
+        Verifica i dati estratti dall'AI qui sotto.
+        Puoi correggere direttamente nel riquadro di testo prima di confermare.
+        Il JSON deve rispettare il formato mostrato.
+    </p>
+
+    <!-- Confirm form -->
+    <form method="post" action="{{ post_url }}" class="preview-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="confirm">
+
+        <div class="json-editor-wrap">
+            <label for="data-json-field">
+                {% if parse_type == "roster" %}
+                Dati rosa (modifica se necessario)
+                {% else %}
+                Dati risultato (modifica se necessario)
+                {% endif %}
+            </label>
+
+            {% if parse_type == "roster" %}
+            <p class="schema-hint">
+                Schema atteso:
+                <code>{"team_name": "…", "players": [{"name": "…", "surname": "…", "number": null}]}</code>
+            </p>
+            {% else %}
+            <p class="schema-hint">
+                Schema atteso:
+                <code>{"home_team": "…", "away_team": "…", "home_goals": 0, "away_goals": 0, "date": null,
+"scorers": [{"name": "…", "surname": "…", "team": "…"}]}</code>
+            </p>
+            {% endif %}
+
+            <textarea id="data-json-field"
+                      name="data_json"
+                      rows="24"
+                      spellcheck="false">{{ data_json }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-confirm">Conferma e salva</button>
+    </form>
+
+    <!-- Discard form -->
+    <form method="post" action="{{ post_url }}" class="discard-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="discard">
+        <button type="submit" class="btn-discard">Annulla e ricomincia</button>
+    </form>
+</section>
+{% endblock %}

@@ -12,3 +12,4 @@ sqlparse==0.4.4
 typing_extensions==4.10.0
 uvicorn==0.29.0
 whitenoise==6.6.0
+httpx==0.28.1

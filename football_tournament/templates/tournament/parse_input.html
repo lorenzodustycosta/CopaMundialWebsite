@@ -1,0 +1,100 @@
+{% extends "tournament/base.html" %}
+{% load static %}
+
+{% block title %}Inserimento dati – CopaMundial{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/parse.css' %}?v=1">
+
+<section class="parse-page">
+    <h1>Inserimento dati tramite AI</h1>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for msg in messages %}
+        <li class="{{ msg.tags }}">{{ msg }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <p class="parse-hint">
+        Incolla un testo <strong>oppure</strong> carica una foto
+        (tabellino, lista rosa, ecc.). Seleziona il tipo di dato da estrarre,
+        poi clicca <em>Analizza</em>. Potrai verificare e correggere il risultato
+        prima che venga salvato.
+    </p>
+
+    <div class="parse-type-selector">
+        <label class="parse-type-option">
+            <input type="radio" name="input_type_selector" value="roster" checked>
+            <span>Rosa squadra</span>
+        </label>
+        <label class="parse-type-option">
+            <input type="radio" name="input_type_selector" value="result">
+            <span>Risultato partita</span>
+        </label>
+    </div>
+
+    <!-- Roster form -->
+    <form id="form-roster"
+          class="parse-form"
+          method="post"
+          action="{% url 'parse_roster' %}"
+          enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="roster-text">Testo (opzionale)</label>
+            <textarea id="roster-text"
+                      name="whatsapp_text"
+                      rows="8"
+                      placeholder="Incolla qui il messaggio con la lista dei giocatori…"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="roster-image">Foto (opzionale)</label>
+            <input id="roster-image" type="file" name="image" accept="image/*">
+        </div>
+        <button type="submit" class="btn-primary">Analizza rosa</button>
+    </form>
+
+    <!-- Result form -->
+    <form id="form-result"
+          class="parse-form hidden"
+          method="post"
+          action="{% url 'parse_result' %}"
+          enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="result-text">Testo (opzionale)</label>
+            <textarea id="result-text"
+                      name="whatsapp_text"
+                      rows="8"
+                      placeholder="Incolla qui il messaggio con il risultato…"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="result-image">Foto (opzionale)</label>
+            <input id="result-image" type="file" name="image" accept="image/*">
+        </div>
+        <button type="submit" class="btn-primary">Analizza risultato</button>
+    </form>
+</section>
+
+<script>
+(function () {
+    const radios = document.querySelectorAll('input[name="input_type_selector"]');
+    const formRoster = document.getElementById('form-roster');
+    const formResult = document.getElementById('form-result');
+
+    radios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            if (this.value === 'roster') {
+                formRoster.classList.remove('hidden');
+                formResult.classList.add('hidden');
+            } else {
+                formResult.classList.remove('hidden');
+                formRoster.classList.add('hidden');
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

@@ -1,12 +1,16 @@
 import json
 import os
 import random
+import tempfile
 from pathlib import Path
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.db.models import Count, Sum
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from tournament.config.tournament_schedule import GROUP_STAGE_START_DATE, KNOCKOUT_DATES
@@ -301,3 +305,210 @@ def download_document(request, doc_id):
 def health_check(request):
     response = HttpResponse("OK", content_type="text/plain")
     return response
+
+
+# ─── Ollama parse views ──────────────────────────────────────────────────────
+
+def parse_input(request):
+    """GET: render the input form (textarea + image upload + roster/result radio)."""
+    return render(request, "tournament/parse_input.html")
+
+
+def _handle_upload(request) -> tuple[str | None, str | None]:
+    """
+    Extract text and/or save an uploaded image to a temp file.
+
+    Returns (text, tmp_image_path). The caller is responsible for deleting
+    the temp file after use.
+    """
+    text = request.POST.get("whatsapp_text", "").strip() or None
+    image_path = None
+
+    uploaded = request.FILES.get("image")
+    if uploaded:
+        suffix = Path(uploaded.name).suffix or ".jpg"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            for chunk in uploaded.chunks():
+                tmp.write(chunk)
+            image_path = tmp.name
+
+    return text, image_path
+
+
+class ParseRosterView(LoginRequiredMixin, View):
+    """
+    Step 1 (POST without 'confirm'): call Ollama, store result in session, show preview.
+    Step 2 (POST with action=confirm):  read edited JSON from form, save to DB, redirect.
+    Step 2 (POST with action=discard):  clear session, redirect to input.
+    """
+
+    login_url = "/tournament/login/"
+
+    def post(self, request):
+        action = request.POST.get("action")
+
+        if action == "confirm":
+            return self._confirm(request)
+        if action == "discard":
+            request.session.pop("parse_roster_data", None)
+            return redirect("parse_input")
+
+        return self._parse(request)
+
+    def _parse(self, request):
+        from .services.ollama_parser import parse_roster
+
+        text, image_path = _handle_upload(request)
+        try:
+            data = parse_roster(text=text, image_path=image_path)
+        except Exception as exc:
+            messages.error(request, f"Parsing failed: {exc}")
+            return redirect("parse_input")
+        finally:
+            if image_path:
+                try:
+                    os.unlink(image_path)
+                except OSError:
+                    pass
+
+        request.session["parse_roster_data"] = data
+        return render(
+            request,
+            "tournament/parse_preview.html",
+            {
+                "parse_type": "roster",
+                "data_json": json.dumps(data, indent=2, ensure_ascii=False),
+                "post_url": request.path,
+            },
+        )
+
+    def _confirm(self, request):
+        from .services.save_service import save_roster
+
+        raw_json = request.POST.get("data_json", "")
+        try:
+            data = json.loads(raw_json)
+        except json.JSONDecodeError as exc:
+            messages.error(request, f"Invalid JSON: {exc}")
+            return render(
+                request,
+                "tournament/parse_preview.html",
+                {
+                    "parse_type": "roster",
+                    "data_json": raw_json,
+                    "post_url": request.path,
+                },
+            )
+
+        try:
+            team = save_roster(data)
+        except Exception as exc:
+            messages.error(request, f"Could not save roster: {exc}")
+            return render(
+                request,
+                "tournament/parse_preview.html",
+                {
+                    "parse_type": "roster",
+                    "data_json": raw_json,
+                    "post_url": request.path,
+                },
+            )
+
+        request.session.pop("parse_roster_data", None)
+        messages.success(request, f"Rosa salvata per {team.name}.")
+        return redirect("team_and_player_list")
+
+
+class ParseResultView(LoginRequiredMixin, View):
+    """
+    Step 1 (POST without 'confirm'): call Ollama, store result in session, show preview.
+    Step 2 (POST with action=confirm):  read edited JSON from form, save to DB, redirect.
+    Step 2 (POST with action=discard):  clear session, redirect to input.
+    """
+
+    login_url = "/tournament/login/"
+
+    def post(self, request):
+        action = request.POST.get("action")
+
+        if action == "confirm":
+            return self._confirm(request)
+        if action == "discard":
+            request.session.pop("parse_result_data", None)
+            return redirect("parse_input")
+
+        return self._parse(request)
+
+    def _parse(self, request):
+        from .services.ollama_parser import parse_result
+
+        text, image_path = _handle_upload(request)
+        try:
+            data = parse_result(text=text, image_path=image_path)
+        except Exception as exc:
+            messages.error(request, f"Parsing failed: {exc}")
+            return redirect("parse_input")
+        finally:
+            if image_path:
+                try:
+                    os.unlink(image_path)
+                except OSError:
+                    pass
+
+        request.session["parse_result_data"] = data
+        return render(
+            request,
+            "tournament/parse_preview.html",
+            {
+                "parse_type": "result",
+                "data_json": json.dumps(data, indent=2, ensure_ascii=False),
+                "post_url": request.path,
+            },
+        )
+
+    def _confirm(self, request):
+        from .services.save_service import save_result
+
+        raw_json = request.POST.get("data_json", "")
+        try:
+            data = json.loads(raw_json)
+        except json.JSONDecodeError as exc:
+            messages.error(request, f"Invalid JSON: {exc}")
+            return render(
+                request,
+                "tournament/parse_preview.html",
+                {
+                    "parse_type": "result",
+                    "data_json": raw_json,
+                    "post_url": request.path,
+                },
+            )
+
+        try:
+            match = save_result(data)
+        except ValueError as exc:
+            messages.error(request, str(exc))
+            return render(
+                request,
+                "tournament/parse_preview.html",
+                {
+                    "parse_type": "result",
+                    "data_json": raw_json,
+                    "post_url": request.path,
+                },
+            )
+        except Exception as exc:
+            messages.error(request, f"Could not save result: {exc}")
+            return render(
+                request,
+                "tournament/parse_preview.html",
+                {
+                    "parse_type": "result",
+                    "data_json": raw_json,
+                    "post_url": request.path,
+                },
+            )
+
+        request.session.pop("parse_result_data", None)
+        messages.success(request, f"Risultato salvato: {match}.")
+        return redirect("match_schedule")

@@ -3,6 +3,10 @@ from . import views
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
+    # ── Ollama AI data entry ──────────────────────────────────────────────
+    path('parse/', views.parse_input, name='parse_input'),
+    path('parse/roster/', views.ParseRosterView.as_view(), name='parse_roster'),
+    path('parse/result/', views.ParseResultView.as_view(), name='parse_result'),
     path('', views.home, name='home'),
     path('matches/', views.match_schedule, name='match_schedule'),  # New URL for matches
     path('sorteggio/', views.group_draw, name='group_draw'),
